@@ -1,0 +1,6 @@
+# harness testleri yayimlanmaz
+test/
+__pycache__/
+*.zip
+Thumbs.db
+.DS_Store

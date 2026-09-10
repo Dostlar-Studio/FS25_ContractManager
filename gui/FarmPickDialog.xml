@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!--
+    FS25_ContractManager - ciftlik secme penceresi (ortak daveti).
+    Oyunun stok diyalog kalibi: fs25_dialogBg > ust/orta/alt seritler + icerik + buton kutusu.
+    Secici oyunun kendi MultiTextOption'i (fs25_dialogMultiTextOption); oklar ve arka plan
+    autoAddDefaultElements ile gelir. Butonlar buttonOK (Enter) / buttonBack (Esc).
+-->
+<GUI name="ContractManagerFarmPickDialog">
+<GuiElement profile="fs25_dialogBg" id="dialogBg">
+    <ThreePartBitmap profile="fs25_dialogBgTop"/>
+    <ThreePartBitmap profile="fs25_dialogBgMiddle"/>
+    <ThreePartBitmap profile="fs25_dialogBgBottom"/>
+
+    <GuiElement profile="fs25_dialogContentContainer">
+        <Text profile="fs25_dialogTitle" id="dialogTitle" text="$l10n_cm_dialogInviteTitle"/>
+        <Text profile="fs25_dialogTextWithTitle" id="dialogText" text="$l10n_cm_dialogInviteText"/>
+        <MultiTextOption profile="cm_farmPickOption" id="farmOption"/>
+    </GuiElement>
+
+    <BoxLayout profile="fs25_dialogButtonBox">
+        <Button profile="buttonOK" id="sendButton" text="$l10n_cm_dialogSend" onClick="onClickSend"/>
+        <Bitmap profile="fs25_dialogButtonBoxSeparator"/>
+        <Button profile="buttonBack" id="cancelButton" text="$l10n_cm_pageDialogNo" onClick="onClickBack"/>
+    </BoxLayout>
+</GuiElement>
+</GUI>

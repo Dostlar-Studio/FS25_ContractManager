@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!--
+    FS25_ContractManager - kendi ikon dilimimiz.
+
+    Neden gerekli: ESC menusunun kenar cubugu sekmeleri ikonu dilim kimliginden
+    (sliceId) cizer; addPageTab'e yalnizca dosya adi verilirse sekme bos kalir.
+    g_overlayManager:addTextureConfigFile ile bu dosyayi "contractManager" onekiyle
+    kaydediyoruz, dilim kimligi "contractManager.pageTab" oluyor.
+
+    uvs pikseldir ve meta/size'a goredir; tabIcon.dds 256x256 tek ikondur.
+    DIKKAT: "px" eki ZORUNLU. FS25'te GuiUtils.getNormalizedValues bir STRING'i yalnizca
+    "px"/"dp" eki varsa referans boyuta boler; eksiz yazilirsa 256 degeri oldugu gibi
+    kalir ve ikon dokunun disini ornekler (bos gorunur).
+-->
+<texture>
+    <meta>
+        <filename>tabIcon.dds</filename>
+        <size width="256" height="256"/>
+    </meta>
+    <slices>
+        <slice id="pageTab" uvs="0px 0px 256px 256px"/>
+    </slices>
+</texture>

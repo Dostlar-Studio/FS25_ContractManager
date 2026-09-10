@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+        <text name="cg_warningWrongDestination" text="Kontrat ürünü %s yalnızca kontratta belirtilen teslim noktasına boşaltılabilir."/>
+        <text name="cg_warningGroundBlocked" text="Kontrat ürünü %s yere dökülemez."/>
+        <text name="cg_warningCrossFarm" text="Kontrat ürünü %s başka bir çiftliğin aracına aktarılamaz."/>
+        <text name="cg_cancelBlocked" text="Bu kontrat iptal edilemez: işe başlanmış. %s ürününü belirtilen noktaya teslim edin."/>
+        <text name="cg_forcedPurge" text="Kontrat başarısız oldu. Korunan %s üründen %s geri alındı."/>
+        <text name="cg_baleBlocked" text="Kontrat balyaları (%s) burada kabul edilmez. Belirtilen teslim noktasını kullanın."/>
+        <text name="cm_penalty" text="Kontrat cezası"/>
+        <text name="cm_timeWarning" text="Kontrat süresi dolmak üzere: %s (%d dk kaldı)"/>
+        <text name="cm_tabTitle" text="Kontrat Yöneticisi"/>
+        <text name="cm_noPermission" text="Kontrat kurallarını yalnızca sunucu yöneticisi değiştirebilir."/>
+        <text name="cm_secGuard" text="Ürün koruması"/>
+        <text name="cm_secReward" text="Ödül ve ceza"/>
+        <text name="cm_secLimits" text="Limitler"/>
+        <text name="cm_secGeneration" text="Kontrat üretimi"/>
+        <text name="cm_secDuration" text="Süre"/>
+        <text name="cm_secCompat" text="Uyumluluk"/>
+        <text name="cm_secTypes" text="Kontrat türleri"/>
+        <text name="cm_secStats" text="Çiftliğinizin istatistiği"/>
+        <text name="cm_guard_enabled" text="Koruma etkin"/>
+        <text name="cm_guard_enabled_tooltip" text="Kontrat ürününün yere dökülmesini, başka çiftliğe aktarılmasını ve yanlış yere boşaltılmasını engeller."/>
+        <text name="cm_guard_blockCancelAfterProgress" text="İş başladıktan sonra iptal engeli"/>
+        <text name="cm_guard_blockCancelAfterProgress_tooltip" text="Hasat ya da teslimat başladıysa kontrat iptal edilemez."/>
+        <text name="cm_guard_confiscateOnFail" text="Başarısızlıkta ürünü geri al"/>
+        <text name="cm_guard_confiscateOnFail_tooltip" text="Süre aşımı veya zorunlu başarısızlıkta kabulden beri biriken net ürün geri alınır."/>
+        <text name="cm_reward_multiplier" text="Ödül çarpanı"/>
+        <text name="cm_reward_multiplier_tooltip" text="Oyunun hesapladığı kontrat ödülü bu çarpanla çarpılır."/>
+        <text name="cm_reward_failPenaltyPercent" text="Başarısızlık cezası"/>
+        <text name="cm_reward_failPenaltyPercent_tooltip" text="Başarısız, iptal veya süresi dolan kontratta ödülün bu yüzdesi çiftlikten kesilir."/>
+        <text name="cm_reward_leaseCostMultiplier" text="Kiralık makine maliyeti"/>
+        <text name="cm_reward_leaseCostMultiplier_tooltip" text="Kontratla gelen kiralık makinelerin maliyet çarpanı."/>
+        <text name="cm_reward_min" text="En düşük ödül"/>
+        <text name="cm_reward_min_tooltip" text="Çarpan sonrası ödül bunun altına inmez."/>
+        <text name="cm_reward_max" text="En yüksek ödül"/>
+        <text name="cm_reward_max_tooltip" text="Çarpan sonrası ödül bunu aşmaz."/>
+        <text name="cm_limits_maxActivePerFarm" text="Çiftlik başına aktif kontrat"/>
+        <text name="cm_limits_maxActivePerFarm_tooltip" text="Bir çiftliğin aynı anda yürütebileceği kontrat sayısı."/>
+        <text name="cm_generation_maxTotal" text="Panodaki toplam kontrat"/>
+        <text name="cm_generation_maxTotal_tooltip" text="Kontrat panosunda aynı anda bulunabilecek kontrat sayısı."/>
+        <text name="cm_generation_maxPerType" text="Tür başına üst sınır"/>
+        <text name="cm_generation_maxPerType_tooltip" text="Her kontrat türünden panoda en çok kaç tane olabilir."/>
+        <text name="cm_generation_refreshMultiplier" text="Yeni kontrat aralığı"/>
+        <text name="cm_generation_refreshMultiplier_tooltip" text="Yeni kontrat üretim aralığı çarpanı. Küçük değer daha sık kontrat demektir."/>
+        <text name="cm_duration_multiplier" text="Kontrat süresi"/>
+        <text name="cm_duration_multiplier_tooltip" text="Yeni üretilen kontratların süresi bu çarpanla ölçeklenir."/>
+        <text name="cm_duration_warnAtMinutes" text="Bitiş uyarısı (oyun dk)"/>
+        <text name="cm_duration_warnAtMinutes_tooltip" text="Kalan süre bu eşiklere inince çiftlik üyelerine uyarı gider."/>
+        <text name="cm_compat_overrideBetterContracts" text="BetterContracts üstüne uygula"/>
+        <text name="cm_compat_overrideBetterContracts_tooltip" text="BetterContracts yüklüyken bu modun ödül/limit/üretim/süre kurallarını da uygula. Çarpanlar katlanır."/>
+        <text name="cm_typeEnabled" text="üretilsin"/>
+        <text name="cm_typeEnabled_tooltip" text="Kapalıysa bu türde yeni kontrat üretilmez."/>
+        <text name="cm_typeWeight" text="ağırlık"/>
+        <text name="cm_typeWeight_tooltip" text="Diğer türlere göre üretilme olasılığı. Hepsi eşitse oyun davranışı değişmez."/>
+        <text name="cm_valNone" text="Yok"/>
+        <text name="cm_valFree" text="Ücretsiz"/>
+        <text name="cm_valUnlimited" text="Sınırsız"/>
+        <text name="cm_valGameDefault" text="Oyun varsayılanı"/>
+        <text name="cm_valNever" text="Hiç"/>
+        <text name="cm_statsLoading" text="Yükleniyor..."/>
+        <text name="cm_statCompleted" text="Tamamlanan"/>
+        <text name="cm_statFailed" text="Başarısız"/>
+        <text name="cm_statCanceled" text="İptal"/>
+        <text name="cm_statTimedOut" text="Süre aşımı"/>
+        <text name="cm_statEarned" text="Toplam kazanç"/>
+        <text name="cm_statPenalties" text="Toplam ceza"/>
+        <text name="cm_day" text="Gün"/>
+        <text name="cm_stateNone" text="-"/>
+        <text name="cm_stateSuccess" text="tamamlandı"/>
+        <text name="cm_stateFailed" text="başarısız"/>
+        <text name="cm_stateCanceled" text="iptal"/>
+        <text name="cm_stateTimedOut" text="süre aşımı"/>
+        <text name="cm_detailTimeLeft" text="Kalan süre"/>
+        <text name="cm_detailPenalty" text="Başarısızlık cezası"/>
+        <text name="cm_detailActive" text="Aktif kontratlar"/>
+        <text name="cm_unitDay" text="g"/>
+        <text name="cm_unitHour" text="sa"/>
+        <text name="cm_unitMinute" text="dk"/>
+        <text name="cm_secIntegrations" text="Entegrasyonlar"/>
+        <text name="cm_secInterface" text="Arayüz"/>
+        <text name="cm_ui_managePage" text="Menüde Kontrat Yönetimi sayfası"/>
+        <text name="cm_ui_managePage_tooltip" text="Kenar çubuğundaki Kontrat Yönetimi sekmesini gösterir veya gizler. Oyunun kendi Kontratlar sayfasındaki butonlar çalışmaya devam eder."/>
+        <text name="cm_partInviteTo" text="Davet et: %s"/>
+        <text name="cm_partNextFarm" text="Sonraki çiftlik"/>
+        <text name="cm_partTargetSet" text="Davet hedefi: %s"/>
+        <text name="cm_integrations_discord" text="Discord Bridge olayları"/>
+        <text name="cm_integrations_discord_tooltip" text="FS25_DiscordBridge yüklüyse kontrat kabul/bitiş/ödeme, süre uyarısı ve koruma engelleri Discord'a gider."/>
+        <text name="cm_adminRefreshButton" text="Panoyu yenile"/>
+        <text name="cm_adminCancelButton" text="Zorla iptal"/>
+        <text name="cm_adminConfirmRefresh" text="Kabul edilmemiş tüm kontratlar silinip yeniden üretilecek. Devam edilsin mi?"/>
+        <text name="cm_adminConfirmCancel" text="&quot;%s&quot; kontratı zorla iptal edilecek (koruma engeli aşılır, para cezası uygulanmaz). Devam edilsin mi?"/>
+        <text name="cm_adminCancelled" text="Kontrat iptal edildi."/>
+        <text name="cm_adminRefreshed" text="Kontrat panosu yenilendi."/>
+        <text name="cm_adminAssigned" text="Kontrat çiftliğe atandı."/>
+        <text name="cm_adminNotFound" text="Kontrat bulunamadı."/>
+        <text name="cm_adminNotActive" text="Bu kontrat aktif değil."/>
+        <text name="cm_adminAlreadyStarted" text="Kontrat zaten başlatılmış."/>
+        <text name="cm_adminNoFarm" text="Geçersiz çiftlik."/>
+        <text name="cm_adminLimit" text="Çiftlik kontrat limitine ulaşmış."/>
+        <text name="cm_adminFailed" text="İşlem başarısız."/>
+        <text name="cm_secReputation" text="İtibar"/>
+        <text name="cm_reputation_enabled" text="İtibar sistemi"/>
+        <text name="cm_reputation_enabled_tooltip" text="Tamamlanan kontrat puan kazandırır, başarısız/iptal/süre aşımı puan düşürür. Puan ödül bonusu ve ek kontrat hakkı verir."/>
+        <text name="cm_reputation_gainComplete" text="Tamamlamada kazanç"/>
+        <text name="cm_reputation_gainComplete_tooltip" text="Başarıyla biten kontrat başına puan."/>
+        <text name="cm_reputation_lossFail" text="Başarısızlıkta kayıp"/>
+        <text name="cm_reputation_lossFail_tooltip" text="Başarısız kontrat başına düşülen puan."/>
+        <text name="cm_reputation_lossCancel" text="İptalde kayıp"/>
+        <text name="cm_reputation_lossCancel_tooltip" text="Oyuncunun iptal ettiği kontrat başına düşülen puan. Yönetici iptali düşürmez."/>
+        <text name="cm_reputation_lossTimeout" text="Süre aşımında kayıp"/>
+        <text name="cm_reputation_lossTimeout_tooltip" text="Süresi dolan kontrat başına düşülen puan."/>
+        <text name="cm_reputation_maxPoints" text="En yüksek puan"/>
+        <text name="cm_reputation_maxPoints_tooltip" text="Puanın üst sınırı; bonus bu değerde en yüksek olur."/>
+        <text name="cm_reputation_rewardBonusMaxPercent" text="En yüksek ödül bonusu"/>
+        <text name="cm_reputation_rewardBonusMaxPercent_tooltip" text="Puan en yüksekteyken ödüle eklenen yüzde; arada doğrusal."/>
+        <text name="cm_reputation_extraSlotAt" text="Ek kontrat hakkı eşiği"/>
+        <text name="cm_reputation_extraSlotAt_tooltip" text="Puan bu eşiği geçince çiftlik limiti +1. 0 = kapalı."/>
+        <text name="cm_statReputation" text="İtibar"/>
+        <text name="cm_statBonus" text="ödül bonusu"/>
+        <text name="cm_statExtraSlot" text="ek kontrat hakkı"/>
+        <text name="cm_boardTitle" text="Sıralama"/>
+        <text name="cm_repNotify" text="İtibar %+d → %d"/>
+        <text name="cm_generation_cooldownPerFieldHours_tooltip" text="Kontratı biten tarla bu kadar oyun saati yeni kontrat almaz. 0 = kapalı."/>
+        <text name="cm_generation_cooldownPerFieldHours" text="Tarla bekleme süresi"/>
+        <text name="cm_secReservation" text="Rezervasyon"/>
+        <text name="cm_reservation_enabled" text="Kontrat rezervasyonu"/>
+        <text name="cm_reservation_enabled_tooltip" text="Oyuncu kabul edilmemiş bir kontratı çiftliği adına kısa süreliğine rezerve eder; o sürede başka çiftlik alamaz."/>
+        <text name="cm_reservation_minutes" text="Rezervasyon süresi"/>
+        <text name="cm_reservation_minutes_tooltip" text="Gerçek dakika. Süre dolunca rezervasyon kendiliğinden kalkar."/>
+        <text name="cm_resReserveButton" text="Rezerve et"/>
+        <text name="cm_resReleaseButton" text="Rezervasyonu bırak"/>
+        <text name="cm_detailReserved" text="Rezerve"/>
+        <text name="cm_resReserved" text="Kontrat çiftliğiniz adına rezerve edildi."/>
+        <text name="cm_resReleased" text="Rezervasyon bırakıldı."/>
+        <text name="cm_resNone" text="Bu kontratta rezervasyon yok."/>
+        <text name="cm_resTakenByOther" text="Bu kontrat başka bir çiftlik tarafından rezerve edilmiş."/>
+        <text name="cm_resFarmLimit" text="Çiftliğinizin zaten bir rezervasyonu var."/>
+        <text name="cm_resAlreadyStarted" text="Kontrat zaten başlatılmış."/>
+        <text name="cm_resDisabled" text="Rezervasyon kapalı."/>
+        <text name="cm_resBlocked" text="Bu kontrat %s tarafından rezerve edilmiş; süre dolana kadar alınamaz."/>
+        <text name="cm_resTakenBy" text="%s rezerve etti · alınmazsa %d dk sonra serbest"/>
+        <text name="cm_resReservedButton" text="Başka çiftlik rezerve etti"/>
+        <text name="cm_detailProduct" text="Ürün"/>
+        <text name="cm_detailFieldYield" text="Tarladan çıkacak (tahmini)"/>
+        <text name="cm_detailToDeliver" text="Teslim edilecek"/>
+        <text name="cm_detailDelivered" text="Teslim edilen"/>
+        <text name="cm_detailRemaining" text="Kalan"/>
+        <text name="cm_detailSurplus" text="Fazlası"/>
+        <text name="cm_detailSurplusHint" text="çiftliğinizde kalır"/>
+        <text name="cm_detailProgress" text="İlerleme"/>
+        <text name="cm_secSchedule" text="Zamanlı bonuslar (gerçek saat)"/>
+        <text name="cm_schedule_enabled" text="Zamanlı bonuslar"/>
+        <text name="cm_schedule_enabled_tooltip" text="Hafta sonu ve mutlu saat bonusları ödüle eklenir. Gerçek dünya saatine göre."/>
+        <text name="cm_schedule_weekendBonusPercent" text="Hafta sonu bonusu"/>
+        <text name="cm_schedule_weekendBonusPercent_tooltip" text="Cumartesi ve Pazar ödüle eklenen yüzde."/>
+        <text name="cm_schedule_happyHourStart" text="Mutlu saat başlangıcı"/>
+        <text name="cm_schedule_happyHourStart_tooltip" text="Sunucunun yerel saati."/>
+        <text name="cm_schedule_happyHourEnd" text="Mutlu saat bitişi"/>
+        <text name="cm_schedule_happyHourEnd_tooltip" text="Başlangıçtan küçükse gece yarısını aşar."/>
+        <text name="cm_schedule_happyHourBonusPercent" text="Mutlu saat bonusu"/>
+        <text name="cm_schedule_happyHourBonusPercent_tooltip" text="Bu saatlerde ödüle eklenen yüzde."/>
+        <text name="cm_secMap" text="Harita"/>
+        <text name="cm_map_showReserved" text="Rezerve kontratı haritada göster"/>
+        <text name="cm_map_showReserved_tooltip" text="Çiftliğinizin rezerve ettiği kontratın tarlası haritada işaretlenir."/>
+        <text name="cm_map_showAvailable" text="Tüm açık kontratları haritada göster"/>
+        <text name="cm_map_showAvailable_tooltip" text="Panodaki kabul edilmemiş bütün kontratların tarlaları işaretlenir."/>
+        <text name="cm_detailEventBonus" text="Etkinlik bonusu"/>
+        <text name="cm_transferDone" text="Kontrat devredildi."/>
+        <text name="cm_transferSameFarm" text="Kontrat zaten bu çiftlikte."/>
+        <text name="cm_transferLeased" text="Kiralık makineli kontrat devredilemez."/>
+        <text name="cm_secPricing" text="Uzaklık ve zorluk"/>
+        <text name="cm_pricing_distanceEnabled" text="Uzaklık bonusu"/>
+        <text name="cm_pricing_distanceEnabled_tooltip" text="Kontrat tarlası çiftlik merkezinden (çiftlik evi, yoksa arazilerin ortası) uzaklaştıkça ödül artar."/>
+        <text name="cm_pricing_distancePercentPerKm" text="Km başına"/>
+        <text name="cm_pricing_distancePercentPerKm_tooltip" text="Her kilometre için ödüle eklenen yüzde."/>
+        <text name="cm_pricing_distanceMaxPercent" text="Uzaklık üst sınırı"/>
+        <text name="cm_pricing_distanceMaxPercent_tooltip" text="Uzaklık bonusunun en yüksek yüzdesi."/>
+        <text name="cm_pricing_smallFieldEnabled" text="Küçük tarla bonusu"/>
+        <text name="cm_pricing_smallFieldEnabled_tooltip" text="Referans alanın altındaki tarlalar bonus alır; küçüldükçe artar."/>
+        <text name="cm_pricing_smallFieldRefHa" text="Referans alan"/>
+        <text name="cm_pricing_smallFieldRefHa_tooltip" text="Bu alanın altındaki tarlalar bonus alır."/>
+        <text name="cm_pricing_smallFieldMaxPercent" text="Küçük tarla üst sınırı"/>
+        <text name="cm_pricing_smallFieldMaxPercent_tooltip" text="Sıfır hektara yaklaşırken ulaşılan en yüksek yüzde."/>
+        <text name="cm_pricing_typeDifficultyEnabled" text="Tür zorluğu bonusu"/>
+        <text name="cm_pricing_typeDifficultyEnabled_tooltip" text="Zor işler ek yüzde alır: taş toplama %30, ölü ağaç %25, ağaç taşıma %25, kaya %30, yabani ot %10, çapalama %10, sarma %10, sürme %5."/>
+        <text name="cm_detailDistance" text="Uzaklık bonusu"/>
+        <text name="cm_detailSmallField" text="Küçük tarla bonusu"/>
+        <text name="cm_detailDifficulty" text="Zorluk bonusu"/>
+        <text name="cm_secLease" text="Kiralık makine"/>
+        <text name="cm_lease_enabled" text="Kontratla makine kiralanabilsin"/>
+        <text name="cm_lease_enabled_tooltip" text="Kapalıysa hiçbir kontrat kiralık makineyle başlatılamaz; oyuncular kendi makinelerini kullanır."/>
+        <text name="cm_lease_minReputation" text="Kiralama için en az itibar"/>
+        <text name="cm_lease_minReputation_tooltip" text="Çiftliğin itibarı bu puanın altındayken makine kiralayamaz. 0 = kapalı."/>
+        <text name="cm_leaseDenied" text="Bu sunucuda kontratla makine kiralanamaz; kontrat makinesiz başlatıldı."/>
+        <text name="cm_leaseDeniedRep" text="Makine kiralamak için en az %d itibar gerekir; kontrat makinesiz başlatıldı."/>
+        <text name="cm_limits_quotaPerDay" text="Günlük kontrat kotası"/>
+        <text name="cm_limits_quotaPerDay_tooltip" text="Bir çiftlik oyun günü başına en fazla kaç kontrat kabul edebilir. 0 = kapalı."/>
+        <text name="cm_limits_quotaPerMonth" text="Aylık kontrat kotası"/>
+        <text name="cm_limits_quotaPerMonth_tooltip" text="Bir çiftlik oyun ayı başına en fazla kaç kontrat kabul edebilir. 0 = kapalı."/>
+        <text name="cm_reward_penaltyStepPercent" text="Ardışık başarısızlık cezası"/>
+        <text name="cm_reward_penaltyStepPercent_tooltip" text="Üst üste her başarısızlıkta ceza yüzdesi bu kadar artar; başarıyla sıfırlanır. 0 = kapalı."/>
+        <text name="cm_reward_penaltyMaxPercent" text="Ceza üst sınırı"/>
+        <text name="cm_reward_penaltyMaxPercent_tooltip" text="Artan ceza bu yüzdeyi aşmaz."/>
+        <text name="cm_reward_partialEnabled" text="Kısmi ödeme"/>
+        <text name="cm_reward_partialEnabled_tooltip" text="Başarısız kontratta tamamlanan orana göre ödemenin bir kısmı yapılır. Yönetici iptalinde uygulanmaz."/>
+        <text name="cm_reward_partialMinCompletion" text="Kısmi ödeme eşiği"/>
+        <text name="cm_reward_partialMinCompletion_tooltip" text="Tamamlanma bu oranın altındaysa ödeme yapılmaz."/>
+        <text name="cm_reward_partialFactor" text="Kısmi ödeme oranı"/>
+        <text name="cm_reward_partialFactor_tooltip" text="Ödenecek tutar: ödül × tamamlanma × bu oran."/>
+        <text name="cm_secChain" text="Zincir ve NPC"/>
+        <text name="cm_chain_enabled" text="Kontrat zinciri bonusu"/>
+        <text name="cm_chain_enabled_tooltip" text="Aynı tarlada sırayı takip eden çiftlik (hazırlık, ekim, bakım, hasat) sonraki adımda ek ödül alır."/>
+        <text name="cm_chain_bonusPercent" text="Zincir bonusu"/>
+        <text name="cm_chain_bonusPercent_tooltip" text="Zincirin devamı olan kontrata eklenen yüzde."/>
+        <text name="cm_chain_windowDays" text="Zincir süresi (gün)"/>
+        <text name="cm_chain_windowDays_tooltip" text="Önceki adımın üzerinden bu kadar günden fazla geçtiyse zincir kopar. 0 = süresiz."/>
+        <text name="cm_npc_enabled" text="NPC ilişkisi"/>
+        <text name="cm_npc_enabled_tooltip" text="Aynı tarla sahibinin işlerini yapan çiftlik o kişiden daha iyi ödül alır."/>
+        <text name="cm_npc_percentPerJob" text="İş başına bonus"/>
+        <text name="cm_npc_percentPerJob_tooltip" text="O NPC için tamamlanan her kontrat ödülü bu kadar artırır."/>
+        <text name="cm_npc_maxPercent" text="NPC bonusu üst sınırı"/>
+        <text name="cm_npc_maxPercent_tooltip" text="NPC ilişkisinden gelen en yüksek yüzde."/>
+        <text name="cm_detailChain" text="Zincir bonusu"/>
+        <text name="cm_detailNpc" text="NPC bonusu"/>
+        <text name="cm_detailQuota" text="Kalan kota (gün / ay)"/>
+        <text name="cm_quotaDay" text="Günlük kontrat kotanız doldu (%d). Yarın yeniden kontrat alabilirsiniz."/>
+        <text name="cm_quotaMonth" text="Aylık kontrat kotanız doldu (%d). Gelecek ay yeniden kontrat alabilirsiniz."/>
+        <text name="cm_secPartnership" text="Ortak kontrat"/>
+        <text name="cm_partnership_enabled" text="Ortak kontrat"/>
+        <text name="cm_partnership_enabled_tooltip" text="Kontratı alan çiftlik başka bir çiftliği ortak edebilir; ödül katkıya göre bölünür."/>
+        <text name="cm_partnership_maxPartners" text="En fazla ortak"/>
+        <text name="cm_partnership_maxPartners_tooltip" text="Bir kontrata sahibin dışında en çok kaç çiftlik ortak olabilir."/>
+        <text name="cm_partnership_inviteMinutes" text="Davet süresi"/>
+        <text name="cm_partnership_inviteMinutes_tooltip" text="Cevaplanmayan davet bu süre sonunda düşer (gerçek dakika)."/>
+        <text name="cm_partAcceptButton" text="Ortaklığı kabul et"/>
+        <text name="cm_partLeaveButton" text="Ortaklıktan ayrıl"/>
+        <text name="cm_detailPartner" text="Ortaklar"/>
+        <text name="cm_partInvited" text="Davet gönderildi."/>
+        <text name="cm_partJoined" text="Ortaklık kuruldu; ödül katkıya göre bölünecek."/>
+        <text name="cm_partLeft" text="Ortaklıktan ayrıldınız."/>
+        <text name="cm_partDisabled" text="Ortak kontrat kapalı."/>
+        <text name="cm_partNotOwner" text="Yalnızca kontratı alan çiftlik davet edebilir."/>
+        <text name="cm_partAlready" text="Bu çiftlik zaten ortak."/>
+        <text name="cm_partFull" text="Ortak sayısı dolu."/>
+        <text name="cm_partNoInvite" text="Bu kontrat için davetiniz yok."/>
+        <text name="cm_partNotMember" text="Bu kontratta ortak değilsiniz."/>
+        <text name="cm_partInviteNotify" text="&quot;%s&quot; kontratı için ortaklık daveti aldınız (Çiftlik %d). Kontratlar sayfasından kabul edebilirsiniz."/>
+        <text name="cm_popupOk" text="Tamam"/>
+        <text name="cm_popupPartnerTitle" text="Ortak Kontrat"/>
+        <text name="cm_hudOwner" text="Sahip"/>
+        <text name="cm_hudPartner" text="Ortak"/>
+        <text name="cm_partAcceptedNotify" text="Çiftlik %d &quot;%s&quot; için davetinizi kabul etti. Ödül katkıya göre bölünecek."/>
+        <text name="cm_partDeclinedNotify" text="Çiftlik %d &quot;%s&quot; için davetinizi reddetti."/>
+        <text name="cm_pageActive" text="Aktif"/>
+        <text name="cm_pageNew" text="Yeni"/>
+        <text name="cm_pageHistory" text="Geçmiş"/>
+        <text name="cm_pageContracts" text="Kontratlar"/>
+        <text name="cm_pageSelected" text="Seçili kontrat"/>
+        <text name="cm_pageSelectedMark" text="Seçili"/>
+        <text name="cm_pageActions" text="Eylemler"/>
+        <text name="cm_pageSelect" text="Seç"/>
+        <text name="cm_pageEmpty" text="Gösterilecek kontrat yok."/>
+        <text name="cm_pageSelectHint" text="Listeden bir kontrat seçin."/>
+        <text name="cm_pageField" text="Tarla"/>
+        <text name="cm_pageTargetFarm" text="Hedef çiftlik"/>
+        <text name="cm_pageInvite" text="Ortağa davet et"/>
+        <text name="cm_dialogInviteTitle" text="Ortak Davet Et"/>
+        <text name="cm_dialogInviteText" text="Bu kontratı paylaşacağınız çiftliği seçin."/>
+        <text name="cm_dialogSend" text="Daveti gönder"/>
+        <text name="cm_detailRole" text="Rolünüz"/>
+        <text name="cm_detailYourShare" text="Payınız"/>
+        <text name="cm_pageTransfer" text="Devret"/>
+        <text name="cm_pageAssign" text="Çiftliğe ata"/>
+        <text name="cm_pageAction_reserve" text="Bu kontratı çiftliğiniz adına tutar"/>
+        <text name="cm_pageAction_release" text="Rezervasyonunuzu bırakır"/>
+        <text name="cm_pageAction_invite" text="Hedef çiftliği ortaklığa davet eder"/>
+        <text name="cm_pageAction_partnerAccept" text="Aldığınız ortaklık davetini kabul eder"/>
+        <text name="cm_pageAction_partnerLeave" text="Ortaklıktan ayrılır"/>
+        <text name="cm_pageAction_transfer" text="Kontratı hedef çiftliğe devreder"/>
+        <text name="cm_pageAction_cancel" text="Kontratı cezasız olarak zorla iptal eder"/>
+        <text name="cm_pageAction_assign" text="Bu kontratı hedef çiftlik adına başlatır"/>
+        <text name="cm_pageAction_refresh" text="Kabul edilmemiş tüm kontratları yeniden üretir"/>
+        <text name="cm_pagePartners" text="Ortaklık"/>
+        <text name="cm_pageOwner" text="sahip"/>
+        <text name="cm_pagePartner" text="ortak"/>
+        <text name="cm_pageEqualSplit" text="eşit bölüşüm"/>
+        <text name="cm_pagePendingInvite" text="Bekleyen davet: %s (%d dk)"/>
+        <text name="cm_pageDecline" text="Daveti reddet"/>
+        <text name="cm_pageAction_partnerDecline" text="Ortaklık davetini reddeder"/>
+        <text name="cm_pageConfirmButton" text="Onayla"/>
+        <text name="cm_pageDialogNo" text="Vazgeç"/>
+        <text name="cm_pageConfirmInvite" text="%s çiftliğine ortaklık daveti gönderilsin mi?"/>
+        <text name="cm_pageConfirmFarm" text="%s için uygulansın mı?"/>
+        <text name="cm_pageConfirmGeneric" text="Onay: %s?"/>
+        <text name="cm_partDeclined" text="Davet reddedildi."/>
+    </texts>
+</l10n>

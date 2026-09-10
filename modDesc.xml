@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<modDesc descVersion="113">
+    <author>Dostlar STUDIO</author>
+    <version>1.13.1.0</version>
+
+    <title>
+        <en>Contract Manager</en>
+        <de>Vertragsmanager</de>
+        <fr>Gestionnaire De Contrats</fr>
+        <tr>Kontrat Yöneticisi</tr>
+    </title>
+
+    <description>
+        <en><![CDATA[Advanced contract management for dedicated servers and single player. Uses only the game's own screens.
+
+RULES (ESC > Settings > Contract Manager, server admin only)
+- Reward multiplier with minimum/maximum, failure penalty as a share of the reward, leased vehicle cost multiplier.
+- Active contracts per farm, contracts on the board, per-type limits, generation interval, contract duration, expiry warnings.
+- Enable/disable each contract type and weight it against the others.
+
+PRODUCT GUARD (server authoritative)
+- Contract crops move only between vehicles of the same farm; ground dumping, cross-farm transfers and wrong unloading points are blocked.
+- Only the delivery point of the contract accepts the protected product; a started contract cannot be cancelled.
+- On timeout or forced failure the net contract product accumulated since acceptance is confiscated.
+
+MORE
+- Contracts page shows time left, possible penalty and active contracts / limit for the selected contract.
+- Farm statistics and the last contracts in the settings tab (visible to everyone).
+- Admin tools: refresh the board, force-cancel a contract (bottom bar buttons and console commands).
+- FS25_DiscordBridge integration: contract events are sent to Discord when that mod is loaded.
+- Replaces FS25_ContractGuard and migrates its save data. Yields its rules automatically when FS25_BetterContracts is loaded.
+
+CONTACT & SOURCE
+- Bug reports and suggestions: hello@kahrastudio.art
+- Source code and issue tracker: https://github.com/PoncikPanda/FS25_ContractManager
+
+Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.13.1.0:
+- HUD contract bar: the role is now the bar title and the payout comes first, so neither is cut off.
+
+Changelog 1.13.0.0:
+- The contract bar on the HUD now shows your role (owner/partner) and your expected payout; partners get their own bar.
+- Partnership events (invite sent, invite received, accepted, declined) open a window instead of a small toast.
+
+Changelog 1.12.1.0:
+- Farm picker window: the selector no longer overlaps the description text.
+
+Changelog 1.12.0.0:
+- Inviting a partner now opens a farm picker window instead of cycling farms with a button.
+- Partner farms see the contract's progress, their role and their expected share in the details.
+
+Changelog 1.11.2.0:
+- Partnership invites, accepts and syncs now leave one log line each, to diagnose reports.
+
+Changelog 1.11.1.0:
+- Updated for game patch 1.23 (descVersion 113).
+- Plain lookups no longer run inside protected calls, so their errors reach log.txt.
+
+Changelog 1.11.0.0:
+- Partner invites can now be sent from the game's own Contracts page (pick the farm with "Next farm", then "Invite").
+- Invited and partner farms see the shared contract in their Active list, with accept/decline right there.
+- New Interface setting to show or hide the Contract Manager tab in the sidebar.
+- Internal cleanup: one shared text helper instead of seven copies.
+
+Changelog 1.10.1.0:
+- The product rows really show up now: the game never sends the harvest amounts to players, so the server sends them separately.
+- Added an estimate of the total yield the field will produce.
+
+Changelog 1.10.0.0:
+- Contract details now show the product, how much to deliver, how much is delivered and what is still needed.
+- The lease cost row is hidden when leasing is switched off.
+- Refreshing the board fills it again at once instead of one contract at a time.
+- A contract reserved by another farm now says who reserved it and when it frees up, instead of just "failed".
+- Partner invites can be accepted or declined straight from the contracts page.
+- The leaderboard shows far more farms.
+- The transfer button is suspended for now (console command still works).
+
+Changelog 1.9.6.0:
+- Partnership invites now reach the invited player, so accept and decline finally appear.
+- The reservation release button works for players on a server.
+- Moving a settings slider no longer floods every client with a full settings rebuild.
+
+Changelog 1.9.5.0:
+- The failure penalty is now actually deducted. It was shown on the cancel screen but never charged.
+
+Changelog 1.9.4.0:
+- Fixed a server script error every time a contract was cancelled.
+
+Changelog 1.9.3.0:
+- Fixed force cancel, transfer, reservation and partnership doing nothing for players on a dedicated server.
+- Actions that cannot be undone now open the game's own confirmation window.
+
+Changelog 1.9.2.0:
+- Tab icon redrawn as line art to match the game's own sidebar icons.
+- The target farm selector only shows when an action actually needs it.
+
+Changelog 1.9.1.0:
+- The menu tab now sits right below the game's Contracts page instead of last in the list.
+
+Changelog 1.9.0.0:
+- Shared contracts now list every taking part farm separately with its role, contribution, share and payout.
+- Invites can be declined, and pending invites show the farm and the time left.
+- Actions that cannot be undone ask for confirmation before they run.
+- Fixed both page icons: the sidebar tab and the header stayed empty.
+- Routine setting broadcasts no longer write to log.txt.
+
+Changelog 1.8.2.0:
+- Target farm is now picked with the game's own selector instead of a cycling button.
+- Fixed the page icon: the sidebar tab was empty and the header icon threw a script error every frame.
+- Contract prices are measured once per contract instead of on every reward query.
+
+Changelog 1.8.1.0:
+- Contract Manager page matches the game's own look: docked scroll bar, framed action buttons, proper sidebar icon.
+
+Changelog 1.8.0.0:
+- New "Contract Manager" page in the in-game menu: filter contracts and run every action with buttons.
+
+Changelog 1.7.0.0:
+- Shared contracts: the contract holder can take a partner farm, the reward is split by measured contribution.
+- Partners may carry the protected product and work the contract field.
+
+Changelog 1.6.0.0:
+- Partial payout for failed contracts based on how much was completed.
+- Escalating penalty for consecutive failures, reset by a success.
+- Daily and monthly contract quota per farm.
+- Contract chain bonus on the same field (prepare, sow, tend, harvest).
+- NPC relationship bonus for repeat work for the same land owner.]]></en>
+        <de><![CDATA[Erweiterte Vertragsverwaltung für Dedicated Server und Einzelspieler. Nutzt ausschließlich die Menüs des Spiels.
+
+REGELN (ESC > Einstellungen > Vertragsmanager, nur Serveradmin)
+- Belohnungsfaktor mit Minimum/Maximum, Strafe bei Fehlschlag als Anteil der Belohnung, Kostenfaktor für Leihfahrzeuge.
+- Aktive Verträge je Hof, Verträge auf der Tafel, Limits je Typ, Erzeugungsintervall, Vertragsdauer, Ablaufwarnungen.
+- Jeden Vertragstyp ein-/ausschalten und gegenüber den anderen gewichten.
+
+PRODUKTSCHUTZ (serverseitig)
+- Vertragsware nur zwischen Fahrzeugen desselben Hofes; Abladen auf den Boden, an fremde Höfe und an falschen Stellen wird blockiert.
+- Nur die Abgabestelle des Vertrags nimmt die geschützte Ware an; ein begonnener Vertrag kann nicht abgebrochen werden.
+- Bei Zeitablauf oder erzwungenem Fehlschlag wird die seit Annahme angesammelte Nettoware eingezogen.
+
+WEITERES
+- Vertragsseite zeigt Restzeit, mögliche Strafe und aktive Verträge / Limit zum gewählten Vertrag.
+- Hofstatistik und letzte Verträge im Einstellungsreiter (für alle sichtbar).
+- Admin-Werkzeuge: Tafel erneuern, Vertrag zwangsweise abbrechen (Buttons in der Leiste und Konsolenbefehle).
+- FS25_DiscordBridge-Anbindung: Vertragsereignisse gehen an Discord, wenn dieser Mod geladen ist.
+- Ersetzt FS25_ContractGuard und übernimmt dessen Spielstanddaten. Tritt bei geladenem FS25_BetterContracts automatisch zurück.
+
+KONTAKT & QUELLCODE
+- Fehlermeldungen und Vorschläge: hello@kahrastudio.art
+- Quellcode und Issue-Tracker: https://github.com/PoncikPanda/FS25_ContractManager
+
+Muss auf dem Server und allen Clients aktiviert sein. Nur PC/Mac.
+
+Changelog 1.13.1.0:
+- HUD-Vertragsbalken: Rolle als Titel, Auszahlung vorne - nichts wird mehr abgeschnitten.
+
+Changelog 1.13.0.0:
+- Der Vertragsbalken im HUD zeigt jetzt Rolle (Inhaber/Partner) und erwartete Auszahlung; Partner bekommen einen eigenen Balken.
+- Partnerschaftsereignisse (Einladung gesendet/erhalten, angenommen, abgelehnt) öffnen ein Fenster statt eines kleinen Hinweises.
+
+Changelog 1.12.1.0:
+- Hof-Auswahlfenster: Die Auswahl überlappt den Beschreibungstext nicht mehr.
+
+Changelog 1.12.0.0:
+- Eine Partnereinladung öffnet jetzt ein Hof-Auswahlfenster statt per Knopf durchzuschalten.
+- Partnerhöfe sehen in den Details Fortschritt, Rolle und erwarteten Anteil.
+
+Changelog 1.11.2.0:
+- Partnereinladungen, -annahmen und -synchronisation schreiben je eine Logzeile zur Diagnose.
+
+Changelog 1.11.1.0:
+- Für Spiel-Patch 1.23 aktualisiert (descVersion 113).
+- Einfache Abfragen laufen nicht mehr in geschützten Aufrufen; ihre Fehler erreichen die log.txt.
+
+Changelog 1.11.0.0:
+- Partnereinladungen lassen sich jetzt von der Verträge-Seite des Spiels senden (Hof mit "Nächster Hof" wählen, dann "Einladen").
+- Eingeladene und Partnerhöfe sehen den gemeinsamen Vertrag in ihrer Aktiv-Liste, mit Annehmen/Ablehnen direkt dort.
+- Neue Oberflächen-Einstellung zum Ein-/Ausblenden des Vertragsmanager-Reiters.
+- Interne Aufräumarbeit: ein gemeinsamer Texthelfer statt sieben Kopien.
+
+Changelog 1.10.1.0:
+- Die Warenzeilen erscheinen jetzt wirklich: Das Spiel sendet die Erntemengen nie an Clients, daher schickt sie der Server separat.
+- Schätzung des gesamten Feldertrags ergänzt.
+
+Changelog 1.10.0.0:
+- Vertragsdetails zeigen jetzt Ware, Liefermenge, bereits Geliefertes und Restbedarf.
+- Die Zeile mit den Leihkosten entfällt, wenn Leihmaschinen abgeschaltet sind.
+- Das Auffrischen der Tafel füllt sie sofort wieder, nicht Vertrag für Vertrag.
+- Ein von einem anderen Hof reservierter Vertrag nennt jetzt Hof und Restzeit statt nur "fehlgeschlagen".
+- Partnereinladungen lassen sich direkt auf der Vertragsseite annehmen oder ablehnen.
+- Die Rangliste zeigt deutlich mehr Höfe.
+- Die Übergabe ist vorerst ausgesetzt (Konsolenbefehl bleibt).
+
+Changelog 1.9.6.0:
+- Partnereinladungen erreichen jetzt den eingeladenen Spieler; Annehmen und Ablehnen erscheinen endlich.
+- Die Schaltfläche zum Freigeben einer Reservierung funktioniert nun auch für Clients.
+- Ein Regler in den Einstellungen überflutet die Clients nicht mehr mit vollständigen Neuaufbauten.
+
+Changelog 1.9.5.0:
+- Die Strafe wird jetzt wirklich abgebucht. Sie wurde im Abbruchfenster angezeigt, aber nie belastet.
+
+Changelog 1.9.4.0:
+- Skriptfehler auf dem Server bei jedem Vertragsabbruch behoben.
+
+Changelog 1.9.3.0:
+- Abbruch, Übergabe, Reservierung und Partnerschaft taten auf Dedicated Servern nichts - behoben.
+- Nicht umkehrbare Aktionen öffnen jetzt das Bestätigungsfenster des Spiels.
+
+Changelog 1.9.2.0:
+- Reitersymbol als Strichzeichnung neu gezeichnet, passend zu den Symbolen der Seitenleiste.
+- Die Zielhof-Auswahl erscheint nur, wenn eine Aktion sie wirklich braucht.
+
+Changelog 1.9.1.0:
+- Der Menüreiter sitzt jetzt direkt unter der Verträge-Seite des Spiels statt am Ende der Liste.
+
+Changelog 1.9.0.0:
+- Gemeinsame Verträge listen jetzt jeden beteiligten Hof einzeln mit Rolle, Beitrag, Anteil und Auszahlung.
+- Einladungen können abgelehnt werden, offene Einladungen zeigen Hof und Restzeit.
+- Nicht umkehrbare Aktionen fragen vor der Ausführung nach.
+- Beide Seitensymbole repariert: Reiter und Kopfzeile blieben leer.
+- Routinemäßige Einstellungsübertragungen schreiben nicht mehr in log.txt.
+
+Changelog 1.8.2.0:
+- Der Zielhof wird jetzt mit dem spieleigenen Auswahlfeld gewählt statt per Durchklicken.
+- Seitensymbol repariert: Der Reiter blieb leer und das Kopfsymbol warf in jedem Frame einen Skriptfehler.
+- Vertragspreise werden einmal je Vertrag gemessen statt bei jeder Belohnungsabfrage.
+
+Changelog 1.8.1.0:
+- Die Seite "Vertragsmanager" folgt dem Aussehen des Spiels: angedockter Scrollbalken, gerahmte Aktionsknöpfe, passendes Symbol in der Seitenleiste.
+
+Changelog 1.8.0.0:
+- Neue Seite "Vertragsmanager" im Spielmenü: Verträge filtern und alle Aktionen per Knopf ausführen.
+
+Changelog 1.7.0.0:
+- Gemeinsame Verträge: Der Vertragsinhaber kann einen Partnerhof aufnehmen, die Belohnung wird nach gemessenem Beitrag geteilt.
+- Partner dürfen die geschützte Ware transportieren und auf dem Vertragsfeld arbeiten.
+
+Changelog 1.6.0.0:
+- Teilzahlung bei fehlgeschlagenen Verträgen nach Fortschritt.
+- Steigende Strafe bei aufeinanderfolgenden Fehlschlägen, durch Erfolg zurückgesetzt.
+- Tages- und Monatskontingent für Verträge je Hof.
+- Kettenbonus auf demselben Feld (Vorbereitung, Aussaat, Pflege, Ernte).
+- NPC-Beziehungsbonus für wiederholte Arbeit beim selben Landbesitzer.]]></de>
+        <fr><![CDATA[Gestion avancée des contrats pour serveurs dédiés et solo. Utilise uniquement les écrans du jeu.
+
+RÈGLES (ÉCHAP > Paramètres > Gestionnaire de contrats, administrateur du serveur uniquement)
+- Multiplicateur de récompense avec minimum/maximum, pénalité d'échec en pourcentage de la récompense, multiplicateur du coût des véhicules loués.
+- Contrats actifs par exploitation, contrats affichés au tableau, limites par type, intervalle de génération, durée des contrats, avertissements d'expiration.
+- Activer ou désactiver chaque type de contrat et le pondérer par rapport aux autres.
+
+PROTECTION DES PRODUITS (autorité serveur)
+- Les récoltes sous contrat ne circulent qu'entre les véhicules de la même exploitation ; le déversement au sol, les transferts vers une autre exploitation et les mauvais points de déchargement sont bloqués.
+- Seul le point de livraison indiqué par le contrat accepte le produit protégé ; un contrat commencé ne peut plus être annulé.
+- En cas d'expiration ou d'échec forcé, le produit net accumulé depuis l'acceptation est confisqué.
+
+AUTRES
+- La page des contrats affiche le temps restant, la pénalité éventuelle et les contrats actifs / la limite pour le contrat sélectionné.
+- Statistiques de l'exploitation et derniers contrats dans l'onglet des paramètres (visibles par tous).
+- Outils d'administration : actualiser le tableau, annuler un contrat de force (boutons de la barre inférieure et commandes console).
+- Intégration FS25_DiscordBridge : les événements de contrat sont envoyés vers Discord lorsque ce mod est chargé.
+- Remplace FS25_ContractGuard et reprend ses données de sauvegarde. Se retire automatiquement lorsque FS25_BetterContracts est chargé.
+
+CONTACT & SOURCES
+- Rapports de bugs et suggestions : hello@kahrastudio.art
+- Code source et suivi des problèmes : https://github.com/PoncikPanda/FS25_ContractManager
+
+Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
+
+Changelog 1.13.1.0 :
+- Barre de contrat du HUD : le rôle en titre et le gain en premier, plus rien n'est tronqué.
+
+Changelog 1.13.0.0 :
+- La barre de contrat du HUD affiche le rôle (propriétaire/partenaire) et le gain attendu ; les partenaires ont leur propre barre.
+- Les événements de partenariat (invitation envoyée/reçue, acceptée, refusée) ouvrent une fenêtre au lieu d'une petite notification.
+
+Changelog 1.12.1.0 :
+- Fenêtre de choix de ferme : le sélecteur ne chevauche plus le texte.
+
+Changelog 1.12.0.0 :
+- Inviter un partenaire ouvre une fenêtre de choix de ferme au lieu de faire défiler avec un bouton.
+- Les fermes partenaires voient la progression, leur rôle et leur part estimée dans les détails.
+
+Changelog 1.11.2.0 :
+- Les invitations, acceptations et synchronisations de partenariat laissent une ligne de log chacune.
+
+Changelog 1.11.1.0 :
+- Mis à jour pour le patch 1.23 du jeu (descVersion 113).
+- Les simples consultations ne passent plus par des appels protégés ; leurs erreurs atteignent log.txt.
+
+Changelog 1.11.0.0 :
+- Les invitations de partenariat s'envoient depuis la page Contrats du jeu (choisir la ferme avec « Ferme suivante », puis « Inviter »).
+- Les fermes invitées et partenaires voient le contrat partagé dans leur liste Actifs, avec accepter/refuser sur place.
+- Nouveau réglage Interface pour afficher ou masquer l'onglet Gestionnaire de contrats.
+- Nettoyage interne : un seul assistant de texte au lieu de sept copies.
+
+Changelog 1.10.1.0 :
+- Les lignes de produit s'affichent enfin : le jeu n'envoie jamais les quantités aux clients, le serveur les transmet donc à part.
+- Ajout d'une estimation du rendement total du champ.
+
+Changelog 1.10.0.0 :
+- Les détails du contrat indiquent le produit, la quantité à livrer, le livré et le restant.
+- La ligne de coût de location disparaît quand la location est désactivée.
+- Rafraîchir le tableau le remplit d'un coup au lieu d'un contrat à la fois.
+- Un contrat réservé par une autre exploitation indique qui l'a réservé et quand il se libère.
+- Les invitations de partenariat s'acceptent ou se refusent depuis la page des contrats.
+- Le classement affiche bien plus d'exploitations.
+- Le transfert est suspendu pour l'instant (la commande console reste).
+
+Changelog 1.9.6.0 :
+- Les invitations de partenariat parviennent enfin au joueur invité : accepter et refuser apparaissent.
+- Le bouton de libération de réservation fonctionne pour les clients.
+- Déplacer un curseur de réglage n'inonde plus les clients de reconstructions complètes.
+
+Changelog 1.9.5.0 :
+- La pénalité est enfin prélevée. Elle s'affichait à l'annulation mais n'était jamais débitée.
+
+Changelog 1.9.4.0 :
+- Erreur de script sur le serveur à chaque annulation de contrat corrigée.
+
+Changelog 1.9.3.0 :
+- L'annulation forcée, le transfert, la réservation et le partenariat ne faisaient rien sur serveur dédié : corrigé.
+- Les actions irréversibles ouvrent maintenant la fenêtre de confirmation du jeu.
+
+Changelog 1.9.2.0 :
+- Icône d'onglet redessinée en traits, comme les icônes de la barre latérale du jeu.
+- Le sélecteur d'exploitation cible n'apparaît que si une action en a besoin.
+
+Changelog 1.9.1.0 :
+- L'onglet du menu se place juste sous la page Contrats du jeu au lieu d'être en dernier.
+
+Changelog 1.9.0.0 :
+- Les contrats partagés listent chaque exploitation participante avec son rôle, sa contribution, sa part et son paiement.
+- Les invitations peuvent être refusées ; les invitations en attente indiquent l'exploitation et le temps restant.
+- Les actions irréversibles demandent une confirmation avant de s'exécuter.
+- Les deux icônes de page corrigées : l'onglet et l'en-tête restaient vides.
+- Les diffusions de réglages de routine n'écrivent plus dans log.txt.
+
+Changelog 1.8.2.0 :
+- L'exploitation cible se choisit avec le sélecteur du jeu au lieu d'un bouton qui fait défiler.
+- Icône de page corrigée : l'onglet restait vide et l'icône d'en-tête provoquait une erreur de script à chaque image.
+- Les prix des contrats sont mesurés une fois par contrat au lieu de chaque demande de récompense.
+
+Changelog 1.8.1.0 :
+- La page « Gestionnaire de contrats » adopte l'aspect du jeu : barre de défilement ancrée, boutons d'action encadrés, icône adaptée dans la barre latérale.
+
+Changelog 1.8.0.0 :
+- Nouvelle page « Gestionnaire de contrats » dans le menu du jeu : filtrer les contrats et lancer chaque action par bouton.
+
+Changelog 1.7.0.0 :
+- Contrats partagés : le titulaire peut prendre une exploitation partenaire, la récompense est partagée selon la contribution mesurée.
+- Les partenaires peuvent transporter le produit protégé et travailler le champ du contrat.
+
+Changelog 1.6.0.0 :
+- Paiement partiel des contrats échoués selon la progression.
+- Pénalité croissante en cas d'échecs consécutifs, remise à zéro par une réussite.
+- Quota de contrats journalier et mensuel par exploitation.
+- Bonus de chaîne sur le même champ (préparation, semis, entretien, récolte).
+- Bonus de relation avec le PNJ pour le travail répété chez le même propriétaire.]]></fr>
+        <tr><![CDATA[Dedicated sunucu ve tek oyuncu için gelişmiş kontrat yönetimi. Yalnızca oyunun kendi ekranlarını kullanır.
+
+KURALLAR (ESC > Ayarlar > Kontrat Yöneticisi, yalnızca sunucu yöneticisi)
+- Taban/tavanlı ödül çarpanı, ödülün yüzdesi olarak başarısızlık cezası, kiralık makine maliyet çarpanı.
+- Çiftlik başına aktif kontrat, panodaki kontrat sayısı, tür başına sınır, üretim aralığı, kontrat süresi, bitiş uyarıları.
+- Her kontrat türünü aç/kapat ve diğerlerine göre ağırlıklandır.
+
+ÜRÜN KORUMASI (sunucu otoriter)
+- Kontrat ürünü yalnızca aynı çiftliğin araçları arasında taşınır; yere dökme, başka çiftliğe aktarma ve yanlış boşaltma noktası engellenir.
+- Korunan ürünü yalnızca kontratın teslim noktası kabul eder; başlanmış kontrat iptal edilemez.
+- Süre aşımı veya zorunlu başarısızlıkta kabulden beri biriken net kontrat ürünü geri alınır.
+
+DİĞER
+- Kontratlar sayfası seçili kontrat için kalan süre, olası ceza ve aktif kontrat / limit gösterir.
+- Ayar sekmesinde çiftlik istatistiği ve son kontratlar (herkese görünür).
+- Yönetici araçları: panoyu yenile, kontratı zorla iptal et (alt çubuk butonları ve konsol komutları).
+- FS25_DiscordBridge entegrasyonu: o mod yüklüyse kontrat olayları Discord'a gider.
+- FS25_ContractGuard'ın yerine geçer ve kayıt verisini devralır. FS25_BetterContracts yüklüyse kurallarını otomatik geri çeker.
+
+İLETİŞİM & KAYNAK KOD
+- Hata bildirimi ve öneri: hello@kahrastudio.art
+- Kaynak kod ve sorun takibi: https://github.com/PoncikPanda/FS25_ContractManager
+
+Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.13.1.0:
+- HUD kontrat çubuğu: rol başlıkta, kazanç metnin başında; artık kesilmiyor.
+
+Değişiklikler 1.13.0.0:
+- HUD'daki kontrat çubuğu rolünüzü (sahip/ortak) ve beklenen kazancınızı gösteriyor; ortaklar kendi çubuğunu görüyor.
+- Ortaklık olayları (davet gitti/geldi, kabul, ret) küçük bildirim yerine pencere açıyor.
+
+Değişiklikler 1.12.1.0:
+- Çiftlik seçme penceresi: seçici artık açıklama metninin üstüne binmiyor.
+
+Değişiklikler 1.12.0.0:
+- Ortak davet et artık çiftlik seçme penceresi açıyor; butonla sırayla geçme kalktı.
+- Ortak çiftlik detayda ilerlemeyi, rolünü ve tahmini payını görüyor.
+
+Değişiklikler 1.11.2.0:
+- Ortaklık davet/kabul/senkron adımları teşhis için birer log satırı bırakıyor.
+
+Değişiklikler 1.11.1.0:
+- Oyun yaması 1.23 için güncellendi (descVersion 113).
+- Basit sorgular artık korumalı çağrı içinde çalışmıyor; hataları log.txt'ye ulaşıyor.
+
+Değişiklikler 1.11.0.0:
+- Ortaklık daveti artık oyunun kendi Kontratlar sayfasından gönderiliyor ("Sonraki çiftlik" ile seç, "Davet et" ile gönder).
+- Davet edilen ve ortak çiftlikler ortak kontratı Aktif listesinde görüyor; kabul/reddet orada.
+- Yeni Arayüz ayarı: kenar çubuğundaki Kontrat Yönetimi sekmesini göster/gizle.
+- İç temizlik: yedi kopya yerine tek ortak metin yardımcısı.
+
+Değişiklikler 1.10.1.0:
+- Ürün satırları artık gerçekten görünüyor: oyun hasat miktarlarını oyunculara hiç göndermiyor, sunucu ayrıca gönderiyor.
+- Tarladan çıkacak toplam ürün tahmini eklendi.
+
+Değişiklikler 1.10.0.0:
+- Kontrat detayında ürün, teslim edilecek miktar, teslim edilen ve kalan görünüyor.
+- Kiralama kapalıyken kiralama ücreti satırı gösterilmiyor.
+- Panoyu yenile artık panoyu anında dolduruyor, kontratlar damla damla gelmiyor.
+- Başka çiftliğin rezerve ettiği kontratta "Başarısız" yerine kimin rezerve ettiği ve ne zaman serbest kalacağı yazıyor.
+- Ortaklık daveti kontratlar sayfasından kabul veya reddedilebiliyor.
+- Sıralamada çok daha fazla çiftlik görünüyor.
+- Devret butonu şimdilik askıya alındı (konsol komutu duruyor).
+
+Değişiklikler 1.9.6.0:
+- Ortaklık daveti artık davet edilen oyuncuya ulaşıyor; kabul ve reddet butonları nihayet çıkıyor.
+- Rezervasyonu bırakma butonu sunucudaki oyuncularda da çalışıyor.
+- Ayar kaydıracını oynatmak artık tüm istemcilerde arayüzü baştan kurmuyor.
+
+Değişiklikler 1.9.5.0:
+- Başarısızlık cezası artık gerçekten kesiliyor. İptal ekranında görünüyor ama hiç kesilmiyordu.
+
+Değişiklikler 1.9.4.0:
+- Her kontrat iptalinde sunucuda oluşan betik hatası giderildi.
+
+Değişiklikler 1.9.3.0:
+- Zorla iptal, devret, rezervasyon ve ortaklık sunucuda hiçbir şey yapmıyordu, düzeldi.
+- Geri alınamayan işlemler artık oyunun kendi onay penceresini açıyor.
+
+Değişiklikler 1.9.2.0:
+- Sekme ikonu oyunun kenar çubuğu ikonlarıyla aynı çizgi diline geçti.
+- Hedef çiftlik seçici yalnızca gerçekten gerektiğinde görünüyor.
+
+Değişiklikler 1.9.1.0:
+- Menü sekmesi listenin sonu yerine oyunun Kontratlar sayfasının hemen altında.
+
+Değişiklikler 1.9.0.0:
+- Ortak kontratta katılan her çiftlik ayrı satırda: rolü, katkısı, payı ve hak edişi.
+- Davet reddedilebiliyor; bekleyen davetler çiftlik adı ve kalan süreyle görünüyor.
+- Geri alınamayan işlemler çalışmadan önce onay istiyor.
+- İki sayfa ikonu da düzeldi: kenar çubuğu sekmesi ve başlık boş kalıyordu.
+- Rutin ayar yayınları artık log.txt'ye yazmıyor.
+
+Değişiklikler 1.8.2.0:
+- Hedef çiftlik artık oyunun kendi seçicisiyle seçiliyor, tıklayınca sırayla değişen buton kalktı.
+- Sayfa ikonu düzeldi: kenar çubuğu sekmesi boştu, başlık ikonu her karede betik hatası veriyordu.
+- Kontrat fiyatı her ödül sorgusunda değil, kontrat başına bir kez ölçülüyor.
+
+Değişiklikler 1.8.1.0:
+- Kontrat Yönetimi sayfası oyunun kendi görünümüne oturdu: sağ kenara sabit kaydırma çubuğu, çerçeveli işlem butonları, kenar çubuğunda düzgün ikon.
+
+Değişiklikler 1.8.0.0:
+- Oyun menüsünde yeni "Kontrat Yönetimi" sayfası: kontratları filtreleyin, tüm işlemleri butonla yapın.
+
+Değişiklikler 1.7.0.0:
+- Ortak kontrat: kontratı alan çiftlik ortak alabilir, ödül ölçülen katkıya göre bölünür.
+- Ortaklar korunan ürünü taşıyabilir ve kontrat tarlasında çalışabilir.
+
+Değişiklikler 1.6.0.0:
+- Başarısız kontratta tamamlanma oranına göre kısmi ödeme.
+- Üst üste başarısızlıkta artan ceza; bir başarı seriyi sıfırlar.
+- Çiftlik başına günlük ve aylık kontrat kotası.
+- Aynı tarlada zincir bonusu (hazırlık, ekim, bakım, hasat).
+- Aynı tarla sahibiyle çalışmayı sürdürene NPC ilişki bonusu.]]></tr>
+    </description>
+
+    <iconFilename>icon_contractManager.dds</iconFilename>
+    <multiplayer supported="true"/>
+
+    <l10n filenamePrefix="l10n/l10n"/>
+
+    <specializations>
+        <specialization name="contractGuardVehicle" className="ContractGuardVehicle" filename="scripts/guard/GuardVehicle.lua"/>
+    </specializations>
+
+    <extraSourceFiles>
+        <sourceFile filename="scripts/Main.lua"/>
+        <sourceFile filename="scripts/core/Settings.lua"/>
+        <sourceFile filename="scripts/core/Registry.lua"/>
+        <sourceFile filename="scripts/core/Events.lua"/>
+        <sourceFile filename="scripts/core/MissionInfo.lua"/>
+        <sourceFile filename="scripts/rules/Reputation.lua"/>
+        <sourceFile filename="scripts/rules/Cooldown.lua"/>
+        <sourceFile filename="scripts/rules/Reward.lua"/>
+        <sourceFile filename="scripts/rules/Reservation.lua"/>
+        <sourceFile filename="scripts/rules/Schedule.lua"/>
+        <sourceFile filename="scripts/rules/Pricing.lua"/>
+        <sourceFile filename="scripts/rules/Lease.lua"/>
+        <sourceFile filename="scripts/rules/Quota.lua"/>
+        <sourceFile filename="scripts/rules/Chain.lua"/>
+        <sourceFile filename="scripts/rules/Npc.lua"/>
+        <sourceFile filename="scripts/rules/Partnership.lua"/>
+        <sourceFile filename="scripts/rules/Limits.lua"/>
+        <sourceFile filename="scripts/rules/Generation.lua"/>
+        <sourceFile filename="scripts/rules/Duration.lua"/>
+        <sourceFile filename="scripts/gui/ContractDetails.lua"/>
+        <sourceFile filename="scripts/gui/SettingsTab.lua"/>
+        <sourceFile filename="scripts/gui/AdminTools.lua"/>
+        <sourceFile filename="scripts/gui/ManagePage.lua"/>
+        <sourceFile filename="scripts/gui/FarmPickDialog.lua"/>
+        <sourceFile filename="scripts/gui/InfoPopup.lua"/>
+        <sourceFile filename="scripts/gui/HudBar.lua"/>
+        <sourceFile filename="scripts/rules/Transfer.lua"/>
+        <sourceFile filename="scripts/gui/MapMarkers.lua"/>
+        <sourceFile filename="scripts/guard/GuardNotificationEvent.lua"/>
+        <sourceFile filename="scripts/guard/Guard.lua"/>
+        <sourceFile filename="scripts/guard/Register.lua"/>
+        <sourceFile filename="scripts/core/Persistence.lua"/>
+        <sourceFile filename="scripts/core/Safety.lua"/>
+        <sourceFile filename="scripts/integrations/DiscordBridge.lua"/>
+        <sourceFile filename="scripts/integrations/DiscordBridgePanel.lua"/>
+        <sourceFile filename="scripts/Debug.lua"/>
+    </extraSourceFiles>
+</modDesc>

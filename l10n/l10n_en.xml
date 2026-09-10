@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+        <text name="cg_warningWrongDestination" text="Contract product %s can only be unloaded at its assigned delivery point."/>
+        <text name="cg_warningGroundBlocked" text="Contract product %s cannot be dumped on the ground."/>
+        <text name="cg_warningCrossFarm" text="Contract product %s cannot be transferred to another farm's vehicle."/>
+        <text name="cg_cancelBlocked" text="This contract cannot be cancelled: work has already started. Deliver the %s to the assigned point."/>
+        <text name="cg_forcedPurge" text="The contract failed. Protected %s: %s was confiscated."/>
+        <text name="cg_baleBlocked" text="Contract bales (%s) are not accepted here. Use the assigned delivery point."/>
+        <text name="cm_penalty" text="Contract penalty"/>
+        <text name="cm_timeWarning" text="Contract about to expire: %s (%d min left)"/>
+        <text name="cm_tabTitle" text="Contract Manager"/>
+        <text name="cm_noPermission" text="Only the server admin can change contract rules."/>
+        <text name="cm_secGuard" text="Product guard"/>
+        <text name="cm_secReward" text="Reward and penalty"/>
+        <text name="cm_secLimits" text="Limits"/>
+        <text name="cm_secGeneration" text="Contract generation"/>
+        <text name="cm_secDuration" text="Duration"/>
+        <text name="cm_secCompat" text="Compatibility"/>
+        <text name="cm_secTypes" text="Contract types"/>
+        <text name="cm_secStats" text="Your farm statistics"/>
+        <text name="cm_guard_enabled" text="Guard enabled"/>
+        <text name="cm_guard_enabled_tooltip" text="Blocks dumping contract product on the ground, transferring it to other farms and unloading it at wrong places."/>
+        <text name="cm_guard_blockCancelAfterProgress" text="Block cancel after work started"/>
+        <text name="cm_guard_blockCancelAfterProgress_tooltip" text="A contract cannot be cancelled once harvesting or delivery has started."/>
+        <text name="cm_guard_confiscateOnFail" text="Confiscate product on failure"/>
+        <text name="cm_guard_confiscateOnFail_tooltip" text="On timeout or forced failure the net product accumulated since acceptance is taken back."/>
+        <text name="cm_reward_multiplier" text="Reward multiplier"/>
+        <text name="cm_reward_multiplier_tooltip" text="The reward calculated by the game is multiplied by this value."/>
+        <text name="cm_reward_failPenaltyPercent" text="Failure penalty"/>
+        <text name="cm_reward_failPenaltyPercent_tooltip" text="This share of the reward is charged when a contract fails, is cancelled or times out."/>
+        <text name="cm_reward_leaseCostMultiplier" text="Leased vehicle cost"/>
+        <text name="cm_reward_leaseCostMultiplier_tooltip" text="Cost multiplier for vehicles leased with the contract."/>
+        <text name="cm_reward_min" text="Minimum reward"/>
+        <text name="cm_reward_min_tooltip" text="The reward after the multiplier never drops below this."/>
+        <text name="cm_reward_max" text="Maximum reward"/>
+        <text name="cm_reward_max_tooltip" text="The reward after the multiplier never exceeds this."/>
+        <text name="cm_limits_maxActivePerFarm" text="Active contracts per farm"/>
+        <text name="cm_limits_maxActivePerFarm_tooltip" text="How many contracts a farm may run at the same time."/>
+        <text name="cm_generation_maxTotal" text="Contracts on the board"/>
+        <text name="cm_generation_maxTotal_tooltip" text="Maximum number of contracts on the board at once."/>
+        <text name="cm_generation_maxPerType" text="Maximum per type"/>
+        <text name="cm_generation_maxPerType_tooltip" text="Maximum contracts of each type on the board."/>
+        <text name="cm_generation_refreshMultiplier" text="New contract interval"/>
+        <text name="cm_generation_refreshMultiplier_tooltip" text="Multiplier for the generation interval. Lower means more frequent contracts."/>
+        <text name="cm_duration_multiplier" text="Contract duration"/>
+        <text name="cm_duration_multiplier_tooltip" text="Newly generated contracts get their duration scaled by this."/>
+        <text name="cm_duration_warnAtMinutes" text="Expiry warning (game min)"/>
+        <text name="cm_duration_warnAtMinutes_tooltip" text="Farm members are warned when the remaining time drops below these thresholds."/>
+        <text name="cm_compat_overrideBetterContracts" text="Apply on top of BetterContracts"/>
+        <text name="cm_compat_overrideBetterContracts_tooltip" text="Also apply this mod's reward/limit/generation/duration rules while BetterContracts is loaded. Multipliers stack."/>
+        <text name="cm_typeEnabled" text="generate"/>
+        <text name="cm_typeEnabled_tooltip" text="When off, no new contracts of this type are generated."/>
+        <text name="cm_typeWeight" text="weight"/>
+        <text name="cm_typeWeight_tooltip" text="Generation chance relative to other types. Equal weights keep the game behaviour."/>
+        <text name="cm_valNone" text="None"/>
+        <text name="cm_valFree" text="Free"/>
+        <text name="cm_valUnlimited" text="Unlimited"/>
+        <text name="cm_valGameDefault" text="Game default"/>
+        <text name="cm_valNever" text="Never"/>
+        <text name="cm_statsLoading" text="Loading..."/>
+        <text name="cm_statCompleted" text="Completed"/>
+        <text name="cm_statFailed" text="Failed"/>
+        <text name="cm_statCanceled" text="Cancelled"/>
+        <text name="cm_statTimedOut" text="Timed out"/>
+        <text name="cm_statEarned" text="Total earned"/>
+        <text name="cm_statPenalties" text="Total penalties"/>
+        <text name="cm_day" text="Day"/>
+        <text name="cm_stateNone" text="-"/>
+        <text name="cm_stateSuccess" text="completed"/>
+        <text name="cm_stateFailed" text="failed"/>
+        <text name="cm_stateCanceled" text="cancelled"/>
+        <text name="cm_stateTimedOut" text="timed out"/>
+        <text name="cm_detailTimeLeft" text="Time left"/>
+        <text name="cm_detailPenalty" text="Failure penalty"/>
+        <text name="cm_detailActive" text="Active contracts"/>
+        <text name="cm_unitDay" text="d"/>
+        <text name="cm_unitHour" text="h"/>
+        <text name="cm_unitMinute" text="min"/>
+        <text name="cm_secIntegrations" text="Integrations"/>
+        <text name="cm_secInterface" text="Interface"/>
+        <text name="cm_ui_managePage" text="Contract Manager page in the menu"/>
+        <text name="cm_ui_managePage_tooltip" text="Shows or hides the Contract Manager tab in the sidebar. The game's own Contracts page keeps all buttons."/>
+        <text name="cm_partInviteTo" text="Invite: %s"/>
+        <text name="cm_partNextFarm" text="Next farm"/>
+        <text name="cm_partTargetSet" text="Invite target: %s"/>
+        <text name="cm_integrations_discord" text="Discord Bridge events"/>
+        <text name="cm_integrations_discord_tooltip" text="When FS25_DiscordBridge is loaded, contract accept/finish/payout, expiry warnings and guard blocks are sent to Discord."/>
+        <text name="cm_adminRefreshButton" text="Refresh board"/>
+        <text name="cm_adminCancelButton" text="Force cancel"/>
+        <text name="cm_adminConfirmRefresh" text="All unaccepted contracts will be removed and regenerated. Continue?"/>
+        <text name="cm_adminConfirmCancel" text="Contract &quot;%s&quot; will be force-cancelled (guard block bypassed, no money penalty). Continue?"/>
+        <text name="cm_adminCancelled" text="Contract cancelled."/>
+        <text name="cm_adminRefreshed" text="Contract board refreshed."/>
+        <text name="cm_adminAssigned" text="Contract assigned to farm."/>
+        <text name="cm_adminNotFound" text="Contract not found."/>
+        <text name="cm_adminNotActive" text="This contract is not active."/>
+        <text name="cm_adminAlreadyStarted" text="Contract already started."/>
+        <text name="cm_adminNoFarm" text="Invalid farm."/>
+        <text name="cm_adminLimit" text="Farm has reached its contract limit."/>
+        <text name="cm_adminFailed" text="Action failed."/>
+        <text name="cm_secReputation" text="Reputation"/>
+        <text name="cm_reputation_enabled" text="Reputation system"/>
+        <text name="cm_reputation_enabled_tooltip" text="Completed contracts earn points, failures/cancels/timeouts lose points. Points give a reward bonus and an extra contract slot."/>
+        <text name="cm_reputation_gainComplete" text="Gain on completion"/>
+        <text name="cm_reputation_gainComplete_tooltip" text="Points per successfully finished contract."/>
+        <text name="cm_reputation_lossFail" text="Loss on failure"/>
+        <text name="cm_reputation_lossFail_tooltip" text="Points lost per failed contract."/>
+        <text name="cm_reputation_lossCancel" text="Loss on cancel"/>
+        <text name="cm_reputation_lossCancel_tooltip" text="Points lost per contract cancelled by the player. Admin cancels do not count."/>
+        <text name="cm_reputation_lossTimeout" text="Loss on timeout"/>
+        <text name="cm_reputation_lossTimeout_tooltip" text="Points lost per expired contract."/>
+        <text name="cm_reputation_maxPoints" text="Maximum points"/>
+        <text name="cm_reputation_maxPoints_tooltip" text="Upper bound of the score; the bonus peaks there."/>
+        <text name="cm_reputation_rewardBonusMaxPercent" text="Maximum reward bonus"/>
+        <text name="cm_reputation_rewardBonusMaxPercent_tooltip" text="Percent added to the reward at maximum points; linear in between."/>
+        <text name="cm_reputation_extraSlotAt" text="Extra slot threshold"/>
+        <text name="cm_reputation_extraSlotAt_tooltip" text="Above this score the farm limit is +1. 0 = off."/>
+        <text name="cm_statReputation" text="Reputation"/>
+        <text name="cm_statBonus" text="reward bonus"/>
+        <text name="cm_statExtraSlot" text="extra contract slot"/>
+        <text name="cm_boardTitle" text="Leaderboard"/>
+        <text name="cm_repNotify" text="Reputation %+d → %d"/>
+        <text name="cm_generation_cooldownPerFieldHours_tooltip" text="A field whose contract ended gets no new contract for this many game hours. 0 = off."/>
+        <text name="cm_generation_cooldownPerFieldHours" text="Field cooldown"/>
+        <text name="cm_secReservation" text="Reservation"/>
+        <text name="cm_reservation_enabled" text="Contract reservation"/>
+        <text name="cm_reservation_enabled_tooltip" text="A player reserves an unaccepted contract for their farm for a short time; other farms cannot take it meanwhile."/>
+        <text name="cm_reservation_minutes" text="Reservation time"/>
+        <text name="cm_reservation_minutes_tooltip" text="Real minutes. The reservation expires on its own."/>
+        <text name="cm_resReserveButton" text="Reserve"/>
+        <text name="cm_resReleaseButton" text="Release reservation"/>
+        <text name="cm_detailReserved" text="Reserved"/>
+        <text name="cm_resReserved" text="Contract reserved for your farm."/>
+        <text name="cm_resReleased" text="Reservation released."/>
+        <text name="cm_resNone" text="No reservation on this contract."/>
+        <text name="cm_resTakenByOther" text="This contract is reserved by another farm."/>
+        <text name="cm_resFarmLimit" text="Your farm already has a reservation."/>
+        <text name="cm_resAlreadyStarted" text="Contract already started."/>
+        <text name="cm_resDisabled" text="Reservation is disabled."/>
+        <text name="cm_resBlocked" text="This contract is reserved by %s; it cannot be taken until the reservation expires."/>
+        <text name="cm_resTakenBy" text="Reserved by %s · free in %d min if not accepted"/>
+        <text name="cm_resReservedButton" text="Reserved by another farm"/>
+        <text name="cm_detailProduct" text="Product"/>
+        <text name="cm_detailFieldYield" text="Field yield (est.)"/>
+        <text name="cm_detailToDeliver" text="To deliver"/>
+        <text name="cm_detailDelivered" text="Delivered"/>
+        <text name="cm_detailRemaining" text="Still needed"/>
+        <text name="cm_detailSurplus" text="Surplus"/>
+        <text name="cm_detailSurplusHint" text="stays on your farm"/>
+        <text name="cm_detailProgress" text="Progress"/>
+        <text name="cm_secSchedule" text="Scheduled bonuses (real time)"/>
+        <text name="cm_schedule_enabled" text="Scheduled bonuses"/>
+        <text name="cm_schedule_enabled_tooltip" text="Weekend and happy-hour bonuses are added to the reward, by real-world clock."/>
+        <text name="cm_schedule_weekendBonusPercent" text="Weekend bonus"/>
+        <text name="cm_schedule_weekendBonusPercent_tooltip" text="Percent added on Saturday and Sunday."/>
+        <text name="cm_schedule_happyHourStart" text="Happy hour start"/>
+        <text name="cm_schedule_happyHourStart_tooltip" text="Server local time."/>
+        <text name="cm_schedule_happyHourEnd" text="Happy hour end"/>
+        <text name="cm_schedule_happyHourEnd_tooltip" text="If earlier than start, it spans midnight."/>
+        <text name="cm_schedule_happyHourBonusPercent" text="Happy hour bonus"/>
+        <text name="cm_schedule_happyHourBonusPercent_tooltip" text="Percent added during these hours."/>
+        <text name="cm_secMap" text="Map"/>
+        <text name="cm_map_showReserved" text="Show reserved contract on map"/>
+        <text name="cm_map_showReserved_tooltip" text="The field of the contract your farm reserved is marked on the map."/>
+        <text name="cm_map_showAvailable" text="Show all open contracts on map"/>
+        <text name="cm_map_showAvailable_tooltip" text="Fields of all unaccepted contracts on the board are marked."/>
+        <text name="cm_detailEventBonus" text="Event bonus"/>
+        <text name="cm_transferDone" text="Contract transferred."/>
+        <text name="cm_transferSameFarm" text="Contract already belongs to this farm."/>
+        <text name="cm_transferLeased" text="Contracts with leased vehicles cannot be transferred."/>
+        <text name="cm_secPricing" text="Distance and difficulty"/>
+        <text name="cm_pricing_distanceEnabled" text="Distance bonus"/>
+        <text name="cm_pricing_distanceEnabled_tooltip" text="The farther the contract field is from the farm centre (farmhouse, else centre of owned land), the higher the reward."/>
+        <text name="cm_pricing_distancePercentPerKm" text="Per km"/>
+        <text name="cm_pricing_distancePercentPerKm_tooltip" text="Percent added per kilometre."/>
+        <text name="cm_pricing_distanceMaxPercent" text="Distance cap"/>
+        <text name="cm_pricing_distanceMaxPercent_tooltip" text="Maximum distance bonus."/>
+        <text name="cm_pricing_smallFieldEnabled" text="Small field bonus"/>
+        <text name="cm_pricing_smallFieldEnabled_tooltip" text="Fields below the reference area get a bonus that grows as they get smaller."/>
+        <text name="cm_pricing_smallFieldRefHa" text="Reference area"/>
+        <text name="cm_pricing_smallFieldRefHa_tooltip" text="Fields below this area get the bonus."/>
+        <text name="cm_pricing_smallFieldMaxPercent" text="Small field cap"/>
+        <text name="cm_pricing_smallFieldMaxPercent_tooltip" text="Maximum percent, reached near zero hectares."/>
+        <text name="cm_pricing_typeDifficultyEnabled" text="Type difficulty bonus"/>
+        <text name="cm_pricing_typeDifficultyEnabled_tooltip" text="Hard jobs get extra percent: stone picking 30, deadwood 25, tree transport 25, rocks 30, weeding 10, hoeing 10, wrapping 10, plowing 5."/>
+        <text name="cm_detailDistance" text="Distance bonus"/>
+        <text name="cm_detailSmallField" text="Small field bonus"/>
+        <text name="cm_detailDifficulty" text="Difficulty bonus"/>
+        <text name="cm_secLease" text="Leased vehicles"/>
+        <text name="cm_lease_enabled" text="Allow leasing vehicles with contracts"/>
+        <text name="cm_lease_enabled_tooltip" text="When off, no contract can be started with leased vehicles; players use their own machines."/>
+        <text name="cm_lease_minReputation" text="Minimum reputation to lease"/>
+        <text name="cm_lease_minReputation_tooltip" text="A farm below this reputation cannot lease vehicles. 0 = off."/>
+        <text name="cm_leaseDenied" text="Leasing vehicles with contracts is disabled on this server; the contract started without vehicles."/>
+        <text name="cm_leaseDeniedRep" text="At least %d reputation is required to lease vehicles; the contract started without vehicles."/>
+        <text name="cm_limits_quotaPerDay" text="Daily contract quota"/>
+        <text name="cm_limits_quotaPerDay_tooltip" text="How many contracts a farm may accept per game day. 0 = off."/>
+        <text name="cm_limits_quotaPerMonth" text="Monthly contract quota"/>
+        <text name="cm_limits_quotaPerMonth_tooltip" text="How many contracts a farm may accept per game month. 0 = off."/>
+        <text name="cm_reward_penaltyStepPercent" text="Consecutive failure penalty"/>
+        <text name="cm_reward_penaltyStepPercent_tooltip" text="Each consecutive failure raises the penalty by this much; a success resets it. 0 = off."/>
+        <text name="cm_reward_penaltyMaxPercent" text="Penalty cap"/>
+        <text name="cm_reward_penaltyMaxPercent_tooltip" text="The escalating penalty never exceeds this percent."/>
+        <text name="cm_reward_partialEnabled" text="Partial payout"/>
+        <text name="cm_reward_partialEnabled_tooltip" text="A failed contract still pays a share based on how much was completed. Not applied to admin cancels."/>
+        <text name="cm_reward_partialMinCompletion" text="Partial payout threshold"/>
+        <text name="cm_reward_partialMinCompletion_tooltip" text="Below this completion nothing is paid."/>
+        <text name="cm_reward_partialFactor" text="Partial payout rate"/>
+        <text name="cm_reward_partialFactor_tooltip" text="Paid amount: reward x completion x this rate."/>
+        <text name="cm_secChain" text="Chain and NPC"/>
+        <text name="cm_chain_enabled" text="Contract chain bonus"/>
+        <text name="cm_chain_enabled_tooltip" text="A farm following the order on the same field (prepare, sow, tend, harvest) gets extra reward on the next step."/>
+        <text name="cm_chain_bonusPercent" text="Chain bonus"/>
+        <text name="cm_chain_bonusPercent_tooltip" text="Percent added to a contract that continues the chain."/>
+        <text name="cm_chain_windowDays" text="Chain window (days)"/>
+        <text name="cm_chain_windowDays_tooltip" text="The chain breaks if more days than this passed since the previous step. 0 = no limit."/>
+        <text name="cm_npc_enabled" text="NPC relationship"/>
+        <text name="cm_npc_enabled_tooltip" text="A farm that keeps working for the same land owner earns more from that person."/>
+        <text name="cm_npc_percentPerJob" text="Bonus per job"/>
+        <text name="cm_npc_percentPerJob_tooltip" text="Each completed contract for that NPC raises the reward by this much."/>
+        <text name="cm_npc_maxPercent" text="NPC bonus cap"/>
+        <text name="cm_npc_maxPercent_tooltip" text="Maximum percent from the NPC relationship."/>
+        <text name="cm_detailChain" text="Chain bonus"/>
+        <text name="cm_detailNpc" text="NPC bonus"/>
+        <text name="cm_detailQuota" text="Quota left (day / month)"/>
+        <text name="cm_quotaDay" text="Your daily contract quota is used up (%d). You can take contracts again tomorrow."/>
+        <text name="cm_quotaMonth" text="Your monthly contract quota is used up (%d). You can take contracts again next month."/>
+        <text name="cm_secPartnership" text="Shared contract"/>
+        <text name="cm_partnership_enabled" text="Shared contracts"/>
+        <text name="cm_partnership_enabled_tooltip" text="The farm holding a contract can take a partner farm; the reward is split by contribution."/>
+        <text name="cm_partnership_maxPartners" text="Maximum partners"/>
+        <text name="cm_partnership_maxPartners_tooltip" text="How many farms besides the owner may join one contract."/>
+        <text name="cm_partnership_inviteMinutes" text="Invite timeout"/>
+        <text name="cm_partnership_inviteMinutes_tooltip" text="An unanswered invite expires after this many real minutes."/>
+        <text name="cm_partAcceptButton" text="Accept partnership"/>
+        <text name="cm_partLeaveButton" text="Leave partnership"/>
+        <text name="cm_detailPartner" text="Partners"/>
+        <text name="cm_partInvited" text="Invite sent."/>
+        <text name="cm_partJoined" text="Partnership formed; the reward will be split by contribution."/>
+        <text name="cm_partLeft" text="You left the partnership."/>
+        <text name="cm_partDisabled" text="Shared contracts are disabled."/>
+        <text name="cm_partNotOwner" text="Only the farm holding the contract can invite."/>
+        <text name="cm_partAlready" text="That farm is already a partner."/>
+        <text name="cm_partFull" text="No free partner slot."/>
+        <text name="cm_partNoInvite" text="You have no invite for this contract."/>
+        <text name="cm_partNotMember" text="You are not a partner on this contract."/>
+        <text name="cm_partInviteNotify" text="You were invited to share the contract &quot;%s&quot; (Farm %d). Accept it on the contracts page."/>
+        <text name="cm_popupOk" text="OK"/>
+        <text name="cm_popupPartnerTitle" text="Shared Contract"/>
+        <text name="cm_hudOwner" text="Owner"/>
+        <text name="cm_hudPartner" text="Partner"/>
+        <text name="cm_partAcceptedNotify" text="Farm %d accepted your invite for &quot;%s&quot;. The reward will be split by contribution."/>
+        <text name="cm_partDeclinedNotify" text="Farm %d declined your invite for &quot;%s&quot;."/>
+        <text name="cm_pageActive" text="Active"/>
+        <text name="cm_pageNew" text="New"/>
+        <text name="cm_pageHistory" text="History"/>
+        <text name="cm_pageContracts" text="Contracts"/>
+        <text name="cm_pageSelected" text="Selected contract"/>
+        <text name="cm_pageSelectedMark" text="Selected"/>
+        <text name="cm_pageActions" text="Actions"/>
+        <text name="cm_pageSelect" text="Select"/>
+        <text name="cm_pageEmpty" text="No contracts to show."/>
+        <text name="cm_pageSelectHint" text="Select a contract from the list."/>
+        <text name="cm_pageField" text="Field"/>
+        <text name="cm_pageTargetFarm" text="Target farm"/>
+        <text name="cm_pageInvite" text="Invite partner"/>
+        <text name="cm_dialogInviteTitle" text="Invite Partner"/>
+        <text name="cm_dialogInviteText" text="Choose the farm to share this contract with."/>
+        <text name="cm_dialogSend" text="Send invite"/>
+        <text name="cm_detailRole" text="Your role"/>
+        <text name="cm_detailYourShare" text="Your share"/>
+        <text name="cm_pageTransfer" text="Transfer"/>
+        <text name="cm_pageAssign" text="Assign to farm"/>
+        <text name="cm_pageAction_reserve" text="Holds this contract for your farm"/>
+        <text name="cm_pageAction_release" text="Releases your reservation"/>
+        <text name="cm_pageAction_invite" text="Invites the target farm to share this contract"/>
+        <text name="cm_pageAction_partnerAccept" text="Accepts the partnership invite you received"/>
+        <text name="cm_pageAction_partnerLeave" text="Leaves the partnership"/>
+        <text name="cm_pageAction_transfer" text="Hands the contract to the target farm"/>
+        <text name="cm_pageAction_cancel" text="Force-cancels the contract, no penalty"/>
+        <text name="cm_pageAction_assign" text="Starts this contract for the target farm"/>
+        <text name="cm_pageAction_refresh" text="Regenerates every unaccepted contract"/>
+        <text name="cm_pagePartners" text="Partnership"/>
+        <text name="cm_pageOwner" text="owner"/>
+        <text name="cm_pagePartner" text="partner"/>
+        <text name="cm_pageEqualSplit" text="equal split"/>
+        <text name="cm_pagePendingInvite" text="Invite pending: %s (%d min)"/>
+        <text name="cm_pageDecline" text="Decline invite"/>
+        <text name="cm_pageAction_partnerDecline" text="Rejects the partnership invite"/>
+        <text name="cm_pageConfirmButton" text="Confirm"/>
+        <text name="cm_pageDialogNo" text="Cancel"/>
+        <text name="cm_pageConfirmInvite" text="Send a partnership invite to %s?"/>
+        <text name="cm_pageConfirmFarm" text="Apply to %s?"/>
+        <text name="cm_pageConfirmGeneric" text="Confirm: %s?"/>
+        <text name="cm_partDeclined" text="Invite declined."/>
+    </texts>
+</l10n>

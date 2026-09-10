@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!--
+    FS25_ContractManager - ESC menusundeki "Kontrat Yonetimi" sayfasi.
+    Yerlesim oyunun stok sayfalariyla ayni: fs25_menuContainer > baslik seridi +
+    alt kategori sekmeleri + kaydirmali icerik + sag kenara sabit kaydirma cubugu.
+    Satir arka planlari oyunun ayar sayfasindaki gibi donusumlu boyanir
+    (bkz. ManagePage.lua paintRows).
+-->
+<GUI name="ContractManagerManagePage">
+<GuiElement profile="fs25_menuContainer" id="cmManageRoot">
+
+    <GuiElement profile="fs25_menuHeaderPanel" id="cmHeaderPanel">
+        <Bitmap profile="fs25_menuHeaderIconBg">
+            <Bitmap profile="cm_pageHeaderIcon" id="cmHeaderIcon"/>
+        </Bitmap>
+        <Text profile="fs25_menuHeaderTitle" text="$l10n_cm_tabTitle"/>
+    </GuiElement>
+
+    <BoxLayout profile="fs25_subCategorySelectorTabbedBox">
+        <Button profile="fs25_subCategorySelectorTabbedTab" id="cmTabActive" text="$l10n_cm_pageActive" onClick="onClickFilterActive">
+            <ThreePartBitmap profile="fs25_subCategorySelectorTabbedTabBg" name="background"/>
+        </Button>
+        <Button profile="fs25_subCategorySelectorTabbedTab" id="cmTabNew" text="$l10n_cm_pageNew" onClick="onClickFilterNew">
+            <ThreePartBitmap profile="fs25_subCategorySelectorTabbedTabBg" name="background"/>
+        </Button>
+        <Button profile="fs25_subCategorySelectorTabbedTab" id="cmTabHistory" text="$l10n_cm_pageHistory" onClick="onClickFilterHistory">
+            <ThreePartBitmap profile="fs25_subCategorySelectorTabbedTabBg" name="background"/>
+        </Button>
+    </BoxLayout>
+
+    <GuiElement profile="cm_contentContainer" id="cmManageContainer">
+        <ScrollingLayout profile="fs25_settingsLayout" id="manageLayout">
+            <Text profile="cm_sectionHeader" name="sectionHeader" id="headerPrefab"/>
+            <Bitmap profile="cm_rowContainer" id="textPrefab">
+                <Text profile="cm_rowLabel" name="rowText"/>
+            </Bitmap>
+            <Bitmap profile="cm_rowContainer" id="optionPrefab">
+                <MultiTextOption profile="cm_rowOption" id="rowOption"/>
+                <Text profile="cm_rowLabel" name="optionLabel"/>
+            </Bitmap>
+            <Bitmap profile="cm_rowContainer" id="buttonPrefab">
+                <Button profile="cm_rowButton" id="rowButton" text="..." onClick="onClickRowButton">
+                    <ThreePartBitmap profile="cm_rowButtonBg" name="background"/>
+                </Button>
+                <Text profile="cm_rowLabel" name="buttonLabel"/>
+            </Bitmap>
+        </ScrollingLayout>
+
+        <ThreePartBitmap profile="cm_sliderBg" id="cmSliderBg">
+            <ThreePartBitmap profile="cm_sliderBox">
+                <Slider profile="cm_slider" id="manageSlider"/>
+            </ThreePartBitmap>
+        </ThreePartBitmap>
+    </GuiElement>
+
+</GuiElement>
+</GUI>

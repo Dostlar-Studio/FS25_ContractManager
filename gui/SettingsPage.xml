@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!--
+    FS25_ContractManager - Ayarlar sayfasina eklenen "Kontrat Yoneticisi" alt sekmesi.
+    Yalnizca oyunun stok profilleri kullanilir; kalip FS25_BetterContracts v1.3 ile ayni
+    (etiket adlari ve profiller FS25'te dogrulanmis). Prefab'lar calisma aninda klonlanip silinir.
+-->
+<GUI name="ContractManagerSettings">
+<GuiElement profile="fs25_menuContainer">
+    <BoxLayout profile="fs25_subCategorySelectorTabbedBox">
+        <Button profile="fs25_subCategorySelectorTabbedTab" id="cmTab" text="$l10n_cm_tabTitle" onClick="onClickTab">
+            <ThreePartBitmap profile="fs25_subCategorySelectorTabbedTabBg" name="background"/>
+        </Button>
+    </BoxLayout>
+    <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="cmPage">
+        <Text profile="fs25_settingsNoPermissionText" id="cmNoPermissionText" text="$l10n_cm_noPermission"/>
+        <ScrollingLayout profile="fs25_settingsLayout" id="settingsLayout">
+            <Text profile="fs25_settingsSectionHeader" name="sectionHeader" id="subTitlePrefab"/>
+            <Bitmap profile="fs25_multiTextOptionContainer" id="binaryPrefab">
+                <BinaryOption profile="fs25_settingsBinaryOption" onClick="onClickOption" id="binaryOptionPrefab">
+                    <Text profile="fs25_multiTextOptionTooltip" name="ignore"/>
+                </BinaryOption>
+                <Text profile="fs25_settingsMultiTextOptionTitle"/>
+            </Bitmap>
+            <Bitmap profile="fs25_multiTextOptionContainer" id="multiPrefab">
+                <MultiTextOption profile="fs25_settingsMultiTextOption" onClick="onClickOption" id="multiOptionPrefab">
+                    <Text profile="fs25_multiTextOptionTooltip" name="ignore"/>
+                </MultiTextOption>
+                <Text profile="fs25_settingsMultiTextOptionTitle"/>
+            </Bitmap>
+            <Bitmap profile="fs25_multiTextOptionContainer" id="rowPrefab">
+                <Text profile="fs25_settingsMultiTextOptionTitle" name="rowText"/>
+            </Bitmap>
+        </ScrollingLayout>
+        <Bitmap profile="fs25_settingsTooltipSeparator" id="cmSeparator"/>
+    </GuiElement>
+</GuiElement>
+</GUI>

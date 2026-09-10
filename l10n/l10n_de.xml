@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+        <text name="cg_warningWrongDestination" text="Das Vertragsprodukt %s darf nur an der vorgegebenen Abgabestelle entladen werden."/>
+        <text name="cg_warningGroundBlocked" text="Das Vertragsprodukt %s darf nicht auf den Boden abgekippt werden."/>
+        <text name="cg_warningCrossFarm" text="Das Vertragsprodukt %s darf nicht in ein Fahrzeug eines anderen Hofes umgeladen werden."/>
+        <text name="cg_cancelBlocked" text="Dieser Auftrag kann nicht abgebrochen werden: Die Arbeit hat bereits begonnen. Liefere %s an der vorgegebenen Stelle ab."/>
+        <text name="cg_forcedPurge" text="Der Auftrag ist fehlgeschlagen. Geschütztes Produkt %s: %s wurde eingezogen."/>
+        <text name="cg_baleBlocked" text="Vertragsballen (%s) werden hier nicht angenommen. Nutze die vorgegebene Abgabestelle."/>
+        <text name="cm_penalty" text="Vertragsstrafe"/>
+        <text name="cm_timeWarning" text="Vertrag läuft bald ab: %s (noch %d Min.)"/>
+        <text name="cm_tabTitle" text="Vertragsmanager"/>
+        <text name="cm_noPermission" text="Nur der Serveradmin kann Vertragsregeln ändern."/>
+        <text name="cm_secGuard" text="Produktschutz"/>
+        <text name="cm_secReward" text="Belohnung und Strafe"/>
+        <text name="cm_secLimits" text="Limits"/>
+        <text name="cm_secGeneration" text="Vertragserzeugung"/>
+        <text name="cm_secDuration" text="Dauer"/>
+        <text name="cm_secCompat" text="Kompatibilität"/>
+        <text name="cm_secTypes" text="Vertragstypen"/>
+        <text name="cm_secStats" text="Statistik deines Hofes"/>
+        <text name="cm_guard_enabled" text="Schutz aktiv"/>
+        <text name="cm_guard_enabled_tooltip" text="Verhindert Abladen von Vertragsware auf den Boden, an fremde Höfe und an falschen Stellen."/>
+        <text name="cm_guard_blockCancelAfterProgress" text="Abbruch nach Arbeitsbeginn sperren"/>
+        <text name="cm_guard_blockCancelAfterProgress_tooltip" text="Nach Beginn von Ernte oder Lieferung kann der Vertrag nicht mehr abgebrochen werden."/>
+        <text name="cm_guard_confiscateOnFail" text="Ware bei Fehlschlag einziehen"/>
+        <text name="cm_guard_confiscateOnFail_tooltip" text="Bei Zeitablauf oder erzwungenem Fehlschlag wird die seit Annahme angesammelte Nettoware eingezogen."/>
+        <text name="cm_reward_multiplier" text="Belohnungsfaktor"/>
+        <text name="cm_reward_multiplier_tooltip" text="Die vom Spiel berechnete Belohnung wird mit diesem Wert multipliziert."/>
+        <text name="cm_reward_failPenaltyPercent" text="Strafe bei Fehlschlag"/>
+        <text name="cm_reward_failPenaltyPercent_tooltip" text="Dieser Anteil der Belohnung wird bei Fehlschlag, Abbruch oder Zeitablauf abgezogen."/>
+        <text name="cm_reward_leaseCostMultiplier" text="Kosten Leihfahrzeuge"/>
+        <text name="cm_reward_leaseCostMultiplier_tooltip" text="Kostenfaktor für mit dem Vertrag geliehene Fahrzeuge."/>
+        <text name="cm_reward_min" text="Mindestbelohnung"/>
+        <text name="cm_reward_min_tooltip" text="Die Belohnung nach dem Faktor fällt nie darunter."/>
+        <text name="cm_reward_max" text="Höchstbelohnung"/>
+        <text name="cm_reward_max_tooltip" text="Die Belohnung nach dem Faktor übersteigt dies nie."/>
+        <text name="cm_limits_maxActivePerFarm" text="Aktive Verträge je Hof"/>
+        <text name="cm_limits_maxActivePerFarm_tooltip" text="Wie viele Verträge ein Hof gleichzeitig ausführen darf."/>
+        <text name="cm_generation_maxTotal" text="Verträge auf der Tafel"/>
+        <text name="cm_generation_maxTotal_tooltip" text="Maximale Anzahl Verträge gleichzeitig auf der Tafel."/>
+        <text name="cm_generation_maxPerType" text="Maximum je Typ"/>
+        <text name="cm_generation_maxPerType_tooltip" text="Maximale Verträge je Typ auf der Tafel."/>
+        <text name="cm_generation_refreshMultiplier" text="Intervall neuer Verträge"/>
+        <text name="cm_generation_refreshMultiplier_tooltip" text="Faktor für das Erzeugungsintervall. Kleiner bedeutet häufiger."/>
+        <text name="cm_duration_multiplier" text="Vertragsdauer"/>
+        <text name="cm_duration_multiplier_tooltip" text="Neu erzeugte Verträge erhalten eine mit diesem Faktor skalierte Dauer."/>
+        <text name="cm_duration_warnAtMinutes" text="Ablaufwarnung (Spielmin.)"/>
+        <text name="cm_duration_warnAtMinutes_tooltip" text="Hofmitglieder werden gewarnt, wenn die Restzeit unter diese Schwellen fällt."/>
+        <text name="cm_compat_overrideBetterContracts" text="Zusätzlich zu BetterContracts anwenden"/>
+        <text name="cm_compat_overrideBetterContracts_tooltip" text="Regeln dieses Mods auch bei geladenem BetterContracts anwenden. Faktoren multiplizieren sich."/>
+        <text name="cm_typeEnabled" text="erzeugen"/>
+        <text name="cm_typeEnabled_tooltip" text="Wenn aus, werden keine neuen Verträge dieses Typs erzeugt."/>
+        <text name="cm_typeWeight" text="Gewicht"/>
+        <text name="cm_typeWeight_tooltip" text="Erzeugungschance relativ zu anderen Typen. Gleiche Gewichte behalten das Spielverhalten."/>
+        <text name="cm_valNone" text="Keine"/>
+        <text name="cm_valFree" text="Kostenlos"/>
+        <text name="cm_valUnlimited" text="Unbegrenzt"/>
+        <text name="cm_valGameDefault" text="Spielstandard"/>
+        <text name="cm_valNever" text="Nie"/>
+        <text name="cm_statsLoading" text="Lädt..."/>
+        <text name="cm_statCompleted" text="Abgeschlossen"/>
+        <text name="cm_statFailed" text="Fehlgeschlagen"/>
+        <text name="cm_statCanceled" text="Abgebrochen"/>
+        <text name="cm_statTimedOut" text="Abgelaufen"/>
+        <text name="cm_statEarned" text="Gesamtverdienst"/>
+        <text name="cm_statPenalties" text="Gesamtstrafen"/>
+        <text name="cm_day" text="Tag"/>
+        <text name="cm_stateNone" text="-"/>
+        <text name="cm_stateSuccess" text="abgeschlossen"/>
+        <text name="cm_stateFailed" text="fehlgeschlagen"/>
+        <text name="cm_stateCanceled" text="abgebrochen"/>
+        <text name="cm_stateTimedOut" text="abgelaufen"/>
+        <text name="cm_detailTimeLeft" text="Restzeit"/>
+        <text name="cm_detailPenalty" text="Strafe bei Fehlschlag"/>
+        <text name="cm_detailActive" text="Aktive Verträge"/>
+        <text name="cm_unitDay" text="T"/>
+        <text name="cm_unitHour" text="Std"/>
+        <text name="cm_unitMinute" text="Min"/>
+        <text name="cm_secIntegrations" text="Integrationen"/>
+        <text name="cm_secInterface" text="Oberfläche"/>
+        <text name="cm_ui_managePage" text="Vertragsmanager-Seite im Menü"/>
+        <text name="cm_ui_managePage_tooltip" text="Blendet den Reiter Vertragsmanager in der Seitenleiste ein oder aus. Die Verträge-Seite des Spiels behält alle Knöpfe."/>
+        <text name="cm_partInviteTo" text="Einladen: %s"/>
+        <text name="cm_partNextFarm" text="Nächster Hof"/>
+        <text name="cm_partTargetSet" text="Einladungsziel: %s"/>
+        <text name="cm_integrations_discord" text="Discord-Bridge-Ereignisse"/>
+        <text name="cm_integrations_discord_tooltip" text="Wenn FS25_DiscordBridge geladen ist, gehen Vertragsannahme/-abschluss/-auszahlung, Ablaufwarnungen und Schutzsperren an Discord."/>
+        <text name="cm_adminRefreshButton" text="Tafel erneuern"/>
+        <text name="cm_adminCancelButton" text="Zwangsabbruch"/>
+        <text name="cm_adminConfirmRefresh" text="Alle nicht angenommenen Verträge werden entfernt und neu erzeugt. Fortfahren?"/>
+        <text name="cm_adminConfirmCancel" text="Vertrag &quot;%s&quot; wird zwangsweise abgebrochen (Schutzsperre umgangen, keine Geldstrafe). Fortfahren?"/>
+        <text name="cm_adminCancelled" text="Vertrag abgebrochen."/>
+        <text name="cm_adminRefreshed" text="Vertragstafel erneuert."/>
+        <text name="cm_adminAssigned" text="Vertrag dem Hof zugewiesen."/>
+        <text name="cm_adminNotFound" text="Vertrag nicht gefunden."/>
+        <text name="cm_adminNotActive" text="Dieser Vertrag ist nicht aktiv."/>
+        <text name="cm_adminAlreadyStarted" text="Vertrag bereits gestartet."/>
+        <text name="cm_adminNoFarm" text="Ungültiger Hof."/>
+        <text name="cm_adminLimit" text="Hof hat sein Vertragslimit erreicht."/>
+        <text name="cm_adminFailed" text="Aktion fehlgeschlagen."/>
+        <text name="cm_secReputation" text="Ruf"/>
+        <text name="cm_reputation_enabled" text="Rufsystem"/>
+        <text name="cm_reputation_enabled_tooltip" text="Abgeschlossene Verträge geben Punkte, Fehlschlag/Abbruch/Ablauf kosten Punkte. Punkte geben Belohnungsbonus und einen Extra-Vertragsplatz."/>
+        <text name="cm_reputation_gainComplete" text="Gewinn bei Abschluss"/>
+        <text name="cm_reputation_gainComplete_tooltip" text="Punkte je erfolgreich beendetem Vertrag."/>
+        <text name="cm_reputation_lossFail" text="Verlust bei Fehlschlag"/>
+        <text name="cm_reputation_lossFail_tooltip" text="Punkte je fehlgeschlagenem Vertrag."/>
+        <text name="cm_reputation_lossCancel" text="Verlust bei Abbruch"/>
+        <text name="cm_reputation_lossCancel_tooltip" text="Punkte je vom Spieler abgebrochenem Vertrag. Admin-Abbrüche zählen nicht."/>
+        <text name="cm_reputation_lossTimeout" text="Verlust bei Ablauf"/>
+        <text name="cm_reputation_lossTimeout_tooltip" text="Punkte je abgelaufenem Vertrag."/>
+        <text name="cm_reputation_maxPoints" text="Maximale Punkte"/>
+        <text name="cm_reputation_maxPoints_tooltip" text="Obergrenze der Punkte; dort ist der Bonus am höchsten."/>
+        <text name="cm_reputation_rewardBonusMaxPercent" text="Maximaler Belohnungsbonus"/>
+        <text name="cm_reputation_rewardBonusMaxPercent_tooltip" text="Prozent auf die Belohnung bei Maximalpunkten; dazwischen linear."/>
+        <text name="cm_reputation_extraSlotAt" text="Schwelle Extra-Platz"/>
+        <text name="cm_reputation_extraSlotAt_tooltip" text="Ab dieser Punktzahl Hoflimit +1. 0 = aus."/>
+        <text name="cm_statReputation" text="Ruf"/>
+        <text name="cm_statBonus" text="Belohnungsbonus"/>
+        <text name="cm_statExtraSlot" text="Extra-Vertragsplatz"/>
+        <text name="cm_boardTitle" text="Rangliste"/>
+        <text name="cm_repNotify" text="Ruf %+d → %d"/>
+        <text name="cm_generation_cooldownPerFieldHours_tooltip" text="Ein Feld mit beendetem Vertrag bekommt so viele Spielstunden keinen neuen. 0 = aus."/>
+        <text name="cm_generation_cooldownPerFieldHours" text="Feld-Wartezeit"/>
+        <text name="cm_secReservation" text="Reservierung"/>
+        <text name="cm_reservation_enabled" text="Vertragsreservierung"/>
+        <text name="cm_reservation_enabled_tooltip" text="Ein Spieler reserviert einen nicht angenommenen Vertrag kurz für seinen Hof; andere Höfe können ihn solange nicht annehmen."/>
+        <text name="cm_reservation_minutes" text="Reservierungsdauer"/>
+        <text name="cm_reservation_minutes_tooltip" text="Echte Minuten. Die Reservierung läuft von selbst ab."/>
+        <text name="cm_resReserveButton" text="Reservieren"/>
+        <text name="cm_resReleaseButton" text="Reservierung aufheben"/>
+        <text name="cm_detailReserved" text="Reserviert"/>
+        <text name="cm_resReserved" text="Vertrag für deinen Hof reserviert."/>
+        <text name="cm_resReleased" text="Reservierung aufgehoben."/>
+        <text name="cm_resNone" text="Keine Reservierung für diesen Vertrag."/>
+        <text name="cm_resTakenByOther" text="Dieser Vertrag ist von einem anderen Hof reserviert."/>
+        <text name="cm_resFarmLimit" text="Dein Hof hat bereits eine Reservierung."/>
+        <text name="cm_resAlreadyStarted" text="Vertrag bereits gestartet."/>
+        <text name="cm_resDisabled" text="Reservierung ist deaktiviert."/>
+        <text name="cm_resBlocked" text="Dieser Vertrag ist von %s reserviert; bis zum Ablauf nicht annehmbar."/>
+        <text name="cm_resTakenBy" text="Von %s reserviert · in %d Min frei, wenn nicht angenommen"/>
+        <text name="cm_resReservedButton" text="Von einem anderen Hof reserviert"/>
+        <text name="cm_detailProduct" text="Ware"/>
+        <text name="cm_detailFieldYield" text="Feldertrag (geschätzt)"/>
+        <text name="cm_detailToDeliver" text="Zu liefern"/>
+        <text name="cm_detailDelivered" text="Geliefert"/>
+        <text name="cm_detailRemaining" text="Noch nötig"/>
+        <text name="cm_detailSurplus" text="Überschuss"/>
+        <text name="cm_detailSurplusHint" text="bleibt auf deinem Hof"/>
+        <text name="cm_detailProgress" text="Fortschritt"/>
+        <text name="cm_secSchedule" text="Zeitboni (Echtzeit)"/>
+        <text name="cm_schedule_enabled" text="Zeitboni"/>
+        <text name="cm_schedule_enabled_tooltip" text="Wochenend- und Happy-Hour-Boni werden nach Echtzeit auf die Belohnung addiert."/>
+        <text name="cm_schedule_weekendBonusPercent" text="Wochenendbonus"/>
+        <text name="cm_schedule_weekendBonusPercent_tooltip" text="Prozent am Samstag und Sonntag."/>
+        <text name="cm_schedule_happyHourStart" text="Happy Hour Beginn"/>
+        <text name="cm_schedule_happyHourStart_tooltip" text="Lokale Serverzeit."/>
+        <text name="cm_schedule_happyHourEnd" text="Happy Hour Ende"/>
+        <text name="cm_schedule_happyHourEnd_tooltip" text="Liegt es vor dem Beginn, geht es über Mitternacht."/>
+        <text name="cm_schedule_happyHourBonusPercent" text="Happy-Hour-Bonus"/>
+        <text name="cm_schedule_happyHourBonusPercent_tooltip" text="Prozent in diesen Stunden."/>
+        <text name="cm_secMap" text="Karte"/>
+        <text name="cm_map_showReserved" text="Reservierten Vertrag auf Karte zeigen"/>
+        <text name="cm_map_showReserved_tooltip" text="Das Feld des von deinem Hof reservierten Vertrags wird markiert."/>
+        <text name="cm_map_showAvailable" text="Alle offenen Verträge auf Karte zeigen"/>
+        <text name="cm_map_showAvailable_tooltip" text="Felder aller nicht angenommenen Verträge werden markiert."/>
+        <text name="cm_detailEventBonus" text="Eventbonus"/>
+        <text name="cm_transferDone" text="Vertrag übertragen."/>
+        <text name="cm_transferSameFarm" text="Vertrag gehört bereits diesem Hof."/>
+        <text name="cm_transferLeased" text="Verträge mit Leihfahrzeugen können nicht übertragen werden."/>
+        <text name="cm_secPricing" text="Entfernung und Schwierigkeit"/>
+        <text name="cm_pricing_distanceEnabled" text="Entfernungsbonus"/>
+        <text name="cm_pricing_distanceEnabled_tooltip" text="Je weiter das Vertragsfeld vom Hofzentrum (Farmhaus, sonst Mitte des eigenen Landes) entfernt ist, desto höher die Belohnung."/>
+        <text name="cm_pricing_distancePercentPerKm" text="Je km"/>
+        <text name="cm_pricing_distancePercentPerKm_tooltip" text="Prozent je Kilometer."/>
+        <text name="cm_pricing_distanceMaxPercent" text="Entfernungsobergrenze"/>
+        <text name="cm_pricing_distanceMaxPercent_tooltip" text="Maximaler Entfernungsbonus."/>
+        <text name="cm_pricing_smallFieldEnabled" text="Kleinfeldbonus"/>
+        <text name="cm_pricing_smallFieldEnabled_tooltip" text="Felder unter der Referenzfläche erhalten einen mit der Kleinheit wachsenden Bonus."/>
+        <text name="cm_pricing_smallFieldRefHa" text="Referenzfläche"/>
+        <text name="cm_pricing_smallFieldRefHa_tooltip" text="Felder unter dieser Fläche erhalten den Bonus."/>
+        <text name="cm_pricing_smallFieldMaxPercent" text="Kleinfeldobergrenze"/>
+        <text name="cm_pricing_smallFieldMaxPercent_tooltip" text="Maximaler Prozentsatz nahe null Hektar."/>
+        <text name="cm_pricing_typeDifficultyEnabled" text="Schwierigkeitsbonus je Typ"/>
+        <text name="cm_pricing_typeDifficultyEnabled_tooltip" text="Schwere Arbeiten erhalten extra Prozent: Steine 30, Totholz 25, Baumtransport 25, Felsen 30, Unkraut 10, Hacken 10, Wickeln 10, Pflügen 5."/>
+        <text name="cm_detailDistance" text="Entfernungsbonus"/>
+        <text name="cm_detailSmallField" text="Kleinfeldbonus"/>
+        <text name="cm_detailDifficulty" text="Schwierigkeitsbonus"/>
+        <text name="cm_secLease" text="Leihfahrzeuge"/>
+        <text name="cm_lease_enabled" text="Leihfahrzeuge bei Verträgen erlauben"/>
+        <text name="cm_lease_enabled_tooltip" text="Wenn aus, kann kein Vertrag mit Leihfahrzeugen gestartet werden."/>
+        <text name="cm_lease_minReputation" text="Mindestruf zum Leihen"/>
+        <text name="cm_lease_minReputation_tooltip" text="Ein Hof unter diesem Ruf kann keine Fahrzeuge leihen. 0 = aus."/>
+        <text name="cm_leaseDenied" text="Leihfahrzeuge bei Verträgen sind auf diesem Server deaktiviert; der Vertrag startete ohne Fahrzeuge."/>
+        <text name="cm_leaseDeniedRep" text="Zum Leihen sind mindestens %d Ruf nötig; der Vertrag startete ohne Fahrzeuge."/>
+        <text name="cm_limits_quotaPerDay" text="Tägliches Vertragskontingent"/>
+        <text name="cm_limits_quotaPerDay_tooltip" text="Wie viele Verträge ein Hof pro Spieltag annehmen darf. 0 = aus."/>
+        <text name="cm_limits_quotaPerMonth" text="Monatliches Vertragskontingent"/>
+        <text name="cm_limits_quotaPerMonth_tooltip" text="Wie viele Verträge ein Hof pro Spielmonat annehmen darf. 0 = aus."/>
+        <text name="cm_reward_penaltyStepPercent" text="Strafe bei Folgefehlschlägen"/>
+        <text name="cm_reward_penaltyStepPercent_tooltip" text="Jeder aufeinanderfolgende Fehlschlag erhöht die Strafe um diesen Wert; ein Erfolg setzt sie zurück. 0 = aus."/>
+        <text name="cm_reward_penaltyMaxPercent" text="Strafobergrenze"/>
+        <text name="cm_reward_penaltyMaxPercent_tooltip" text="Die steigende Strafe übersteigt diesen Prozentsatz nie."/>
+        <text name="cm_reward_partialEnabled" text="Teilzahlung"/>
+        <text name="cm_reward_partialEnabled_tooltip" text="Ein fehlgeschlagener Vertrag zahlt anteilig nach Fortschritt. Nicht bei Admin-Abbruch."/>
+        <text name="cm_reward_partialMinCompletion" text="Schwelle für Teilzahlung"/>
+        <text name="cm_reward_partialMinCompletion_tooltip" text="Unter diesem Fortschritt wird nichts gezahlt."/>
+        <text name="cm_reward_partialFactor" text="Teilzahlungsrate"/>
+        <text name="cm_reward_partialFactor_tooltip" text="Auszahlung: Belohnung x Fortschritt x diese Rate."/>
+        <text name="cm_secChain" text="Kette und NPC"/>
+        <text name="cm_chain_enabled" text="Vertragskettenbonus"/>
+        <text name="cm_chain_enabled_tooltip" text="Ein Hof, der auf demselben Feld die Reihenfolge einhält (Vorbereitung, Aussaat, Pflege, Ernte), erhält beim nächsten Schritt Extra-Belohnung."/>
+        <text name="cm_chain_bonusPercent" text="Kettenbonus"/>
+        <text name="cm_chain_bonusPercent_tooltip" text="Prozent für einen Vertrag, der die Kette fortsetzt."/>
+        <text name="cm_chain_windowDays" text="Kettenfenster (Tage)"/>
+        <text name="cm_chain_windowDays_tooltip" text="Die Kette reißt, wenn seit dem vorigen Schritt mehr Tage vergangen sind. 0 = unbegrenzt."/>
+        <text name="cm_npc_enabled" text="NPC-Beziehung"/>
+        <text name="cm_npc_enabled_tooltip" text="Ein Hof, der weiter für denselben Landbesitzer arbeitet, verdient bei ihm mehr."/>
+        <text name="cm_npc_percentPerJob" text="Bonus je Auftrag"/>
+        <text name="cm_npc_percentPerJob_tooltip" text="Jeder für diesen NPC erledigte Vertrag erhöht die Belohnung um diesen Wert."/>
+        <text name="cm_npc_maxPercent" text="Obergrenze NPC-Bonus"/>
+        <text name="cm_npc_maxPercent_tooltip" text="Maximaler Prozentsatz aus der NPC-Beziehung."/>
+        <text name="cm_detailChain" text="Kettenbonus"/>
+        <text name="cm_detailNpc" text="NPC-Bonus"/>
+        <text name="cm_detailQuota" text="Restkontingent (Tag / Monat)"/>
+        <text name="cm_quotaDay" text="Dein tägliches Vertragskontingent ist aufgebraucht (%d). Morgen geht es weiter."/>
+        <text name="cm_quotaMonth" text="Dein monatliches Vertragskontingent ist aufgebraucht (%d). Nächsten Monat geht es weiter."/>
+        <text name="cm_secPartnership" text="Gemeinsamer Vertrag"/>
+        <text name="cm_partnership_enabled" text="Gemeinsame Verträge"/>
+        <text name="cm_partnership_enabled_tooltip" text="Der Hof mit dem Vertrag kann einen Partnerhof aufnehmen; die Belohnung wird nach Beitrag geteilt."/>
+        <text name="cm_partnership_maxPartners" text="Maximale Partner"/>
+        <text name="cm_partnership_maxPartners_tooltip" text="Wie viele Höfe außer dem Besitzer einem Vertrag beitreten dürfen."/>
+        <text name="cm_partnership_inviteMinutes" text="Einladungsdauer"/>
+        <text name="cm_partnership_inviteMinutes_tooltip" text="Eine unbeantwortete Einladung verfällt nach so vielen echten Minuten."/>
+        <text name="cm_partAcceptButton" text="Partnerschaft annehmen"/>
+        <text name="cm_partLeaveButton" text="Partnerschaft verlassen"/>
+        <text name="cm_detailPartner" text="Partner"/>
+        <text name="cm_partInvited" text="Einladung gesendet."/>
+        <text name="cm_partJoined" text="Partnerschaft gebildet; die Belohnung wird nach Beitrag geteilt."/>
+        <text name="cm_partLeft" text="Du hast die Partnerschaft verlassen."/>
+        <text name="cm_partDisabled" text="Gemeinsame Verträge sind deaktiviert."/>
+        <text name="cm_partNotOwner" text="Nur der Hof mit dem Vertrag kann einladen."/>
+        <text name="cm_partAlready" text="Dieser Hof ist bereits Partner."/>
+        <text name="cm_partFull" text="Kein freier Partnerplatz."/>
+        <text name="cm_partNoInvite" text="Du hast keine Einladung für diesen Vertrag."/>
+        <text name="cm_partNotMember" text="Du bist bei diesem Vertrag kein Partner."/>
+        <text name="cm_partInviteNotify" text="Du wurdest zum Vertrag &quot;%s&quot; eingeladen (Hof %d). Auf der Vertragsseite annehmen."/>
+        <text name="cm_popupOk" text="OK"/>
+        <text name="cm_popupPartnerTitle" text="Gemeinsamer Vertrag"/>
+        <text name="cm_hudOwner" text="Inhaber"/>
+        <text name="cm_hudPartner" text="Partner"/>
+        <text name="cm_partAcceptedNotify" text="Hof %d hat deine Einladung für &quot;%s&quot; angenommen. Die Belohnung wird nach Beitrag geteilt."/>
+        <text name="cm_partDeclinedNotify" text="Hof %d hat deine Einladung für &quot;%s&quot; abgelehnt."/>
+        <text name="cm_pageActive" text="Aktiv"/>
+        <text name="cm_pageNew" text="Neu"/>
+        <text name="cm_pageHistory" text="Verlauf"/>
+        <text name="cm_pageContracts" text="Verträge"/>
+        <text name="cm_pageSelected" text="Gewählter Vertrag"/>
+        <text name="cm_pageSelectedMark" text="Ausgewählt"/>
+        <text name="cm_pageActions" text="Aktionen"/>
+        <text name="cm_pageSelect" text="Wählen"/>
+        <text name="cm_pageEmpty" text="Keine Verträge vorhanden."/>
+        <text name="cm_pageSelectHint" text="Wähle einen Vertrag aus der Liste."/>
+        <text name="cm_pageField" text="Feld"/>
+        <text name="cm_pageTargetFarm" text="Zielhof"/>
+        <text name="cm_pageInvite" text="Partner einladen"/>
+        <text name="cm_dialogInviteTitle" text="Partner Einladen"/>
+        <text name="cm_dialogInviteText" text="Wähle den Hof, mit dem du diesen Vertrag teilen möchtest."/>
+        <text name="cm_dialogSend" text="Einladung senden"/>
+        <text name="cm_detailRole" text="Deine Rolle"/>
+        <text name="cm_detailYourShare" text="Dein Anteil"/>
+        <text name="cm_pageTransfer" text="Übertragen"/>
+        <text name="cm_pageAssign" text="Hof zuweisen"/>
+        <text name="cm_pageAction_reserve" text="Hält diesen Vertrag für deinen Hof frei"/>
+        <text name="cm_pageAction_release" text="Gibt deine Reservierung frei"/>
+        <text name="cm_pageAction_invite" text="Lädt den Zielhof zum gemeinsamen Vertrag ein"/>
+        <text name="cm_pageAction_partnerAccept" text="Nimmt die erhaltene Partnereinladung an"/>
+        <text name="cm_pageAction_partnerLeave" text="Verlässt die Partnerschaft"/>
+        <text name="cm_pageAction_transfer" text="Übergibt den Vertrag an den Zielhof"/>
+        <text name="cm_pageAction_cancel" text="Bricht den Vertrag ohne Strafe ab"/>
+        <text name="cm_pageAction_assign" text="Startet diesen Vertrag für den Zielhof"/>
+        <text name="cm_pageAction_refresh" text="Erzeugt alle offenen Verträge neu"/>
+        <text name="cm_pagePartners" text="Partnerschaft"/>
+        <text name="cm_pageOwner" text="Inhaber"/>
+        <text name="cm_pagePartner" text="Partner"/>
+        <text name="cm_pageEqualSplit" text="gleiche Teilung"/>
+        <text name="cm_pagePendingInvite" text="Einladung offen: %s (%d Min)"/>
+        <text name="cm_pageDecline" text="Einladung ablehnen"/>
+        <text name="cm_pageAction_partnerDecline" text="Lehnt die Partnereinladung ab"/>
+        <text name="cm_pageConfirmButton" text="Bestätigen"/>
+        <text name="cm_pageDialogNo" text="Abbrechen"/>
+        <text name="cm_pageConfirmInvite" text="Partnereinladung an %s senden?"/>
+        <text name="cm_pageConfirmFarm" text="Für %s ausführen?"/>
+        <text name="cm_pageConfirmGeneric" text="Bestätigen: %s?"/>
+        <text name="cm_partDeclined" text="Einladung abgelehnt."/>
+    </texts>
+</l10n>

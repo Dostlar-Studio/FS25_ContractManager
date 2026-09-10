@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!--
+    FS25_ContractManager - kendi profillerimiz. Hepsi stok fs25_* profillerinden turer;
+    yalnizca genislik/konum gibi olculer degistirilir, renk ve doku oyundan gelir.
+    g_gui:loadProfiles ile yuklenir (FS25_BetterContracts'ta dogrulanmis yol).
+
+    Olcu degistirirken dikkat: fs25_subCategorySelectorTabbedContainer'in
+    absoluteSizeOffset'i (80px) sekme seridinin yuksekligidir. Buyutulurse
+    sekmelerle ilk satir arasinda bos bant kalir.
+-->
+<GUIProfiles>
+    <!-- sayfa basligi ikonu; dosya ManagePage.lua'da atanir (slice adi yayinlanmadi) -->
+    <Profile name="cm_pageHeaderIcon" extends="fs25_menuHeaderIcon" />
+
+    <!-- icerik alani: stok alt kategori kabi, olcusune dokunulmaz -->
+    <Profile name="cm_contentContainer" extends="fs25_subCategorySelectorTabbedContainer" />
+
+    <!--
+        Kaydirma cubugu. Stok yerlesim uc katmanlidir ve sirasi onemlidir:
+        raylı zemin (sag kenara sabit) > siyah oluk (icinde ortalanir) > yesil tutamak.
+        Oluk tek basina kullanilirsa anchorStretchingYCenter yuzunden icerigin
+        ORTASINDA durur - ilk denemedeki hata buydu.
+    -->
+    <Profile name="cm_sliderBg" extends="fs25_sliderDockedBg" with="anchorStretchingYRight">
+        <size value="36px 100%" />
+        <position value="0px 0px" />
+    </Profile>
+    <Profile name="cm_sliderBox" extends="fs25_sliderDockedBox" />
+    <Profile name="cm_slider" extends="fs25_sliderDocked" />
+
+    <!-- satir kabi: icerik genisligini kaplar, stok ayar satiriyla ayni yukseklik -->
+    <Profile name="cm_rowContainer" extends="fs25_multiTextOptionContainer">
+        <size value="100% 50px" />
+    </Profile>
+
+    <!-- satir metni: uzun kontrat ozetleri icin genis -->
+    <Profile name="cm_rowLabel" extends="fs25_settingsMultiTextOptionTitle">
+        <width value="1000px" />
+    </Profile>
+
+    <!-- satir butonu: sagda, oyunun tus atama butonuyla ayni cerceveli gorunum -->
+    <Profile name="cm_rowButton" extends="fs25_settingsControlsListButton" with="anchorMiddleRight">
+        <size value="300px 38px" />
+        <position value="-20px 0px" />
+        <textSize value="16px" />
+        <textBold value="true" />
+        <textUpperCase value="true" />
+        <handleFocus value="true" />
+    </Profile>
+    <Profile name="cm_rowButtonBg" extends="fs25_settingsControlsListButtonBg" />
+
+    <!-- hedef ciftlik secici: oyunun ayar sayfasindaki ok tuslu secicinin aynisi.
+         Arka plan, oklar ve metin autoAddDefaultElements ile kendiliginden gelir. -->
+    <Profile name="cm_rowOption" extends="fs25_settingsMultiTextOption">
+        <size value="320px 36px" />
+        <position value="-20px 0px" />
+    </Profile>
+
+    <!-- ciftlik secme penceresi: stok diyalog secicisi, biraz genis -->
+    <!-- Kap (fs25_dialogContentContainer) pencere altindan 79px yukarida biter; secici
+         kap altina yakin durur ki -175px'teki aciklama metniyle cakismasin. -->
+    <Profile name="cm_farmPickOption" extends="fs25_dialogMultiTextOption">
+        <size value="420px 40px" />
+        <position value="0px 12px" />
+    </Profile>
+
+    <!-- bolum basligi: metni satir etiketleriyle ayni hizada baslar -->
+    <Profile name="cm_sectionHeader" extends="fs25_settingsSectionHeader">
+        <height value="66px" />
+        <textOffset value="20px 0px" />
+    </Profile>
+</GUIProfiles>
