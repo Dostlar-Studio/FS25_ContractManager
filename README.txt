@@ -184,7 +184,7 @@ koruma engelleri ve kural değişiklikleri Discord'a gider. Ayarlar sekmesindeki
 hiçbir şey olmaz.
 
 SORUN BİLDİRİMİ
-İletişim: hello@kahrastudio.art · Kaynak kod: https://github.com/PoncikPanda/FS25_ContractManager
+İletişim: hello@kahrastudio.art · Kaynak kod: https://github.com/Dostlar-Studio/FS25_ContractManager
 log.txt içinde "[CM]" geçen satırları gönderin. Oyunun kendi kontrat kodunda
 bir hata yakalanırsa "[CM] Game field-completion code failed" satırı yazılır
 ve oyun kapanmaz; bu satırı da ekleyin.

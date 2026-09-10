@@ -44,7 +44,7 @@ Everything in it can also be changed in game. Invalid values fall back to the de
 ## Reporting problems
 
 - Email: hello@kahrastudio.art
-- Issues: https://github.com/PoncikPanda/FS25_ContractManager/issues
+- Issues: https://github.com/Dostlar-Studio/FS25_ContractManager/issues
 
 Please attach the lines of `log.txt` that contain `[CM]`.
 
