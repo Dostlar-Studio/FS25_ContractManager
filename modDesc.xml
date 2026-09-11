@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.13.2.0</version>
+    <version>1.13.3.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,9 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.13.3.0:
+- Fixed: the Discord Bridge lookup now reads the real global table, so the integration activates on dedicated servers.
 
 Changelog 1.13.2.0:
 - Fixed: the FS25_DiscordBridge integration never activated (mods run in separate script environments); contract events and the web panel section now reach the bridge.
@@ -154,6 +157,9 @@ KONTAKT & QUELLCODE
 
 Muss auf dem Server und allen Clients aktiviert sein. Nur PC/Mac.
 
+Changelog 1.13.3.0:
+- Behoben: Die Discord-Bridge-Suche liest jetzt die echte Globaltabelle; die Anbindung wird auf Dedicated Servern aktiv.
+
 Changelog 1.13.2.0:
 - Behoben: Die FS25_DiscordBridge-Anbindung wurde nie aktiv (Mods laufen in getrennten Skript-Umgebungen); Vertragsereignisse und der Web-Panel-Abschnitt erreichen die Brücke jetzt.
 
@@ -272,6 +278,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.13.3.0 :
+- Corrigé : la recherche du Discord Bridge lit désormais la vraie table globale ; l'intégration s'active sur les serveurs dédiés.
+
 Changelog 1.13.2.0 :
 - Corrigé : l'intégration FS25_DiscordBridge ne s'activait jamais (les mods tournent dans des environnements de script séparés) ; les événements de contrat et la section du panneau web atteignent désormais le pont.
 
@@ -389,6 +398,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.13.3.0:
+- Düzeltme: Discord Bridge araması artık gerçek global tabloyu okuyor; entegrasyon dedicated sunucuda devreye giriyor.
 
 Değişiklikler 1.13.2.0:
 - Düzeltme: FS25_DiscordBridge entegrasyonu hiç devreye girmiyordu (modlar ayrı script ortamlarında çalışır); kontrat olayları ve web paneli bölümü artık köprüye ulaşıyor.

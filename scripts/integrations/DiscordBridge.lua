@@ -44,11 +44,22 @@ local GUARD_CODE_NAMES = { [1] = "cancelBlocked", [2] = "forcedPurge", [3] = "ba
 ---baska modun globali dogrudan gorunmez; oyun her mod ortamini mod adiyla (`FS25_DiscordBridge`)
 ---gercek _G'ye kaydeder. Canli logda hook satiri hic yazmadi, kopru DB'sinde tek cm_ olay yoktu
 ---(2026-09-11) - sebep buydu. Siralama: ayni ortam (harness) -> mod ortami -> yok.
+---Gercek global tablo. Mod icindeki `_G` sandbox ortamidir; gercek olan onun metatablosunun
+---__index'idir (BetterContracts ayni yolu kullanir: `gEnv = getmetatable(_G).__index`).
+---1.13.2.0'da rawget(_G, ...) sandbox'a bakip bos dondu (canli log: "environment was not found").
+function Discord.globals()
+    local mt = getmetatable(_G)
+    if type(mt) == "table" and type(mt.__index) == "table" then
+        return mt.__index
+    end
+    return _G
+end
+
 function Discord.resolve()
     if type(DiscordBridge) == "table" then
         return DiscordBridge
     end
-    local env = rawget(_G, Discord.MOD_NAME)
+    local env = Discord.globals()[Discord.MOD_NAME]
     if type(env) == "table" and type(env.DiscordBridge) == "table" then
         return env.DiscordBridge
     end
