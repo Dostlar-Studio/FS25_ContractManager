@@ -144,6 +144,7 @@
         <text name="cm_detailProduct" text="Product"/>
         <text name="cm_detailFieldYield" text="Field yield (est.)"/>
         <text name="cm_detailToDeliver" text="To deliver"/>
+        <text name="cm_detailEstimated" text="est."/>
         <text name="cm_detailDelivered" text="Delivered"/>
         <text name="cm_detailRemaining" text="Still needed"/>
         <text name="cm_detailSurplus" text="Surplus"/>

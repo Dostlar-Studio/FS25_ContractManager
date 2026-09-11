@@ -679,6 +679,7 @@ function ContractManagerMissionInfoEvent.new(objectId, data)
     self.deposited = data ~= nil and data.deposited or 0
     self.fillTypeIndex = data ~= nil and data.fillTypeIndex or 0
     self.yieldLiters = data ~= nil and data.yieldLiters or 0
+    self.estimated = data ~= nil and data.estimated == true
     return self
 end
 
@@ -688,6 +689,7 @@ function ContractManagerMissionInfoEvent:writeStream(streamId, connection)
     streamWriteInt32(streamId, self.deposited or 0)
     streamWriteInt32(streamId, self.fillTypeIndex or 0)
     streamWriteInt32(streamId, self.yieldLiters or 0)
+    streamWriteBool(streamId, self.estimated == true)
 end
 
 function ContractManagerMissionInfoEvent:readStream(streamId, connection)
@@ -696,6 +698,7 @@ function ContractManagerMissionInfoEvent:readStream(streamId, connection)
     self.deposited = streamReadInt32(streamId)
     self.fillTypeIndex = streamReadInt32(streamId)
     self.yieldLiters = streamReadInt32(streamId)
+    self.estimated = streamReadBool(streamId)
     self:run(connection)
 end
 
@@ -712,6 +715,7 @@ function ContractManagerMissionInfoEvent:run(connection)
         deposited = self.deposited,
         fillTypeIndex = self.fillTypeIndex,
         yieldLiters = self.yieldLiters,
+        estimated = self.estimated == true,
     })
 end
 

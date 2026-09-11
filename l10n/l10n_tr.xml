@@ -144,6 +144,7 @@
         <text name="cm_detailProduct" text="Ürün"/>
         <text name="cm_detailFieldYield" text="Tarladan çıkacak (tahmini)"/>
         <text name="cm_detailToDeliver" text="Teslim edilecek"/>
+        <text name="cm_detailEstimated" text="tahmini"/>
         <text name="cm_detailDelivered" text="Teslim edilen"/>
         <text name="cm_detailRemaining" text="Kalan"/>
         <text name="cm_detailSurplus" text="Fazlası"/>

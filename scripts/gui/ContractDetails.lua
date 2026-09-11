@@ -108,7 +108,12 @@ function Details.buildDeliveryRows(mission)
         rows[#rows + 1] = { title = text("cm_detailFieldYield", "Field yield (est.)"),
             value = Details.formatLiters(info.yieldLiters) }
     end
-    rows[#rows + 1] = { title = text("cm_detailToDeliver", "To deliver"), value = Details.formatLiters(expected) }
+    local toDeliver = Details.formatLiters(expected)
+    if info.estimated then
+        -- pano kontrati: oyun henuz hedef vermedi, tarla veriminden tahmin
+        toDeliver = string.format("%s (%s)", toDeliver, text("cm_detailEstimated", "est."))
+    end
+    rows[#rows + 1] = { title = text("cm_detailToDeliver", "To deliver"), value = toDeliver }
     local running = mission.status == MissionStatus.RUNNING or mission.status == MissionStatus.PREPARING
     if running then
         rows[#rows + 1] = { title = text("cm_detailDelivered", "Delivered"), value = string.format("%s  (%d %%)",

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.14.0.0</version>
+    <version>1.14.1.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,9 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.14.1.0:
+- Contract details: product, estimated field yield and amount to deliver now also show for contracts on the board; the crop is read from the field when the contract does not carry it.
 
 Changelog 1.14.0.0:
 - Partner invite window: Enter accepts the invite right away, Esc keeps it for later on the contracts page.
@@ -160,6 +163,9 @@ KONTAKT & QUELLCODE
 
 Muss auf dem Server und allen Clients aktiviert sein. Nur PC/Mac.
 
+Changelog 1.14.1.0:
+- Vertragsdetails: Produkt, geschätzter Feldertrag und Liefermenge erscheinen jetzt auch bei Verträgen auf der Tafel; die Frucht wird vom Feld gelesen, wenn der Vertrag sie nicht trägt.
+
 Changelog 1.14.0.0:
 - Einladungsfenster: Enter nimmt die Einladung sofort an, Esc lässt sie für später auf der Vertragsseite.
 
@@ -284,6 +290,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.14.1.0 :
+- Détails du contrat : produit, rendement estimé du champ et quantité à livrer s'affichent aussi pour les contrats du tableau ; la culture est lue depuis le champ si le contrat ne la porte pas.
+
 Changelog 1.14.0.0 :
 - Fenêtre d'invitation : Entrée accepte immédiatement, Échap la garde pour plus tard sur la page des contrats.
 
@@ -407,6 +416,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.14.1.0:
+- Kontrat detayı: ürün, tahmini tarla verimi ve teslim edilecek miktar artık panodaki kontratlarda da görünür; kontrat ürünü taşımıyorsa tarladan okunur.
 
 Değişiklikler 1.14.0.0:
 - Davet penceresi: Enter daveti hemen kabul eder, Esc daha sonra Kontratlar sayfasında bırakır.

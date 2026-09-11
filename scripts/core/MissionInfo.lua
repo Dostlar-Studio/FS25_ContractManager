@@ -31,17 +31,73 @@ Info.PUSH_DELTA_LITERS = 250     -- bu kadar degismeden tekrar yayinlanmaz
 -- olcum (sunucu; saf yardimcilar test edilir)
 -- ---------------------------------------------------------------------------
 
+Info.SUCCESS_FACTOR_DEFAULT = 0.93   -- oyunun AbstractMission.SUCCESS_FACTOR'u okunamazsa
+Info.DELIVERY_TYPES = { harvestMission = true, mowMission = true }   -- urun teslim eden kontrat turleri
+
+---Oyunun basari carpani: teslim edilmesi gereken = tarla verimi * carpan (AbstractFieldMission
+---getFieldCompletion ayni sabiti kullanir). Okunamazsa varsayilan.
+function Info.getSuccessFactor()
+    local factor = AbstractMission ~= nil and tonumber(AbstractMission.SUCCESS_FACTOR) or nil
+    if factor == nil or factor <= 0 or factor > 1 then
+        return Info.SUCCESS_FACTOR_DEFAULT
+    end
+    return factor
+end
+
+function Info.isDeliveryType(mission)
+    local typeName = mission ~= nil and mission.type ~= nil and mission.type.name or nil
+    return typeName ~= nil and Info.DELIVERY_TYPES[typeName] == true
+end
+
 ---Kontratin teslimat sayilari. Teslimatsiz kontratta nil.
+---HarvestMission sinifi yayinlanmadi: `expectedLiters` uretimde mi baslangicta mi doluyor bilinmiyor.
+---Bos ise (pano kontrati) tarla veriminden tahmin edilir; `estimated` bayragi istemciye gider.
 function Info.measure(mission)
-    if mission == nil or type(mission.expectedLiters) ~= "number" or mission.expectedLiters <= 0 then
+    if mission == nil then
         return nil
     end
+    local yieldLiters = Info.estimateFieldYield(mission)
+    local expected = tonumber(mission.expectedLiters) or 0
+    local estimated = false
+    if expected <= 0 then
+        if not Info.isDeliveryType(mission) or yieldLiters <= 0 then
+            return nil
+        end
+        expected = yieldLiters * Info.getSuccessFactor()
+        estimated = true
+    end
     return {
-        expected = math.max(0, math.floor(mission.expectedLiters + 0.5)),
+        expected = math.max(0, math.floor(expected + 0.5)),
         deposited = math.max(0, math.floor((tonumber(mission.depositedLiters) or 0) + 0.5)),
         fillTypeIndex = Info.resolveFillType(mission) or 0,
-        yieldLiters = Info.estimateFieldYield(mission),
+        yieldLiters = yieldLiters,
+        estimated = estimated,
     }
+end
+
+---Kontratin urun turu (fruitType index). Alan adi yayinlanmamis sinifta yasadigi icin sirayla
+---denenir: kontrat, tarla durumu, tarla. FruitType.UNKNOWN sayilmaz.
+function Info.resolveFruitType(mission)
+    if mission == nil then
+        return nil
+    end
+    local unknown = FruitType ~= nil and FruitType.UNKNOWN or nil
+    local function valid(v)
+        return type(v) == "number" and v > 0 and v ~= unknown
+    end
+    if valid(mission.fruitTypeIndex) then return mission.fruitTypeIndex end
+    if valid(mission.fruitType) then return mission.fruitType end
+    local field = mission.field
+    if type(field) == "table" then
+        local state = field.fieldState
+        if type(state) == "table" and valid(state.fruitTypeIndex) then return state.fruitTypeIndex end
+        if valid(field.fruitTypeIndex) then return field.fruitTypeIndex end
+        if type(field.getFruitType) == "function" then
+            local ok, v = pcall(field.getFruitType, field)
+            if ok and valid(v) then return v end
+        end
+    end
+    return nil
 end
 
 function Info.resolveFillType(mission)
@@ -54,9 +110,10 @@ function Info.resolveFillType(mission)
     if type(mission.fillType) == "number" then
         return mission.fillType
     end
-    if type(mission.fruitTypeIndex) == "number" and g_fruitTypeManager ~= nil
+    local fruitTypeIndex = Info.resolveFruitType(mission)
+    if fruitTypeIndex ~= nil and g_fruitTypeManager ~= nil
         and g_fruitTypeManager.getFillTypeIndexByFruitTypeIndex ~= nil then
-        local index = g_fruitTypeManager:getFillTypeIndexByFruitTypeIndex(mission.fruitTypeIndex)
+        local index = g_fruitTypeManager:getFillTypeIndexByFruitTypeIndex(fruitTypeIndex)
         if type(index) == "number" then
             return index
         end
@@ -82,11 +139,11 @@ function Info.estimateFieldYield(mission)
 end
 
 function Info.getLiterPerSqm(mission)
-    if mission == nil or type(mission.fruitTypeIndex) ~= "number"
-        or g_fruitTypeManager == nil or g_fruitTypeManager.getFruitTypeByIndex == nil then
+    local fruitTypeIndex = Info.resolveFruitType(mission)
+    if fruitTypeIndex == nil or g_fruitTypeManager == nil or g_fruitTypeManager.getFruitTypeByIndex == nil then
         return nil
     end
-    local fruitType = g_fruitTypeManager:getFruitTypeByIndex(mission.fruitTypeIndex)
+    local fruitType = g_fruitTypeManager:getFruitTypeByIndex(fruitTypeIndex)
     if type(fruitType) ~= "table" then
         return nil
     end
@@ -162,6 +219,12 @@ function Info.broadcast(mission, connection)
     local data = Info.measure(mission)
     if data == nil then
         return false
+    end
+    -- kontratin ilk yayini loga: sunucu logundan hangi alanin doldugu gorulsun (alan adlari yayinlanmamis sinifta)
+    if Info.lastSent[objectId] == nil and connection == nil then
+        ContractManager.info("MissionInfo '%s': toDeliver=%d%s yield=%d fillType=%d deposited=%d",
+            tostring(mission.title or mission.progressTitle or "?"), data.expected, data.estimated and " (est)" or "",
+            data.yieldLiters or 0, data.fillTypeIndex or 0, data.deposited or 0)
     end
     local event = ContractManagerMissionInfoEvent.new(objectId, data)
     if connection ~= nil then

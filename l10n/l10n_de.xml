@@ -144,6 +144,7 @@
         <text name="cm_detailProduct" text="Ware"/>
         <text name="cm_detailFieldYield" text="Feldertrag (geschätzt)"/>
         <text name="cm_detailToDeliver" text="Zu liefern"/>
+        <text name="cm_detailEstimated" text="gesch."/>
         <text name="cm_detailDelivered" text="Geliefert"/>
         <text name="cm_detailRemaining" text="Noch nötig"/>
         <text name="cm_detailSurplus" text="Überschuss"/>
