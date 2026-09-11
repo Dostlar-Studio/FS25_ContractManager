@@ -18,6 +18,7 @@
 --
 
 ContractManagerDiscord = {
+    MOD_NAME = "FS25_DiscordBridge",
     emitted = 0,
     dropped = 0,
 }
@@ -39,11 +40,27 @@ local function stateName(value)
 end
 local GUARD_CODE_NAMES = { [1] = "cancelBlocked", [2] = "forcedPurge", [3] = "baleBlocked" }
 
+---Kopru modunun `DiscordBridge` tablosunu bul. FS25'te her mod KENDI global ortaminda calisir:
+---baska modun globali dogrudan gorunmez; oyun her mod ortamini mod adiyla (`FS25_DiscordBridge`)
+---gercek _G'ye kaydeder. Canli logda hook satiri hic yazmadi, kopru DB'sinde tek cm_ olay yoktu
+---(2026-09-11) - sebep buydu. Siralama: ayni ortam (harness) -> mod ortami -> yok.
+function Discord.resolve()
+    if type(DiscordBridge) == "table" then
+        return DiscordBridge
+    end
+    local env = rawget(_G, Discord.MOD_NAME)
+    if type(env) == "table" and type(env.DiscordBridge) == "table" then
+        return env.DiscordBridge
+    end
+    return nil
+end
+
 function Discord.getEmitter()
-    if DiscordBridge == nil or DiscordBridge.EventLog == nil then
+    local bridge = Discord.resolve()
+    if bridge == nil or bridge.EventLog == nil then
         return nil
     end
-    local emit = DiscordBridge.EventLog.emit
+    local emit = bridge.EventLog.emit
     if type(emit) ~= "function" then
         return nil
     end

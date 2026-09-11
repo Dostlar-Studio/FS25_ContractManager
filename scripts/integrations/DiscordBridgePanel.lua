@@ -170,15 +170,23 @@ end
 -- ---------------------------------------------------------------------------
 
 function Panel.install()
-    if Panel.installed or DiscordBridge == nil then
+    if Panel.installed then
         return false
     end
     local mission = g_currentMission
     if mission == nil or not mission:getIsServer() then
         return false
     end
+    local bridge = ContractManagerDiscord ~= nil and ContractManagerDiscord.resolve() or nil
+    if bridge == nil then
+        -- kopru yuklu ama ortami bulunamadiysa bunu logda gormek gerekir; yuklu degilse sessiz
+        if g_modIsLoaded ~= nil and g_modIsLoaded[ContractManagerDiscord.MOD_NAME] then
+            ContractManager.warning("Discord Bridge is loaded but its environment was not found; panel/events off")
+        end
+        return false
+    end
     local count = 0
-    local C = DiscordBridge.Collectors
+    local C = bridge.Collectors
     if C ~= nil and type(C.STEPS) == "table" then
         local exists = false
         for _, step in ipairs(C.STEPS) do
@@ -189,7 +197,7 @@ function Panel.install()
         end
         count = count + 1
     end
-    local Inbox = DiscordBridge.CommandInbox
+    local Inbox = bridge.CommandInbox
     if Inbox ~= nil and type(Inbox.actions) == "table" then
         Inbox.actions.cmSet = Panel.commandSet
         Inbox.actions.cmAdmin = Panel.commandAdmin

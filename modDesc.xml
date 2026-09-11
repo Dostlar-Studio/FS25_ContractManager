@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.13.1.0</version>
+    <version>1.13.2.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,9 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.13.2.0:
+- Fixed: the FS25_DiscordBridge integration never activated (mods run in separate script environments); contract events and the web panel section now reach the bridge.
 
 Changelog 1.13.1.0:
 - HUD contract bar: the role is now the bar title and the payout comes first, so neither is cut off.
@@ -151,6 +154,9 @@ KONTAKT & QUELLCODE
 
 Muss auf dem Server und allen Clients aktiviert sein. Nur PC/Mac.
 
+Changelog 1.13.2.0:
+- Behoben: Die FS25_DiscordBridge-Anbindung wurde nie aktiv (Mods laufen in getrennten Skript-Umgebungen); Vertragsereignisse und der Web-Panel-Abschnitt erreichen die Brücke jetzt.
+
 Changelog 1.13.1.0:
 - HUD-Vertragsbalken: Rolle als Titel, Auszahlung vorne - nichts wird mehr abgeschnitten.
 
@@ -266,6 +272,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.13.2.0 :
+- Corrigé : l'intégration FS25_DiscordBridge ne s'activait jamais (les mods tournent dans des environnements de script séparés) ; les événements de contrat et la section du panneau web atteignent désormais le pont.
+
 Changelog 1.13.1.0 :
 - Barre de contrat du HUD : le rôle en titre et le gain en premier, plus rien n'est tronqué.
 
@@ -380,6 +389,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.13.2.0:
+- Düzeltme: FS25_DiscordBridge entegrasyonu hiç devreye girmiyordu (modlar ayrı script ortamlarında çalışır); kontrat olayları ve web paneli bölümü artık köprüye ulaşıyor.
 
 Değişiklikler 1.13.1.0:
 - HUD kontrat çubuğu: rol başlıkta, kazanç metnin başında; artık kesilmiyor.
