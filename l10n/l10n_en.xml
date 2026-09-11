@@ -245,8 +245,11 @@
         <text name="cm_partFull" text="No free partner slot."/>
         <text name="cm_partNoInvite" text="You have no invite for this contract."/>
         <text name="cm_partNotMember" text="You are not a partner on this contract."/>
-        <text name="cm_partInviteNotify" text="You were invited to share the contract &quot;%s&quot; (Farm %d). Accept it on the contracts page."/>
+        <text name="cm_partInviteNotify" text="You were invited to share the contract &quot;%s&quot; (Farm %d). Press Enter to accept, or accept it later on the contracts page."/>
         <text name="cm_popupOk" text="OK"/>
+        <text name="cm_partInviteGone" text="The invite is no longer available."/>
+        <text name="cm_popupLater" text="Later"/>
+        <text name="cm_popupAccept" text="Accept"/>
         <text name="cm_popupPartnerTitle" text="Shared Contract"/>
         <text name="cm_hudOwner" text="Owner"/>
         <text name="cm_hudPartner" text="Partner"/>

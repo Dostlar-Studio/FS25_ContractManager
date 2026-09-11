@@ -209,8 +209,15 @@ function ContractManagerNotificationEvent.showLocal(code, farmId, text, amount)
         return
     end
     if ContractManagerNotificationEvent.POPUP_CODES[code] and ContractManagerInfoPopup ~= nil then
+        local action = nil
+        if code == ContractManagerNotificationEvent.PARTNER_INVITE and ContractManagerPartnership ~= nil then
+            -- Enter = kabul et (davet eden ciftlik 'amount' alaninda gelir)
+            local inviter = amount
+            action = { acceptText = g_i18n:getText("cm_popupAccept"),
+                onAccept = function() ContractManagerPartnership.acceptInvite(inviter) end }
+        end
         ContractManagerInfoPopup.show(g_i18n:getText("cm_popupPartnerTitle"), line,
-            code ~= ContractManagerNotificationEvent.PARTNER_DECLINED)
+            code ~= ContractManagerNotificationEvent.PARTNER_DECLINED, action)
         return
     end
     if g_currentMission.addIngameNotification ~= nil then

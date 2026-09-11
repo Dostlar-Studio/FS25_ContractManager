@@ -672,6 +672,35 @@ function Part.onClickButton()
     end
 end
 
+---Bu ciftlige bekleyen daveti olan kontrat (saf; test edilir). inviterFarmId verilirse sahibi o olmali.
+function Part.findInvitedMission(farmId, inviterFarmId)
+    if farmId == nil or g_missionManager == nil or g_missionManager.missions == nil then
+        return nil
+    end
+    for _, mission in ipairs(g_missionManager.missions) do
+        if Part.hasPendingInvite(mission, farmId) and (inviterFarmId == nil or mission.farmId == inviterFarmId) then
+            return mission
+        end
+    end
+    return nil
+end
+
+---Davet penceresinde Enter: daveti bul, sunucuya KABUL gonder. Kullanici Kontratlar sayfasina
+---gitmek zorunda kalmasin (kullanici istegi 2026-09-11). Davet kalkmissa toast.
+function Part.acceptInvite(inviterFarmId)
+    local farmId = g_currentMission ~= nil and g_currentMission.getFarmId ~= nil and g_currentMission:getFarmId() or nil
+    local mission = Part.findInvitedMission(farmId, inviterFarmId) or Part.findInvitedMission(farmId, nil)
+    if mission == nil then
+        if ContractManagerAdmin ~= nil and ContractManagerAdmin.showResult ~= nil then
+            ContractManagerAdmin.showResult("cm_partInviteGone", false)
+        end
+        return false
+    end
+    ContractManagerPartnerEvent.send(ContractManagerPartnerEvent.ACCEPT,
+        ContractManager.getMissionKey(mission), nil, ContractManager.getMissionObjectId(mission))
+    return true
+end
+
 -- Stok Kontratlar sayfasindan davet: hedef ciftlik burada secilir (sayfada secici yok).
 Part.stockTarget = nil
 

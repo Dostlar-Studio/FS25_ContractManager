@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <!--
     FS25_ContractManager - bilgi penceresi (ortaklik: davet gitti / kabul edildi / reddedildi).
-    FarmPickDialog ile ayni stok kalip; secici yok, tek Tamam butonu (Enter/Esc ikisi de kapatir).
+    FarmPickDialog ile ayni stok kalip; Bilgi: tek Tamam (Enter/Esc kapatir). Davet: Enter = kabul et, Esc = daha sonra.
 -->
 <GUI name="ContractManagerInfoPopup">
 <GuiElement profile="fs25_dialogBg" id="dialogBg">
@@ -14,8 +14,10 @@
         <Text profile="fs25_dialogTextWithTitle" id="dialogText" text=""/>
     </GuiElement>
 
-    <BoxLayout profile="fs25_dialogButtonBox">
-        <Button profile="buttonOK" id="okButton" text="$l10n_cm_popupOk" onClick="onClickBack"/>
+    <BoxLayout profile="fs25_dialogButtonBox" id="buttonBox">
+        <Button profile="buttonOK" id="okButton" text="$l10n_cm_popupOk" onClick="onClickOk"/>
+        <Bitmap profile="fs25_dialogButtonBoxSeparator" id="buttonSeparator"/>
+        <Button profile="buttonBack" id="laterButton" text="$l10n_cm_popupLater" onClick="onClickBack"/>
     </BoxLayout>
 </GuiElement>
 </GUI>

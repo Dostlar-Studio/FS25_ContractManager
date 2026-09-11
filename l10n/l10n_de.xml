@@ -245,8 +245,11 @@
         <text name="cm_partFull" text="Kein freier Partnerplatz."/>
         <text name="cm_partNoInvite" text="Du hast keine Einladung für diesen Vertrag."/>
         <text name="cm_partNotMember" text="Du bist bei diesem Vertrag kein Partner."/>
-        <text name="cm_partInviteNotify" text="Du wurdest zum Vertrag &quot;%s&quot; eingeladen (Hof %d). Auf der Vertragsseite annehmen."/>
+        <text name="cm_partInviteNotify" text="Du wurdest zum Vertrag &quot;%s&quot; eingeladen (Hof %d). Mit Enter annehmen oder später auf der Vertragsseite."/>
         <text name="cm_popupOk" text="OK"/>
+        <text name="cm_partInviteGone" text="Die Einladung ist nicht mehr verfügbar."/>
+        <text name="cm_popupLater" text="Später"/>
+        <text name="cm_popupAccept" text="Annehmen"/>
         <text name="cm_popupPartnerTitle" text="Gemeinsamer Vertrag"/>
         <text name="cm_hudOwner" text="Inhaber"/>
         <text name="cm_hudPartner" text="Partner"/>

@@ -245,8 +245,11 @@
         <text name="cm_partFull" text="Ortak sayısı dolu."/>
         <text name="cm_partNoInvite" text="Bu kontrat için davetiniz yok."/>
         <text name="cm_partNotMember" text="Bu kontratta ortak değilsiniz."/>
-        <text name="cm_partInviteNotify" text="&quot;%s&quot; kontratı için ortaklık daveti aldınız (Çiftlik %d). Kontratlar sayfasından kabul edebilirsiniz."/>
+        <text name="cm_partInviteNotify" text="&quot;%s&quot; kontratı için ortaklık daveti aldınız (Çiftlik %d). Enter ile kabul edin ya da daha sonra Kontratlar sayfasından."/>
         <text name="cm_popupOk" text="Tamam"/>
+        <text name="cm_partInviteGone" text="Davet artık geçerli değil."/>
+        <text name="cm_popupLater" text="Daha sonra"/>
+        <text name="cm_popupAccept" text="Kabul et"/>
         <text name="cm_popupPartnerTitle" text="Ortak Kontrat"/>
         <text name="cm_hudOwner" text="Sahip"/>
         <text name="cm_hudPartner" text="Ortak"/>
