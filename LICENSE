@@ -1,0 +1,83 @@
+Dostlar STUDIO mod lisansi / mod license
+Surum 1.0 - 12 Eylul 2026
+Telif (c) 2026 Dostlar STUDIO - https://studio.dostlarkonagi.com
+
+--------------------------------------------------------------------
+TURKCE
+--------------------------------------------------------------------
+
+Bu mod ucretsizdir. Asagidaki kosullar hem yayinlanan zip dosyasina hem de
+bu depodaki kaynak koda uygulanir.
+
+YAPABILECEKLERIN
+
+1. Kullanma. Modu tek kisilik oyununda ve yonettigin sunucularda serbestce
+   calistirabilirsin. Oyuncularin da kurmasi gereken bir mod oldugu icin
+   zip dosyasini kendi sunucun uzerinden dagitmak serbesttir.
+
+2. Duzenleme ve paylasma. Modu kendi ihtiyacina gore degistirebilir, bir mod
+   paketine dahil edebilir ve degistirdigin halini paylasabilirsin. Tek sart
+   kaynagi belirtmektir: "Dostlar STUDIO" adi ve
+   https://studio.dostlarkonagi.com adresi, kullanicinin gorebilecegi bir
+   yerde (mod aciklamasi, paket readme'si veya indirme sayfasi) yazilmalidir.
+
+3. Koddan yararlanma. Kod parcalarini kendi modunda kullanabilirsin; ayni
+   kredi kurali gecerlidir.
+
+YAPAMAYACAKLARIN
+
+4. Yeniden yukleme. Zip dosyasini baska bir mod sitesine, dosya paylasim
+   servisine ya da kapali bir arsive yukleyemezsin. Baglanti ver, dosyayi
+   kopyalama; boylece herkes guncel surumu alir.
+
+5. Satis. Modu satamaz; odeme duvari, zorunlu reklam, baglanti kisaltici ya
+   da bekleme sayaci arkasina koyamazsin.
+
+GARANTI YOK
+
+6. Mod "oldugu gibi" sunulur. Oyun kaydinda, sisteminde veya sunucu
+   deneyiminde yol acabilecegi sorunlardan (uyumsuzluk, kararsizlik, veri
+   kaybi) Dostlar STUDIO sorumlu tutulamaz. Kurulumdan once kayit dosyanin
+   yedegini al.
+
+Bu kosullarin disinda bir kullanim icin: hello@kahrastudio.art
+
+--------------------------------------------------------------------
+ENGLISH
+--------------------------------------------------------------------
+
+This mod is free. The terms below apply both to the released zip file and to
+the source code in this repository.
+
+WHAT YOU MAY DO
+
+1. Use it. Run the mod freely in single player and on servers you administer.
+   Because players need it installed as well, distributing the zip through
+   your own server is allowed.
+
+2. Edit and share. You may change the mod for your own needs, include it in a
+   modpack and share your modified version. The single condition is credit:
+   the name "Dostlar STUDIO" and the address
+   https://studio.dostlarkonagi.com must appear where users can see it (the
+   mod description, the pack readme or the download page).
+
+3. Reuse code. You may use pieces of the code in your own mod; the same
+   credit rule applies.
+
+WHAT YOU MAY NOT DO
+
+4. Reupload. You may not upload the zip file to another mod site, a file
+   sharing service or a closed archive. Link to it instead of copying the
+   file, so that everyone gets the current version.
+
+5. Sell. You may not sell the mod or place it behind a paywall, forced
+   advertising, a link shortener or a wait timer.
+
+NO WARRANTY
+
+6. The mod is provided "as is". Dostlar STUDIO is not liable for problems it
+   may cause to your savegame, your system or your server experience, such as
+   incompatibility, instability or data loss. Back up your savegame before
+   installing.
+
+For any use outside these terms: hello@kahrastudio.art
