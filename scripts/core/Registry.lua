@@ -203,6 +203,18 @@ function Registry:onMissionFinished(mission, finishState)
     if id == nil then
         return
     end
+    -- AbstractMission.finish uc ayri modulde sarmalanmis ve oyun bunu iki kez cagirabiliyor
+    -- (zaman asimi ile tamamlanma yarisi). Ikinci gecis itibari IKI KEZ dusuruyor, gecmise
+    -- ikinci kayit yaziyor ve sayaclari iki kez artiriyordu (2026-09-13).
+    if mission.cmFinishHandled then
+        return
+    end
+    mission.cmFinishHandled = true
+    -- Odulu ITIBAR DEGISMEDEN once dondur: asagidaki publish Reputation'i tetikliyor,
+    -- odeme ise dismiss'te yapiliyor. Bkz. ContractManagerReward.freeze.
+    if ContractManagerReward ~= nil and ContractManagerReward.freeze ~= nil then
+        ContractManagerReward.freeze(mission)
+    end
     local meta = self.active[id]
     if meta == nil then
         -- savegame'den once kabul edilmis ve kaydi olmayan kontrat: asgari meta

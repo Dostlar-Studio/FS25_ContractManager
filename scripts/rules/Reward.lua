@@ -132,13 +132,41 @@ function Reward.overwriteGetActualReward(mission, superFunc)
     return Reward.getPartialReward(mission)
 end
 
+---Kontrat bitiminde odulu dondur. Odeme zinciri su sirayla isliyor:
+---finish() -> Registry bitisi isler -> MESSAGE_CONTRACT_FINISHED -> ITIBAR DEGISIR
+---   -> dismiss() -> getTotalReward() -> getReward() -> itibar bonusu ARTIK YENI PUANI okur.
+---Yani oyuncunun ekranda gordugu tutar ile hesabina gecen tutar farkliydi (2026-09-13).
+---Schedule bonusu gercek duvar saatinden okundugu icin ayni sorun orada daha da buyuktu.
+function Reward.freeze(mission)
+    if mission == nil then
+        return nil
+    end
+    local ok, value = pcall(mission.getReward, mission)
+    if ok and type(value) == "number" then
+        mission.cmFrozenReward = value
+    end
+    return mission.cmFrozenReward
+end
+
 function Reward.overwriteGetReward(mission, superFunc)
     if not Reward.isEnabled() or mission.cmInReward then
         return superFunc(mission)
     end
+    -- bitiste dondurulmus deger varsa odeme, ceza ve gosterim hep ayni sayiyi kullanir
+    if type(mission.cmFrozenReward) == "number" then
+        return mission.cmFrozenReward
+    end
     mission.cmInReward = true
-    local base = superFunc(mission)
+    -- Oyunun kendi getReward'i hata atarsa bayrak temizlenmeden kalirdi ve o kontrat
+    -- bundan sonra HEP ham oyun odulunu dondururdu (carpan, itibar, bonuslar kaybolurdu).
+    -- Hata getPenalty'deki pcall'da yutuldugu icin logda iz de birakmiyordu.
+    local ok, base = pcall(superFunc, mission)
     mission.cmInReward = nil
+    if not ok then
+        ContractManager.warning("getReward failed for contract %s: %s",
+            tostring(ContractManager.getMissionKey(mission)), tostring(base))
+        error(base, 0)
+    end
     local value = Reward.apply(base)
     -- itibar bonusu: kabul edilmis kontratta ciftligin puani; kabul oncesi istemcide kendi ciftligi (gosterim)
     if ContractManagerReputation ~= nil and type(value) == "number" and value > 0 then

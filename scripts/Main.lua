@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.16.0.0",
+    VERSION = "1.17.0.0",
     LOG_PREFIX = "[CM]",
 
     -- savegame icindeki birlesik durum dosyasi ve devralinacak eski Guard dosyasi
