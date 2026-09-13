@@ -125,5 +125,7 @@ if addConsoleCommand ~= nil and ContractManagerAdmin ~= nil then
         ContractManagerAdminEvent.send(ContractManagerAdmin.ACTION_TRANSFER, uniqueId, tonumber(farmId))
         return "transfer requested"
     end
-    addConsoleCommand("cmTransferContract", "ContractManager: move an active contract to another farm", "consoleTransfer", ContractManagerAdmin)
+    if ContractManager.consoleCommands then
+        addConsoleCommand("cmTransferContract", "ContractManager: move an active contract to another farm", "consoleTransfer", ContractManagerAdmin)
+    end
 end

@@ -378,7 +378,7 @@ function Admin:consoleAssign(uniqueId, farmId)
     return "assign requested"
 end
 
-if addConsoleCommand ~= nil then
+if addConsoleCommand ~= nil and ContractManager.consoleCommands then
     addConsoleCommand("cmListContracts", "ContractManager: list contracts with ids", "consoleList", Admin)
     addConsoleCommand("cmRefreshContracts", "ContractManager: remove unaccepted contracts and regenerate", "consoleRefresh", Admin)
     addConsoleCommand("cmCancelContract", "ContractManager: force-cancel a contract by uniqueId", "consoleCancel", Admin)
