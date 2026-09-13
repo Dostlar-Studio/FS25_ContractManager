@@ -118,11 +118,23 @@ function Part.addLiters(mission, farmId, liters)
     entry.liters[farmId] = (entry.liters[farmId] or 0) + liters
 end
 
+---Tarlada gecen SURE (saniye). Onceden her cagrida 1 artiyordu, oysa oyun bu yolu
+---is alani basina her karede cagiriyor: cok bolmeli bir aleti tarlaya indirip bekleyen
+---ortak hicbir sey yapmadan odulun yarisina yakinini aliyordu (2026-09-13).
+Part.WORK_TICK_MS = 1000
+
 function Part.addWork(mission, farmId)
     local entry = ensureEntry(mission)
     if entry == nil or farmId == nil then
         return
     end
+    entry.workTick = entry.workTick or {}
+    local now = nowMs()
+    local last = entry.workTick[farmId]
+    if last ~= nil and now - last < Part.WORK_TICK_MS then
+        return
+    end
+    entry.workTick[farmId] = now
     entry.work[farmId] = (entry.work[farmId] or 0) + 1
 end
 
@@ -413,7 +425,9 @@ end
 function Part.overwriteIsMissionWorkAllowed(manager, superFunc, farmId, x, z, workAreaType, vehicle)
     local allowed = superFunc(manager, farmId, x, z, workAreaType, vehicle)
     if allowed then
-        if manager.getMissionAtWorldPosition ~= nil then
+        -- isEnabled kontrolu yalnizca asagidaki dalda vardi: ortaklik KAPALI sunucularda bile
+        -- her is alani icin her karede uzamsal sorgu calisiyordu.
+        if Part.isEnabled() and manager.getMissionAtWorldPosition ~= nil then
             local mission = manager:getMissionAtWorldPosition(x, z)
             if mission ~= nil and Part.get(mission) ~= nil then
                 Part.addWork(mission, farmId)

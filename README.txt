@@ -1,4 +1,4 @@
-FS25 KONTRAT YÖNETİCİSİ - v1.16.0.0
+FS25 KONTRAT YÖNETİCİSİ - v1.17.0.0
 ===============================================================================
 
 Bu sürüm, FS25_ContractGuard modunun tamamını yeni Kontrat Yöneticisi çatısı

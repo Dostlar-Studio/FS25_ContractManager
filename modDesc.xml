@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.16.0.0</version>
+    <version>1.17.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,12 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.17.0.0:
+- Fixed: the payout was recalculated after the contract had already changed your reputation, so the amount on screen did not match the amount paid. The reward is now frozen when the contract ends.
+- Fixed: if the game's own reward code failed once, that contract silently lost the multiplier and every bonus from then on.
+- Fixed: a contract could be counted twice, costing double reputation and writing two history entries.
+- Fixed: the partner contribution counter counted engine calls instead of time, so an idle partner could claim half the reward. It now counts seconds worked.
 
 Changelog 1.16.0.0:
 - Fixed: the confirmation dialog for "Refresh board" and "Force cancel" read the wrong answer, so both buttons did nothing.
@@ -178,6 +184,12 @@ KONTAKT & QUELLCODE
 
 Muss auf dem Server und allen Clients aktiviert sein. Nur PC/Mac.
 
+Changelog 1.17.0.0:
+- Behoben: Die Auszahlung wurde neu berechnet, nachdem der Vertrag den Ruf bereits geändert hatte; Anzeige und Gutschrift wichen voneinander ab. Die Belohnung wird jetzt beim Vertragsende eingefroren.
+- Behoben: Schlug der spieleigene Belohnungscode einmal fehl, verlor dieser Vertrag danach still den Multiplikator und alle Boni.
+- Behoben: Ein Vertrag konnte doppelt gewertet werden (doppelter Rufverlust, zwei Verlaufseinträge).
+- Behoben: Der Partner-Beitragszähler zählte Engine-Aufrufe statt Zeit; ein untätiger Partner konnte die halbe Belohnung beanspruchen. Jetzt zählen gearbeitete Sekunden.
+
 Changelog 1.16.0.0:
 - Behoben: Der Bestätigungsdialog für "Tafel erneuern" und "Zwangsabbruch" las die falsche Antwort, beide Buttons taten nichts.
 - Behoben: Im Vertragsfenster stand auf dem Server immer 0 geliefert; jetzt zählen die Werte vom Server.
@@ -320,6 +332,12 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.17.0.0 :
+- Corrigé : le paiement était recalculé après que le contrat ait déjà modifié votre réputation ; le montant affiché ne correspondait pas au montant versé. La récompense est désormais figée à la fin du contrat.
+- Corrigé : si le code de récompense du jeu échouait une fois, ce contrat perdait silencieusement le multiplicateur et tous les bonus.
+- Corrigé : un contrat pouvait être compté deux fois (double perte de réputation, deux entrées d'historique).
+- Corrigé : le compteur de contribution du partenaire comptait les appels moteur au lieu du temps ; un partenaire inactif pouvait réclamer la moitié de la récompense. Il compte maintenant les secondes travaillées.
+
 Changelog 1.16.0.0 :
 - Corrigé : la fenêtre de confirmation de « Actualiser le tableau » et « Annulation forcée » lisait la mauvaise réponse, les deux boutons ne faisaient rien.
 - Corrigé : le panneau de contrat affichait toujours 0 livré sur un serveur ; il utilise désormais les valeurs envoyées par le serveur.
@@ -461,6 +479,12 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.17.0.0:
+- Düzeltme: ödeme, kontrat itibarı değiştirdikten sonra yeniden hesaplanıyordu; ekranda gördüğünüz tutar ile hesabınıza geçen tutar farklıydı. Ödül artık kontrat bitince donduruluyor.
+- Düzeltme: oyunun kendi ödül kodu bir kez hata verirse o kontrat sonrasında çarpanı ve tüm bonusları sessizce kaybediyordu.
+- Düzeltme: bir kontrat iki kez sayılabiliyordu; itibar iki kez düşüyor ve geçmişe iki kayıt yazılıyordu.
+- Düzeltme: ortak katkı sayacı süre yerine motor çağrısı sayıyordu, boşta duran ortak ödülün yarısını isteyebiliyordu. Artık çalışılan saniyeyi sayıyor.
 
 Değişiklikler 1.16.0.0:
 - Düzeltme: "Panoyu yenile" ve "Zorla iptal" onay penceresi yanlış yanıtı okuyordu, iki buton da hiçbir şey yapmıyordu.
