@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.21.0.0</version>
+    <version>1.21.1.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,12 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.21.1.0:
+- Fixed: refreshing the board often produced no contracts at all. The game tries a single random field per contract type and gives up immediately if it does not fit, relying on repetition over time; the refresh only ran one round and concluded nothing could be generated. It now retries.
+
+Changelog 1.21.1.0:
+- Behoben: Das Erneuern der Tafel erzeugte oft gar keine Verträge. Das Spiel prüft je Vertragstyp nur ein zufälliges Feld und gibt sofort auf, wenn es nicht passt; die Erneuerung führte nur eine Runde aus. Jetzt wird mehrfach versucht.
 
 Changelog 1.21.0.0:
 - "Refresh board" no longer empties the board. It first checks whether the game can generate a contract at all; if no field is available it keeps every contract and says so, instead of deleting them with nothing to put back.
@@ -394,6 +400,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.21.1.0 :
+- Corrigé : l'actualisation du tableau ne produisait souvent aucun contrat. Le jeu n'essaie qu'un seul champ au hasard par type et abandonne aussitôt s'il ne convient pas ; l'actualisation ne faisait qu'un seul passage. Elle réessaie désormais.
+
 Changelog 1.21.0.0 :
 - « Actualiser le tableau » ne vide plus le tableau. Le mod vérifie d'abord si le jeu peut générer un contrat ; si aucun champ n'est disponible, tous les contrats sont conservés et la raison est indiquée.
 
@@ -572,6 +581,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.21.1.0:
+- Düzeltme: pano yenilemesi çoğu zaman hiç kontrat üretmiyordu. Oyun her kontrat türü için tek bir rastgele tarla deniyor ve uymuyorsa hemen vazgeçiyor; yenileme ise yalnızca tek tur deneyip üretilemiyor sonucuna varıyordu. Artık tekrar deniyor.
 
 Değişiklikler 1.21.0.0:
 - "Panoyu yenile" artık panoyu boşaltmıyor. Önce oyunun kontrat üretip üretemediğine bakıyor; uygun tarla yoksa hiçbir kontratı silmiyor ve sebebini yazıyor.
