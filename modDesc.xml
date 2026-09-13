@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.20.0.0</version>
+    <version>1.20.1.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,12 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.20.1.0:
+- Added the French translation. The mod advertised French but shipped no French text file, so French players saw an English interface.
+
+Changelog 1.20.1.0:
+- Französische Übersetzung ergänzt. Der Mod bot Französisch an, lieferte aber keine französische Textdatei, sodass die Oberfläche englisch blieb.
 
 Changelog 1.20.0.0:
 - Fixed: restarting the game from the server panel without restarting the process stacked the generation and harvest multipliers on top of themselves and carried old reservations over. The game's own values are now remembered on the game side.
@@ -364,6 +370,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.20.1.0 :
+- Ajout de la traduction française. Le mod annonçait le français sans fournir de fichier de textes français ; l'interface restait en anglais.
+
 Changelog 1.20.0.0 :
 - Corrigé : redémarrer la partie depuis le panneau du serveur sans relancer le processus empilait les multiplicateurs de génération et de récolte et conservait les anciennes réservations. Les valeurs d'origine du jeu sont désormais mémorisées côté jeu.
 - La page de gestion se rafraîchit maintenant lorsqu'elle est ouverte et que quelque chose change sur le serveur.
@@ -527,6 +536,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.20.1.0:
+- Fransızca çeviri eklendi. Mod Fransızca ilan ediyordu ama Fransızca metin dosyası yoktu, arayüz İngilizce kalıyordu.
 
 Değişiklikler 1.20.0.0:
 - Düzeltme: sunucu panelinden oyunu durdurup başlatmak (süreç yeniden başlamadan) üretim ve hasat çarpanlarını üst üste bindiriyor, eski rezervasyonları taşıyordu. Oyunun kendi değerleri artık oyun tarafında saklanıyor.
