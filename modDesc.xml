@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.20.4.0</version>
+    <version>1.21.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,12 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.21.0.0:
+- "Refresh board" no longer empties the board. It first checks whether the game can generate a contract at all; if no field is available it keeps every contract and says so, instead of deleting them with nothing to put back.
+
+Changelog 1.21.0.0:
+- "Tafel erneuern" leert die Tafel nicht mehr. Es wird zuerst geprüft, ob das Spiel überhaupt einen Vertrag erzeugen kann; ist kein Feld frei, bleiben alle Verträge erhalten und es wird erklärt, warum.
 
 Changelog 1.20.4.0:
 - Diagnostics: a board refresh that regenerates nothing now lists, per contract type, which ones this mod's rules skipped and which ones the game itself declined, so the cause is unambiguous.
@@ -388,6 +394,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.21.0.0 :
+- « Actualiser le tableau » ne vide plus le tableau. Le mod vérifie d'abord si le jeu peut générer un contrat ; si aucun champ n'est disponible, tous les contrats sont conservés et la raison est indiquée.
+
 Changelog 1.20.4.0 :
 - Diagnostic : si une actualisation ne régénère rien, le journal indique désormais, par type de contrat, ceux écartés par ce mod et ceux refusés par le jeu lui-même.
 
@@ -563,6 +572,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.21.0.0:
+- "Panoyu yenile" artık panoyu boşaltmıyor. Önce oyunun kontrat üretip üretemediğine bakıyor; uygun tarla yoksa hiçbir kontratı silmiyor ve sebebini yazıyor.
 
 Değişiklikler 1.20.4.0:
 - Teşhis: hiç kontrat üretmeyen pano yenilemesi artık tür tür yazıyor; hangilerini bu modun kuralları atladı, hangilerini oyunun kendisi üretemedi.

@@ -100,6 +100,7 @@
         <text name="cm_adminNoFarm" text="Geçersiz çiftlik."/>
         <text name="cm_adminLimit" text="Çiftlik kontrat limitine ulaşmış."/>
         <text name="cm_adminFailed" text="İşlem başarısız."/>
+        <text name="cm_adminNoFields" text="Pano şu anda yenilenemiyor: oyunun yeni kontrat için uygun tarlası yok. Hiçbir kontrat silinmedi."/>
         <text name="cm_secReputation" text="İtibar"/>
         <text name="cm_reputation_enabled" text="İtibar sistemi"/>
         <text name="cm_reputation_enabled_tooltip" text="Tamamlanan kontrat puan kazandırır, başarısız/iptal/süre aşımı puan düşürür. Puan ödül bonusu ve ek kontrat hakkı verir."/>

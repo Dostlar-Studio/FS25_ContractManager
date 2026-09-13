@@ -101,13 +101,28 @@ function Admin.refreshBoard()
             "Board refresh found nothing to remove: %d contracts seen [%s]; MissionStatus.CREATED=%s",
             seen, table.concat(parts, " "), tostring(MissionStatus ~= nil and MissionStatus.CREATED or nil))
     end
+    -- YOKLAMA: once bir kontrat uretmeyi dene. Oyun uretemiyorsa (uygun tarla yok) silme
+    -- yapilmaz; yoksa yenileme panoyu bosaltip bir daha dolduramaz. Canli olcum 2026-09-13:
+    -- 13 kontrat silindi, 12 turun hepsi oyuna gitti, hicbiri uretmedi, pano bos kaldi.
+    g_missionManager.generationTimer = -1
+    local probe = 0
+    if #doomed > 0 then
+        probe = Admin.fillBoard(1)
+        if probe == 0 then
+            ContractManager.warning(
+                "Board refresh aborted: the game cannot generate a contract right now; %d contracts kept",
+                #doomed)
+            return false, "cm_adminNoFields"
+        end
+    end
+
     for index = #doomed, 1, -1 do
         pcall(function() doomed[index]:delete() end)
     end
     local removed = #doomed
-    -- uretim sayacini sifirla: getCanStartNewMissionGeneration generationTimer < 0 ister
     g_missionManager.generationTimer = -1
-    local created = Admin.fillBoard(removed)
+    -- yoklama zaten bir kontrat uretti; kalani kadar doldur ki toplam silinen sayisini gecmesin
+    local created = probe + Admin.fillBoard(math.max(0, removed - probe))
     ContractManager.info("Admin refreshed contract board: %d removed, %d generated immediately", removed, created)
     return true, "cm_adminRefreshed"
 end

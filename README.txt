@@ -1,4 +1,4 @@
-FS25 KONTRAT YÖNETİCİSİ - v1.20.4.0
+FS25 KONTRAT YÖNETİCİSİ - v1.21.0.0
 ===============================================================================
 
 Bu sürüm, FS25_ContractGuard modunun tamamını yeni Kontrat Yöneticisi çatısı
@@ -170,7 +170,8 @@ ZAMANLI BONUSLAR (1.3, gerçek saat)
 
 YÖNETİCİ ARAÇLARI (sunucu yöneticisi)
 - ESC > Kontratlar sayfasının alt çubuğunda "Panoyu yenile": kabul edilmemiş
-  tüm kontratlar silinir ve yenileri üretilir.
+  tüm kontratlar silinir ve yenileri üretilir. Oyun o anda yeni kontrat
+  üretemiyorsa (uygun tarla yoksa) hiçbir kontrat silinmez ve uyarı çıkar.
 - Seçili aktif kontratta "Zorla iptal": koruma engeli aşılır, para cezası
   uygulanmaz, biriken kontrat ürünü yine geri alınır.
 - Konsol komutları (cm*) kapalıdır; tüm işlemler oyun içi butonlarla ve web
