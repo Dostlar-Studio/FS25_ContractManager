@@ -125,6 +125,27 @@ function Generation.shouldAttempt(typeName, randomValue)
     return randomValue < p
 end
 
+---Teshis sayaci: pano yenilemesi hicbir kontrat uretemedigi zaman, kapinin mi yoksa
+---oyunun mu bos dondugunu ayirt etmek icin. `Generation.trace` nil iken hicbir maliyeti yok.
+Generation.trace = nil
+
+function Generation.startTrace()
+    Generation.trace = { blocked = {}, attempted = {}, produced = {} }
+end
+
+function Generation.stopTrace()
+    local trace = Generation.trace
+    Generation.trace = nil
+    return trace
+end
+
+local function note(bucket, typeName)
+    local trace = Generation.trace
+    if trace ~= nil then
+        trace[bucket][typeName] = (trace[bucket][typeName] or 0) + 1
+    end
+end
+
 function Generation.wrapMissionType(missionType)
     local cls = missionType.classObject
     if type(cls) ~= "table" or Generation.wrapped[cls] then
@@ -137,9 +158,15 @@ function Generation.wrapMissionType(missionType)
     local typeName = missionType.name
     cls.tryGenerateMission = function(...)
         if not Generation.shouldAttempt(typeName) then
+            note("blocked", typeName)
             return nil
         end
-        return original(...)
+        note("attempted", typeName)
+        local mission = original(...)
+        if mission ~= nil then
+            note("produced", typeName)
+        end
+        return mission
     end
     Generation.wrapped[cls] = true
     return true

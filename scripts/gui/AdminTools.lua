@@ -123,6 +123,9 @@ function Admin.fillBoard(target)
             tostring(manager ~= nil and manager.generateMission or nil))
         return 0
     end
+    if ContractManagerGeneration ~= nil and ContractManagerGeneration.startTrace ~= nil then
+        ContractManagerGeneration.startTrace()
+    end
     local maxTotal = MissionManager ~= nil and MissionManager.MAX_MISSIONS or 50
     target = math.max(0, math.min(target or 0, maxTotal))
     local typeCount = type(manager.missionTypes) == "table" and #manager.missionTypes or 1
@@ -153,12 +156,40 @@ function Admin.fillBoard(target)
             ContractManager.warning(
                 "Board fill produced nothing: missions=%d max=%d types=%d steps=%d inProgress=%s",
                 before, maxTotal, typeCount, steps, tostring(manager.missionGenerationInProgress))
+            ContractManager.warning("Board fill detail: %s", Admin.describeTrace())
             break
         end
         created = created + 1
     end
     manager.generationTimer = -1
+    if ContractManagerGeneration ~= nil and ContractManagerGeneration.stopTrace ~= nil then
+        ContractManagerGeneration.stopTrace()
+    end
     return created
+end
+
+---Izleme sayacini tek satira dok: hangi turler kuralimizca engellendi, hangileri oyuna
+---gitti ve kac tanesi kontrat uretti. "blocked" bizim kapimiz, "attempted ... produced=0"
+---oyunun uygun tarla bulamamasi demektir.
+function Admin.describeTrace()
+    local trace = ContractManagerGeneration ~= nil and ContractManagerGeneration.trace or nil
+    if trace == nil then
+        return "trace unavailable"
+    end
+    local function dump(bucket)
+        local parts = {}
+        for name, count in pairs(bucket) do
+            parts[#parts + 1] = string.format("%s x%d", name, count)
+        end
+        table.sort(parts)
+        return #parts > 0 and table.concat(parts, ", ") or "-"
+    end
+    local produced = 0
+    for _, count in pairs(trace.produced) do
+        produced = produced + count
+    end
+    return string.format("blocked by rule [%s] | tried in game [%s] | produced=%d",
+        dump(trace.blocked), dump(trace.attempted), produced)
 end
 
 function Admin.assign(uniqueId, farmId)
