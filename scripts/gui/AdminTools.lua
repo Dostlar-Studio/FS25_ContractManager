@@ -80,10 +80,26 @@ function Admin.refreshBoard()
     -- icin uretim "pano dolu" sanip yenilerini uretmez. mission:delete() zaten
     -- removeMission cagirir (AbstractMission:delete).
     local doomed = {}
+    local seen, histogram = 0, {}
     for _, mission in ipairs(g_missionManager.missions or {}) do
+        seen = seen + 1
+        local key = tostring(mission.status)
+        histogram[key] = (histogram[key] or 0) + 1
         if mission.status == MissionStatus.CREATED then
             doomed[#doomed + 1] = mission
         end
+    end
+    -- Canli testte 17 kabul edilmemis kontrat varken "0 removed" yazdi (2026-09-13).
+    -- Tahmin yurutmek yerine olc: kac kontrat gorundu, durumlari ne, sabit ne.
+    if #doomed == 0 then
+        local parts = {}
+        for status, count in pairs(histogram) do
+            parts[#parts + 1] = string.format("%s=%d", status, count)
+        end
+        table.sort(parts)
+        ContractManager.warning(
+            "Board refresh found nothing to remove: %d contracts seen [%s]; MissionStatus.CREATED=%s",
+            seen, table.concat(parts, " "), tostring(MissionStatus ~= nil and MissionStatus.CREATED or nil))
     end
     for index = #doomed, 1, -1 do
         pcall(function() doomed[index]:delete() end)

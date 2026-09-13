@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.20.1.0</version>
+    <version>1.20.2.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,12 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.20.2.0:
+- Diagnostics: when "Refresh board" finds nothing to remove it now logs how many contracts it saw and their states, so the cause can be found from the server log.
+
+Changelog 1.20.2.0:
+- Diagnose: Findet "Tafel erneuern" nichts zum Entfernen, wird jetzt protokolliert, wie viele Verträge gesehen wurden und in welchem Zustand.
 
 Changelog 1.20.1.0:
 - Added the French translation. The mod advertised French but shipped no French text file, so French players saw an English interface.
@@ -370,6 +376,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.20.2.0 :
+- Diagnostic : si « Actualiser le tableau » ne trouve rien à supprimer, le nombre de contrats vus et leurs états sont désormais journalisés.
+
 Changelog 1.20.1.0 :
 - Ajout de la traduction française. Le mod annonçait le français sans fournir de fichier de textes français ; l'interface restait en anglais.
 
@@ -536,6 +545,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.20.2.0:
+- Teşhis: "Panoyu yenile" silecek bir şey bulamazsa kaç kontrat gördüğünü ve durumlarını loga yazıyor; sebep sunucu logundan bulunabilsin.
 
 Değişiklikler 1.20.1.0:
 - Fransızca çeviri eklendi. Mod Fransızca ilan ediyordu ama Fransızca metin dosyası yoktu, arayüz İngilizce kalıyordu.
