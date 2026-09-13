@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.17.0.0</version>
+    <version>1.18.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,16 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.18.0.0:
+- Fixed: if the contract's starting measurement was lost (for example by turning the guard off and on again), a failed contract confiscated everything in your trailers, including crops you harvested from your own fields. The starting amount is now measured instead of assumed to be zero.
+- Confiscation is now capped at what the contract itself could produce, minus what you already delivered.
+- Confiscation now covers partner farms too; a partner could keep the whole harvest by loading it into their own trailers.
+
+Changelog 1.18.0.0:
+- Behoben: Ging der Startwert eines Vertrags verloren (z. B. durch Aus- und Einschalten des Schutzes), zog ein gescheiterter Vertrag alles aus deinen Anhängern ein, auch Ernte von eigenen Feldern. Der Startwert wird jetzt gemessen statt als null angenommen.
+- Die Einziehung ist jetzt auf das begrenzt, was der Vertrag selbst erzeugen konnte, abzüglich bereits gelieferter Menge.
+- Die Einziehung erfasst jetzt auch Partnerhöfe; ein Partner konnte die gesamte Ernte behalten.
 
 Changelog 1.17.0.0:
 - Fixed: the payout was recalculated after the contract had already changed your reputation, so the amount on screen did not match the amount paid. The reward is now frozen when the contract ends.
@@ -332,6 +342,11 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.18.0.0 :
+- Corrigé : si la mesure de départ du contrat était perdue (par exemple en désactivant puis réactivant la protection), un contrat échoué confisquait tout le contenu de vos remorques, y compris la récolte de vos propres champs. La quantité de départ est désormais mesurée au lieu d'être supposée nulle.
+- La confiscation est désormais plafonnée à ce que le contrat pouvait produire, moins ce qui a déjà été livré.
+- La confiscation couvre désormais aussi les fermes partenaires ; un partenaire pouvait garder toute la récolte.
+
 Changelog 1.17.0.0 :
 - Corrigé : le paiement était recalculé après que le contrat ait déjà modifié votre réputation ; le montant affiché ne correspondait pas au montant versé. La récompense est désormais figée à la fin du contrat.
 - Corrigé : si le code de récompense du jeu échouait une fois, ce contrat perdait silencieusement le multiplicateur et tous les bonus.
@@ -479,6 +494,11 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.18.0.0:
+- Düzeltme: kontratın başlangıç ölçüsü kaybolduğunda (örneğin korumayı kapatıp açmak) başarısız kontrat römorklarınızdaki her şeyi geri alıyordu, kendi tarlanızdan hasat ettiğiniz ürün dahil. Başlangıç miktarı artık sıfır varsayılmıyor, ölçülüyor.
+- Müsadere artık kontratın kendi ürettiği miktarla sınırlı; teslim ettiğiniz kadarı düşülüyor.
+- Müsadere artık ortak çiftlikleri de kapsıyor; ortak, ürünü kendi römorkuna doldurarak tamamını elinde tutabiliyordu.
 
 Değişiklikler 1.17.0.0:
 - Düzeltme: ödeme, kontrat itibarı değiştirdikten sonra yeniden hesaplanıyordu; ekranda gördüğünüz tutar ile hesabınıza geçen tutar farklıydı. Ödül artık kontrat bitince donduruluyor.

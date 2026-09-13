@@ -385,6 +385,13 @@ function ContractGuard:getFarmFillVolume(farmId, fillTypeIndex)
     return total
 end
 
+---`fromLoadedGame` artik yalnizca LOG icindir, davranisi degistirmez.
+---Eskiden bu bayrak "baseline = 0" demekti ve dort cagri noktasi da sabit true geciyordu
+---(update dongusu, missionHasProgress, confiscateMissionProduct, writeToXML). Baseline'in
+---kayboldugu her durumda - Guard'i kapatip acmak, Guard kapaliyken bir kez kaydetmek,
+---fillType'in gec cozulmesi - sifir yaziliyordu ve musadere oyuncunun KENDI urununu
+---aliyordu (2026-09-13 denetimi). Bilinmeyen baseline artik mevcut hacim sayilir:
+---bu en kotu ihtimalle az musadere eder, oyuncunun malini almaz.
 function ContractGuard:initializeMission(mission, fromLoadedGame)
     if not self:isProtectedMission(mission) or mission.contractGuardBaselineLiters ~= nil then
         return
@@ -397,12 +404,13 @@ function ContractGuard:initializeMission(mission, fromLoadedGame)
 
     if saved ~= nil and saved.farmId == mission.farmId and saved.fillTypeIndex == fillTypeIndex then
         baseline = saved.baselineLiters
-    elseif fromLoadedGame then
-        -- Secure default for a running contract created before this mod was installed.
-        baseline = 0
-        Logging.warning("[CM/Guard] No saved baseline for running mission '%s'; using strict baseline 0", tostring(missionId))
     else
         baseline = self:getFarmFillVolume(mission.farmId, fillTypeIndex)
+        if fromLoadedGame then
+            Logging.warning(
+                "[CM/Guard] No saved baseline for running mission '%s'; measured current volume %.1f instead",
+                tostring(missionId), baseline or 0)
+        end
     end
 
     mission.contractGuardBaselineLiters = math.max(0, baseline or 0)
@@ -433,6 +441,39 @@ function ContractGuard:missionHasProgress(mission)
     return current > (mission.contractGuardBaselineLiters or 0) + self.MIN_TRACKED_LITERS
 end
 
+---Kontrata dahil ciftlikler: sahip + ortaklar.
+function ContractGuard:getMemberFarmIds(mission)
+    local ids = { mission.farmId }
+    local Part = ContractManagerPartnership
+    if Part ~= nil and Part.getFarms ~= nil then
+        local ok, farms = pcall(Part.getFarms, mission)
+        if ok and type(farms) == "table" then
+            ids = {}
+            for _, farmId in ipairs(farms) do
+                ids[#ids + 1] = farmId
+            end
+            if #ids == 0 then
+                ids = { mission.farmId }
+            end
+        end
+    end
+    return ids
+end
+
+---Geri alinabilecek en fazla litre: kontratin uretmesi beklenen urunden teslim edilen dusulur.
+---Cozulemezse nil (sinir yok) - eski davranis, ama artik yalnizca olcum hic yoksa.
+function ContractGuard:getConfiscationCap(mission)
+    local Info = ContractManagerMissionInfo
+    if Info == nil or Info.measure == nil then
+        return nil
+    end
+    local ok, data = pcall(Info.measure, mission)
+    if not ok or type(data) ~= "table" or (data.total or 0) <= 0 then
+        return nil
+    end
+    return math.max(0, data.total - (data.deposited or 0))
+end
+
 function ContractGuard:confiscateMissionProduct(mission)
     if not self:isProtectedMission(mission) then
         return 0
@@ -442,13 +483,27 @@ function ContractGuard:confiscateMissionProduct(mission)
     end
 
     local fillTypeIndex = self:getMissionFillType(mission)
-    local entries = self:collectFillEntries(mission.farmId, fillTypeIndex)
+    -- Ortak kontratta urun ortagin araclarinda olabilir: uye ciftliklerin hepsi taranir,
+    -- yoksa ortak urunu kendi romorkuna doldurup musadereden tamamen kaciyordu.
+    local entries = {}
+    for _, memberFarmId in ipairs(self:getMemberFarmIds(mission)) do
+        for _, entry in ipairs(self:collectFillEntries(memberFarmId, fillTypeIndex)) do
+            entries[#entries + 1] = entry
+        end
+    end
     local current = 0
     for _, entry in ipairs(entries) do
         current = current + entry.amount
     end
 
     local remaining = math.max(0, current - (mission.contractGuardBaselineLiters or 0))
+    -- UST SINIR: en fazla kontratin kendi urunu kadar geri alinir. Olcu "ciftligin o urundeki
+    -- toplami" oldugu icin, kontrat acikken kendi tarlasini hasat eden oyuncunun urunu de
+    -- hesaba giriyordu ve sinirsiz aliniyordu (2026-09-13 denetimi).
+    local cap = self:getConfiscationCap(mission)
+    if cap ~= nil then
+        remaining = math.min(remaining, cap)
+    end
     local requested = remaining
 
     for _, entry in ipairs(entries) do
@@ -482,10 +537,12 @@ function ContractGuard:confiscateMissionProduct(mission)
     local removedTotal = requested - remaining
     if removedTotal > self.MIN_TRACKED_LITERS then
         Logging.warning(
-            "[CM/Guard] Confiscated %.1f liters from failed mission '%s' (farm %s)",
+            "[CM/Guard] Confiscated %.1f liters from failed mission '%s' (farm %s, baseline %.1f, cap %s)",
             removedTotal,
             tostring(self:getMissionId(mission)),
-            tostring(mission.farmId)
+            tostring(mission.farmId),
+            mission.contractGuardBaselineLiters or 0,
+            cap ~= nil and string.format("%.1f", cap) or "none"
         )
     end
     return removedTotal

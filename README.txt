@@ -1,4 +1,4 @@
-FS25 KONTRAT YÖNETİCİSİ - v1.17.0.0
+FS25 KONTRAT YÖNETİCİSİ - v1.18.0.0
 ===============================================================================
 
 Bu sürüm, FS25_ContractGuard modunun tamamını yeni Kontrat Yöneticisi çatısı
@@ -39,7 +39,8 @@ KORUMA KURALLARI
 - Hasat veya teslimat başladıktan sonra kontrat iptal edilemez.
 - Kontrat süre aşımı ya da başka zorunlu sebeple başarısız olursa,
   kontrat kabulünden sonra çiftliğin araçlarında/balyalarında oluşan net
-  ürün miktarı geri alınır.
+  ürün miktarı geri alınır. En fazla kontratın kendi ürettiği kadar alınır
+  (teslim edilen düşülür); ortak çiftliklerin araçları da taranır.
 
 AYAR DOSYASI
 Documents\My Games\FarmingSimulator2025\modSettings\FS25_ContractManager.xml
