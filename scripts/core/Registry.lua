@@ -126,7 +126,26 @@ function Registry:getActiveMeta(mission)
 end
 
 ---Ciftlige gore gecmis (en yeni once). farmId nil ise hepsi.
+---Istemcide gecmis HIC dolmaz (kayit yalnizca sunucuda yazilir, Registry akisla gelmez).
+---StatsEvent yanitiyla gelenler burada tutulur; `getHistory` sunucu olmayan tarafta bunu doner.
+---Oncesinde "Gecmis" filtresi dedicated sunucudaki her oyuncuda bos gorunuyordu (2026-09-13).
+Registry.remoteHistory = {}
+
+function Registry:setRemoteHistory(entries)
+    Registry.remoteHistory = entries or {}
+end
+
 function Registry:getHistory(farmId)
+    local mission = g_currentMission
+    if mission ~= nil and mission.getIsServer ~= nil and not mission:getIsServer() then
+        local out = {}
+        for _, entry in ipairs(Registry.remoteHistory) do
+            if farmId == nil or entry.farmId == farmId then
+                out[#out + 1] = entry
+            end
+        end
+        return out
+    end
     local result = {}
     for i = #self.history, 1, -1 do
         local entry = self.history[i]

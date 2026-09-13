@@ -565,7 +565,9 @@ function Tab.buildStatsLines(stats, history, board)
     lines[#lines + 1] = string.format("%s: %d", text("cm_statTimedOut"), stats.timedOut or 0)
     lines[#lines + 1] = string.format("%s: %s", text("cm_statEarned"), Tab.formatMoney(stats.earned))
     lines[#lines + 1] = string.format("%s: %s", text("cm_statPenalties"), Tab.formatMoney(stats.penalties))
-    for _, entry in ipairs(history or {}) do
+    for i, entry in ipairs(history or {}) do
+        -- satir butcesi: 8 + HISTORY_ROWS + BOARD_ROWS. Kapak olmazsa siralamanin kuyrugu sessizce kesilir.
+        if i > Tab.HISTORY_ROWS then break end
         local stateKey = FINISH_STATE_KEYS[(entry.finishState or 0) + 1] or "cm_stateNone"
         lines[#lines + 1] = string.format("%s %d · %s · %s · %s",
             text("cm_day"), entry.finishedDay or 0,

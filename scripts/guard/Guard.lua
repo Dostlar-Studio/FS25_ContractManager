@@ -186,6 +186,20 @@ function ContractGuard:isGroundDischargeBlocked(vehicle, dischargeNode)
     return false, nil, fillTypeIndex
 end
 
+---Hedef ciftlik, eslesen kontratlardan birinin uyesi mi (sahip ya da ortak)?
+function ContractGuard:isPartnerFarm(missions, targetFarmId)
+    local Part = ContractManagerPartnership
+    if Part == nil or Part.isMember == nil or targetFarmId == nil then
+        return false
+    end
+    for _, mission in ipairs(missions or {}) do
+        if Part.isMember(mission, targetFarmId) then
+            return true
+        end
+    end
+    return false
+end
+
 function ContractGuard:isObjectDischargeBlocked(vehicle, dischargeNode, object)
     local farmId, fillTypeIndex, missions = self:getDischargeContext(vehicle, dischargeNode)
     if #missions == 0 or object == nil then
@@ -195,6 +209,12 @@ function ContractGuard:isObjectDischargeBlocked(vehicle, dischargeNode, object)
     if self:isVehicleObject(object) then
         local targetFarmId = self:getVehicleFarmId(object)
         if targetFarmId == farmId then
+            return false, nil, fillTypeIndex
+        end
+        -- Ortak kontratta sahip ve ortak birbirinin aracina aktarabilmeli. getMatchingMissions
+        -- ortagi zaten "uye" sayiyordu ama bu kol yalnizca "ayni ciftlik mi" diye bakiyordu:
+        -- sahibin bicerdoveri ortagin romorkuna bosaltamiyordu (2026-09-13).
+        if self:isPartnerFarm(missions, targetFarmId) then
             return false, nil, fillTypeIndex
         end
         return true, self.WARNING_CROSS_FARM, fillTypeIndex
