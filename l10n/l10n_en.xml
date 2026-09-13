@@ -142,13 +142,17 @@
         <text name="cm_resTakenBy" text="Reserved by %s · free in %d min if not accepted"/>
         <text name="cm_resReservedButton" text="Reserved by another farm"/>
         <text name="cm_detailProduct" text="Product"/>
-        <text name="cm_detailFieldYield" text="Field yield (est.)"/>
+        <text name="cm_harvest_keepPercentBale_tooltip" text="Same for baling contracts. The game default is 10%."/>
+        <text name="cm_harvest_keepPercentBale" text="Farm keeps (bales)"/>
+        <text name="cm_harvest_keepPercent_tooltip" text="Share of the harvest that stays with the farm instead of being delivered. The game default is 7%. Raising it means less to deliver and more crop to sell yourself."/>
+        <text name="cm_harvest_keepPercent" text="Farm keeps (harvest)"/>
+        <text name="cm_secHarvest" text="Harvest share"/>
+        <text name="cm_detailFieldYield" text="Field yield"/>
         <text name="cm_detailToDeliver" text="To deliver"/>
         <text name="cm_detailEstimated" text="est."/>
         <text name="cm_detailDelivered" text="Delivered"/>
         <text name="cm_detailRemaining" text="Still needed"/>
-        <text name="cm_detailSurplus" text="Surplus"/>
-        <text name="cm_detailSurplusHint" text="stays on your farm"/>
+        <text name="cm_detailSurplus" text="Stays with you"/>
         <text name="cm_detailProgress" text="Progress"/>
         <text name="cm_secSchedule" text="Scheduled bonuses (real time)"/>
         <text name="cm_schedule_enabled" text="Scheduled bonuses"/>

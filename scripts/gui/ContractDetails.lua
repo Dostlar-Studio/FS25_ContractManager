@@ -95,34 +95,35 @@ function Details.buildDeliveryRows(mission)
     -- DIKKAT: expectedLiters/depositedLiters istemciye AKTARILMIYOR (hicbir writeStream'de
     -- yok). Sunucu bunlari MissionInfo ile ayrica yayinlar; burada o olcumu okuyoruz.
     local info = ContractManagerMissionInfo ~= nil and ContractManagerMissionInfo.get(mission) or nil
-    if info == nil or (info.expected or 0) <= 0 then
+    if info == nil or (info.total or 0) <= 0 then
         return rows
     end
-    local expected = info.expected
+    local deliver = info.deliver or info.total
     local delivered = info.deposited or 0
     local name = Details.fillTypeName(mission) or Details.fillTypeNameByIndex(info.fillTypeIndex)
     if name ~= nil then
         rows[#rows + 1] = { title = text("cm_detailProduct", "Product"), value = name }
     end
-    if (info.yieldLiters or 0) > 0 then
-        rows[#rows + 1] = { title = text("cm_detailFieldYield", "Field yield (est.)"),
-            value = Details.formatLiters(info.yieldLiters) }
-    end
-    local toDeliver = Details.formatLiters(expected)
+    local total = Details.formatLiters(info.total)
     if info.estimated then
-        -- pano kontrati: oyun henuz hedef vermedi, tarla veriminden tahmin
-        toDeliver = string.format("%s (%s)", toDeliver, text("cm_detailEstimated", "est."))
+        -- oyun henuz sayi vermedi: tarla veriminden tahmin
+        total = string.format("%s (%s)", total, text("cm_detailEstimated", "est."))
     end
-    rows[#rows + 1] = { title = text("cm_detailToDeliver", "To deliver"), value = toDeliver }
+    rows[#rows + 1] = { title = text("cm_detailFieldYield", "Field yield"), value = total }
+    rows[#rows + 1] = { title = text("cm_detailToDeliver", "To deliver"), value = Details.formatLiters(deliver) }
+    -- Ciftlige kalan urun: oyuncunun en cok merak ettigi kalem. Ayardan gelir.
+    if (info.keep or 0) > 0 then
+        rows[#rows + 1] = { title = text("cm_detailSurplus", "Stays with you"),
+            value = string.format("%s  (%d %%)", Details.formatLiters(info.keep),
+                math.floor(info.keep / info.total * 100 + 0.5)) }
+    end
     local running = mission.status == MissionStatus.RUNNING or mission.status == MissionStatus.PREPARING
-    if running then
+    if running and deliver > 0 then
         rows[#rows + 1] = { title = text("cm_detailDelivered", "Delivered"), value = string.format("%s  (%d %%)",
-            Details.formatLiters(delivered), math.floor(math.min(1, delivered / expected) * 100 + 0.5)) }
+            Details.formatLiters(delivered), math.floor(math.min(1, delivered / deliver) * 100 + 0.5)) }
         rows[#rows + 1] = { title = text("cm_detailRemaining", "Still needed"),
-            value = Details.formatLiters(math.max(0, expected - delivered)) }
+            value = Details.formatLiters(math.max(0, deliver - delivered)) }
     end
-    -- Fazla urun ciftlige kalir; oyuncunun en cok merak ettigi kalem bu.
-    rows[#rows + 1] = { title = text("cm_detailSurplus", "Surplus is yours"), value = text("cm_detailSurplusHint", "yes") }
     return rows
 end
 

@@ -1,4 +1,4 @@
-FS25 KONTRAT YÖNETİCİSİ - v1.14.2.0
+FS25 KONTRAT YÖNETİCİSİ - v1.15.0.0
 ===============================================================================
 
 Bu sürüm, FS25_ContractGuard modunun tamamını yeni Kontrat Yöneticisi çatısı
@@ -49,6 +49,9 @@ Documents\My Games\FarmingSimulator2025\modSettings\FS25_ContractManager.xml
   reward#multiplier (1.25)  ödül çarpanı; #min / #max taban-tavan (0 = yok)
   reward#failPenaltyPercent (10)  başarısız/iptal/süre aşımında ödülün yüzdesi ceza
   reward#leaseCostMultiplier (1.0)  kiralık makine maliyeti çarpanı
+  harvest#keepPercent (7)  hasadın çiftliğe kalan yüzdesi; oyun varsayılanı %7.
+    Artırınca teslim edilecek miktar azalır, elinizde kalan ürün artar.
+  harvest#keepPercentBale (10)  balya kontratları için aynısı
   limits#maxActivePerFarm (3)  çiftlik başına aynı anda aktif kontrat (0 = sınırsız)
   generation#maxTotal (0 = oyun varsayılanı, en çok 80)  panodaki toplam kontrat
   generation#maxPerType (0 = oyun varsayılanı)  tür başına üst sınır

@@ -139,6 +139,10 @@ Tab.SPEC = {
     { id = "reward.min", kind = "range", min = 0, max = 100000, step = 2500, format = "money", zero = "cm_valNone" },
     { id = "reward.max", kind = "range", min = 0, max = 500000, step = 10000, format = "money", zero = "cm_valNone" },
 
+    { section = "cm_secHarvest" },
+    { id = "harvest.keepPercent", kind = "range", min = 0, max = 60, step = 1, format = "%d %%", zero = "cm_valNone" },
+    { id = "harvest.keepPercentBale", kind = "range", min = 0, max = 60, step = 1, format = "%d %%", zero = "cm_valNone" },
+
     { section = "cm_secLimits" },
     { id = "limits.maxActivePerFarm", kind = "range", min = 0, max = 20, step = 1, format = "%d", zero = "cm_valUnlimited" },
     { id = "limits.quotaPerDay", kind = "range", min = 0, max = 20, step = 1, format = "%d", zero = "cm_valNone" },
