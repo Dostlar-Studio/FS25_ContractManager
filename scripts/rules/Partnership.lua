@@ -943,7 +943,7 @@ if g_messageCenter ~= nil and MessageType ~= nil and MessageType.MISSION_DELETED
     end, Part)
 end
 
-if addConsoleCommand ~= nil then
+if addConsoleCommand ~= nil and ContractManager.consoleCommands then
     addConsoleCommand("cmInvitePartner", "ContractManager: invite a farm to share your contract", "consoleInvite", Part)
     addConsoleCommand("cmAcceptPartner", "ContractManager: accept a partnership invite", "consoleAccept", Part)
     addConsoleCommand("cmLeavePartner", "ContractManager: leave a shared contract", "consoleLeave", Part)

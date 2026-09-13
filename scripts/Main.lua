@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.14.1.0",
+    VERSION = "1.14.2.0",
     LOG_PREFIX = "[CM]",
 
     -- savegame icindeki birlesik durum dosyasi ve devralinacak eski Guard dosyasi
@@ -22,6 +22,7 @@ ContractManager = {
 
     -- Faz 2'de Settings.lua'ya tasinir
     debugEnabled = false,    -- gelistirmede true: Debug.lua [CM/Debug] dokumu yazar
+    consoleCommands = false, -- konsol komutlari (cm*) kapali: her islem oyun ici butonlarda var (kullanici karari 2026-09-13)
     guardEnabled = true,
 }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.14.1.0</version>
+    <version>1.14.2.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -26,7 +26,7 @@ PRODUCT GUARD (server authoritative)
 MORE
 - Contracts page shows time left, possible penalty and active contracts / limit for the selected contract.
 - Farm statistics and the last contracts in the settings tab (visible to everyone).
-- Admin tools: refresh the board, force-cancel a contract (bottom bar buttons and console commands).
+- Admin tools: refresh the board, force-cancel a contract (bottom bar buttons).
 - FS25_DiscordBridge integration: contract events are sent to Discord when that mod is loaded.
 - Replaces FS25_ContractGuard and migrates its save data. Yields its rules automatically when FS25_BetterContracts is loaded.
 
@@ -35,6 +35,9 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.14.2.0:
+- Console commands (cm*) are disabled; every action is available through the in-game buttons and the web panel.
 
 Changelog 1.14.1.0:
 - Contract details: product, estimated field yield and amount to deliver now also show for contracts on the board; the crop is read from the field when the contract does not carry it.
@@ -153,7 +156,7 @@ PRODUKTSCHUTZ (serverseitig)
 WEITERES
 - Vertragsseite zeigt Restzeit, mögliche Strafe und aktive Verträge / Limit zum gewählten Vertrag.
 - Hofstatistik und letzte Verträge im Einstellungsreiter (für alle sichtbar).
-- Admin-Werkzeuge: Tafel erneuern, Vertrag zwangsweise abbrechen (Buttons in der Leiste und Konsolenbefehle).
+- Admin-Werkzeuge: Tafel erneuern, Vertrag zwangsweise abbrechen (Buttons in der Leiste).
 - FS25_DiscordBridge-Anbindung: Vertragsereignisse gehen an Discord, wenn dieser Mod geladen ist.
 - Ersetzt FS25_ContractGuard und übernimmt dessen Spielstanddaten. Tritt bei geladenem FS25_BetterContracts automatisch zurück.
 
@@ -162,6 +165,9 @@ KONTAKT & QUELLCODE
 - Quellcode und Issue-Tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Muss auf dem Server und allen Clients aktiviert sein. Nur PC/Mac.
+
+Changelog 1.14.2.0:
+- Konsolenbefehle (cm*) sind deaktiviert; alle Aktionen laufen über die Buttons im Spiel und das Web-Panel.
 
 Changelog 1.14.1.0:
 - Vertragsdetails: Produkt, geschätzter Feldertrag und Liefermenge erscheinen jetzt auch bei Verträgen auf der Tafel; die Frucht wird vom Feld gelesen, wenn der Vertrag sie nicht trägt.
@@ -280,7 +286,7 @@ PROTECTION DES PRODUITS (autorité serveur)
 AUTRES
 - La page des contrats affiche le temps restant, la pénalité éventuelle et les contrats actifs / la limite pour le contrat sélectionné.
 - Statistiques de l'exploitation et derniers contrats dans l'onglet des paramètres (visibles par tous).
-- Outils d'administration : actualiser le tableau, annuler un contrat de force (boutons de la barre inférieure et commandes console).
+- Outils d'administration : actualiser le tableau, annuler un contrat de force (boutons de la barre inférieure).
 - Intégration FS25_DiscordBridge : les événements de contrat sont envoyés vers Discord lorsque ce mod est chargé.
 - Remplace FS25_ContractGuard et reprend ses données de sauvegarde. Se retire automatiquement lorsque FS25_BetterContracts est chargé.
 
@@ -289,6 +295,9 @@ CONTACT & SOURCES
 - Code source et suivi des problèmes : https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
+
+Changelog 1.14.2.0 :
+- Les commandes console (cm*) sont désactivées ; toutes les actions passent par les boutons du jeu et le panneau web.
 
 Changelog 1.14.1.0 :
 - Détails du contrat : produit, rendement estimé du champ et quantité à livrer s'affichent aussi pour les contrats du tableau ; la culture est lue depuis le champ si le contrat ne la porte pas.
@@ -407,7 +416,7 @@ KURALLAR (ESC > Ayarlar > Kontrat Yöneticisi, yalnızca sunucu yöneticisi)
 DİĞER
 - Kontratlar sayfası seçili kontrat için kalan süre, olası ceza ve aktif kontrat / limit gösterir.
 - Ayar sekmesinde çiftlik istatistiği ve son kontratlar (herkese görünür).
-- Yönetici araçları: panoyu yenile, kontratı zorla iptal et (alt çubuk butonları ve konsol komutları).
+- Yönetici araçları: panoyu yenile, kontratı zorla iptal et (alt çubuk butonları).
 - FS25_DiscordBridge entegrasyonu: o mod yüklüyse kontrat olayları Discord'a gider.
 - FS25_ContractGuard'ın yerine geçer ve kayıt verisini devralır. FS25_BetterContracts yüklüyse kurallarını otomatik geri çeker.
 
@@ -416,6 +425,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.14.2.0:
+- Konsol komutları (cm*) kapatıldı; tüm işlemler oyun içi butonlar ve web paneliyle yapılır.
 
 Değişiklikler 1.14.1.0:
 - Kontrat detayı: ürün, tahmini tarla verimi ve teslim edilecek miktar artık panodaki kontratlarda da görünür; kontrat ürünü taşımıyorsa tarladan okunur.

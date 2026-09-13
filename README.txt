@@ -1,4 +1,4 @@
-FS25 KONTRAT YÖNETİCİSİ - v1.14.1.0
+FS25 KONTRAT YÖNETİCİSİ - v1.14.2.0
 ===============================================================================
 
 Bu sürüm, FS25_ContractGuard modunun tamamını yeni Kontrat Yöneticisi çatısı
@@ -94,7 +94,7 @@ KONTRAT YÖNETİMİ SAYFASI (1.8)
 - Hedef çiftlik gerektiren işlemlerde "Hedef çiftlik" satırındaki seçiciyi
   (oyunun kendi ok tuşlu kontrolü) kullanarak çiftliği seçin.
 - Yönetici olmayan oyuncular yalnızca kendi kontratlarını ve kendilerine açık
-  işlemleri görür. Konsol komutları da çalışmaya devam eder.
+  işlemleri görür.
 
 ORTAKLIK KONTRATLAR SAYFASINDA + ARAYÜZ ANAHTARI (1.11)
 - Kontratlar sayfasında kendi çalışan kontratınızı seçince "Davet et: <çiftlik>"
@@ -166,10 +166,8 @@ YÖNETİCİ ARAÇLARI (sunucu yöneticisi)
   tüm kontratlar silinir ve yenileri üretilir.
 - Seçili aktif kontratta "Zorla iptal": koruma engeli aşılır, para cezası
   uygulanmaz, biriken kontrat ürünü yine geri alınır.
-- Konsol (~): cmListContracts, cmRefreshContracts, cmCancelContract <id>,
-  cmAssignContract <id> <çiftlikNo>, cmTransferContract <id> <çiftlikNo>
-  (aktif kontratı devret; kiralık makineli kontrat devredilmez). Hepsi sunucuda
-  yetki doğrulamasından geçer; web panelinden de yapılabilir.
+- Konsol komutları (cm*) kapalıdır; tüm işlemler oyun içi butonlarla ve web
+  panelinden yapılır. Hepsi sunucuda yetki doğrulamasından geçer.
 
 WEB PANELİ (Discord Bridge panosu)
 Köprü panosunun Kontratlar sekmesinde "Kontrat kuralları" kartı bulunur:
