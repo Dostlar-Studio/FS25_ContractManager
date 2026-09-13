@@ -1,4 +1,4 @@
-FS25 KONTRAT YÖNETİCİSİ - v1.18.0.0
+FS25 KONTRAT YÖNETİCİSİ - v1.19.0.0
 ===============================================================================
 
 Bu sürüm, FS25_ContractGuard modunun tamamını yeni Kontrat Yöneticisi çatısı
@@ -21,7 +21,8 @@ KURULUM
    yüklenirse Kontrat Yöneticisi kendi koruma katmanını kapatır ve log.txt'ye
    hata yazar.
 3. Modu kayıt için etkinleştirin ve sunucuyu yeniden başlatın.
-4. Bağlanan bütün PC/Mac oyuncularında aynı mod sürümü bulunmalıdır.
+4. Bağlanan bütün PC/Mac oyuncularında aynı mod sürümü bulunmalıdır. Sürümler
+   farklıysa mod bunu fark eder ve oyuncuya uyarı penceresi açar.
 
 KAYIT VERİSİ DEVRALMA
 Kayıt klasöründe eski FS25_ContractGuard.xml varsa ilk yüklemede otomatik
