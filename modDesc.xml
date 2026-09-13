@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.20.2.0</version>
+    <version>1.20.3.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,12 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.20.3.0:
+- More diagnostics: when a board refresh regenerates nothing, the server log now says how many contracts were on the board, how many types were tried and where the generation loop stopped.
+
+Changelog 1.20.3.0:
+- Mehr Diagnose: Erzeugt eine Tafelerneuerung nichts, protokolliert der Server jetzt die Anzahl der Verträge, die geprüften Typen und wo die Generierung endete.
 
 Changelog 1.20.2.0:
 - Diagnostics: when "Refresh board" finds nothing to remove it now logs how many contracts it saw and their states, so the cause can be found from the server log.
@@ -376,6 +382,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.20.3.0 :
+- Diagnostic supplémentaire : si une actualisation du tableau ne régénère rien, le journal du serveur indique désormais le nombre de contrats, les types essayés et où la génération s'est arrêtée.
+
 Changelog 1.20.2.0 :
 - Diagnostic : si « Actualiser le tableau » ne trouve rien à supprimer, le nombre de contrats vus et leurs états sont désormais journalisés.
 
@@ -545,6 +554,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.20.3.0:
+- Ek teşhis: pano yenilemesi hiç kontrat üretemezse sunucu logu artık panoda kaç kontrat olduğunu, kaç tür denendiğini ve üretim döngüsünün nerede durduğunu yazıyor.
 
 Değişiklikler 1.20.2.0:
 - Teşhis: "Panoyu yenile" silecek bir şey bulamazsa kaç kontrat gördüğünü ve durumlarını loga yazıyor; sebep sunucu logundan bulunabilsin.

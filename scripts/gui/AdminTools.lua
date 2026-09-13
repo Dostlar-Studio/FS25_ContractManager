@@ -118,12 +118,15 @@ end
 function Admin.fillBoard(target)
     local manager = g_missionManager
     if manager == nil or manager.startMissionGeneration == nil or manager.generateMission == nil then
+        ContractManager.warning("Board fill skipped: generation API missing (start=%s generate=%s)",
+            tostring(manager ~= nil and manager.startMissionGeneration or nil),
+            tostring(manager ~= nil and manager.generateMission or nil))
         return 0
     end
     local maxTotal = MissionManager ~= nil and MissionManager.MAX_MISSIONS or 50
     target = math.max(0, math.min(target or 0, maxTotal))
     local typeCount = type(manager.missionTypes) == "table" and #manager.missionTypes or 1
-    local created = 0
+    local created, steps = 0, 0
     for _ = 1, target do
         if #(manager.missions or {}) >= maxTotal then
             break
@@ -131,11 +134,12 @@ function Admin.fillBoard(target)
         local before = #(manager.missions or {})
         manager.missionGenerationInProgress = false
         if not pcall(manager.startMissionGeneration, manager) then
+            ContractManager.warning("Board fill: startMissionGeneration failed")
             break
         end
         -- generateMission her cagrida BIR tur dener; basarida ya da tur listesi
         -- dolandiginda finishMissionGeneration cagirilir ve bayrak duser.
-        local steps = 0
+        steps = 0
         while manager.missionGenerationInProgress and steps <= typeCount do
             if not pcall(manager.generateMission, manager) then
                 break
@@ -143,7 +147,13 @@ function Admin.fillBoard(target)
             steps = steps + 1
         end
         if #(manager.missions or {}) <= before then
-            break -- bu turda hicbir tur uretemedi; zorlamanin anlami yok
+            -- Oyunun uretimi bu turda hicbir sey veremedi. Bu NORMAL olabilir (uygun tarla yok)
+            -- ya da cagri kalibimiz yanlis olabilir; canli logdan ayirt etmek icin olcum.
+            -- 2026-09-13: "3 removed, 0 generated" gorulduginde eklendi.
+            ContractManager.warning(
+                "Board fill produced nothing: missions=%d max=%d types=%d steps=%d inProgress=%s",
+                before, maxTotal, typeCount, steps, tostring(manager.missionGenerationInProgress))
+            break
         end
         created = created + 1
     end
