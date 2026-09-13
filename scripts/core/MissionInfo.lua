@@ -187,15 +187,8 @@ function Info.applyRemote(objectId, data)
     return mission
 end
 
----Kontratin olcumu: sunucuda dogrudan alanlardan, istemcide senkronla gelenden.
-function Info.get(mission)
-    if mission == nil then
-        return nil
-    end
-    local direct = Info.measure(mission)
-    if direct ~= nil then
-        return direct
-    end
+---Senkronla gelen olcum (istemci onbellegi).
+function Info.getRemote(mission)
     if type(mission.cmInfo) == "table" then
         return mission.cmInfo
     end
@@ -206,6 +199,29 @@ function Info.get(mission)
         end
     end
     return nil
+end
+
+---Kontratin olcumu: sunucuda dogrudan alanlardan, ISTEMCIDE once senkronla gelenden.
+---Istemcide `depositedLiters` NIL oldugu icin yerel olcum "teslim edilen 0" uretir; sira
+---yanlis olursa sunucunun gercek sayisi hic kullanilmaz ("Teslim edilen" hep %0 gorunurdu,
+---1.14.1.0'da tahmin yedegi eklenince olustu, 2026-09-13'te bulundu).
+function Info.get(mission)
+    if mission == nil then
+        return nil
+    end
+    local isServer = g_currentMission ~= nil and g_currentMission.getIsServer ~= nil
+        and g_currentMission:getIsServer()
+    if not isServer then
+        local remote = Info.getRemote(mission)
+        if remote ~= nil then
+            return remote
+        end
+    end
+    local direct = Info.measure(mission)
+    if direct ~= nil then
+        return direct
+    end
+    return Info.getRemote(mission)
 end
 
 function Info.reset()

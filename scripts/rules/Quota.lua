@@ -85,10 +85,26 @@ function Quota.count(farmId)
     end
 end
 
+---Istemcide sayaclar YOK (Registry akisla gelmez); StatsEvent yaniti bunu doldurur.
+---Oncesinde oyuncu her zaman "kota tam dolu" goruyordu ve okuma yolu Registry'yi buyutuyordu.
+Quota.remoteRemaining = nil   -- { day = n|nil, month = n|nil }
+
+function Quota.setRemoteRemaining(day, month)
+    Quota.remoteRemaining = { day = day, month = month }
+end
+
 ---kalan hak (gosterim icin): gun, ay; sinirsizsa nil
 function Quota.getRemaining(farmId)
     if not Quota.isEnabled() then
         return nil, nil
+    end
+    local mission = g_currentMission
+    if mission ~= nil and mission.getIsServer ~= nil and not mission:getIsServer() then
+        local remote = Quota.remoteRemaining
+        if remote == nil then
+            return nil, nil
+        end
+        return remote.day, remote.month
     end
     local record = Quota.getRecord(farmId)
     if record == nil then

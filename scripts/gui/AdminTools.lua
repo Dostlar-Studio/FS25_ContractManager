@@ -277,8 +277,8 @@ function Admin.getSelectedMission(frame)
 end
 
 function Admin.onClickRefresh()
-    YesNoDialog.show(function(_, yes)
-        if yes then
+    YesNoDialog.show(function(a, b)
+        if ContractManager.dialogAnswer(a, b) == true then
             ContractManagerAdminEvent.send(Admin.ACTION_REFRESH)
         end
     end, nil, text("cm_adminConfirmRefresh"))
@@ -293,8 +293,8 @@ function Admin.onClickCancel()
         return
     end
     local title = mission.title or "?"
-    YesNoDialog.show(function(_, yes)
-        if yes then
+    YesNoDialog.show(function(a, b)
+        if ContractManager.dialogAnswer(a, b) == true then
             ContractManagerAdminEvent.send(Admin.ACTION_CANCEL, ContractManager.getMissionKey(mission),
                 nil, ContractManager.getMissionObjectId(mission))
         end

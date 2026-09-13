@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.15.0.0</version>
+    <version>1.16.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,14 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.16.0.0:
+- Fixed: the confirmation dialog for "Refresh board" and "Force cancel" read the wrong answer, so both buttons did nothing.
+- Fixed: on a server the contract panel always showed 0 delivered; it now uses the amounts the server sends.
+- Fixed: the History filter on the management page was always empty for players.
+- Fixed: the remaining quota shown to players was always the full amount.
+- Fixed: partners could not unload contract crops into each other's vehicles.
+- The Transfer button is available again on the management page.
 
 Changelog 1.15.0.0:
 - New setting: the share of the harvest that stays with your farm instead of being delivered (game default 7%, 10% for bales). Raise it to leave more crop to sell yourself.
@@ -170,6 +178,14 @@ KONTAKT & QUELLCODE
 
 Muss auf dem Server und allen Clients aktiviert sein. Nur PC/Mac.
 
+Changelog 1.16.0.0:
+- Behoben: Der Bestätigungsdialog für "Tafel erneuern" und "Zwangsabbruch" las die falsche Antwort, beide Buttons taten nichts.
+- Behoben: Im Vertragsfenster stand auf dem Server immer 0 geliefert; jetzt zählen die Werte vom Server.
+- Behoben: Der Verlauf-Filter der Verwaltungsseite war für Spieler immer leer.
+- Behoben: Das angezeigte Restkontingent war immer der volle Wert.
+- Behoben: Partner konnten Vertragsware nicht in die Fahrzeuge des anderen abladen.
+- Der Übergabe-Button ist wieder verfügbar.
+
 Changelog 1.15.0.0:
 - Neue Einstellung: Anteil der Ernte, der beim Hof bleibt statt abgeliefert zu werden (Spielstandard 7%, 10% bei Ballen). Höher = mehr Ware zum Selbstverkaufen.
 - Die Vertragsdetails zeigen Feldertrag, Liefermenge und den Anteil, der beim Hof bleibt, als echte Zahlen.
@@ -304,6 +320,14 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.16.0.0 :
+- Corrigé : la fenêtre de confirmation de « Actualiser le tableau » et « Annulation forcée » lisait la mauvaise réponse, les deux boutons ne faisaient rien.
+- Corrigé : le panneau de contrat affichait toujours 0 livré sur un serveur ; il utilise désormais les valeurs envoyées par le serveur.
+- Corrigé : le filtre Historique de la page de gestion était toujours vide pour les joueurs.
+- Corrigé : le quota restant affiché était toujours le total.
+- Corrigé : les partenaires ne pouvaient pas décharger la récolte dans les véhicules de l'autre.
+- Le bouton Transfert est de nouveau disponible.
+
 Changelog 1.15.0.0 :
 - Nouveau réglage : la part de la récolte qui reste à la ferme au lieu d'être livrée (défaut du jeu 7%, 10% pour les balles). Augmentez-la pour garder plus de récolte à vendre.
 - Les détails du contrat affichent le rendement du champ, la quantité à livrer et la part qui vous reste en chiffres réels.
@@ -437,6 +461,14 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.16.0.0:
+- Düzeltme: "Panoyu yenile" ve "Zorla iptal" onay penceresi yanlış yanıtı okuyordu, iki buton da hiçbir şey yapmıyordu.
+- Düzeltme: sunucuda kontrat panelinde "Teslim edilen" hep 0 görünüyordu; artık sunucunun gönderdiği miktarlar kullanılıyor.
+- Düzeltme: Yönetim sayfasındaki "Geçmiş" filtresi oyuncularda hep boştu.
+- Düzeltme: oyuncuya gösterilen kalan kota hep tam görünüyordu.
+- Düzeltme: ortaklar kontrat ürününü birbirinin aracına boşaltamıyordu.
+- Devret butonu Yönetim sayfasında geri geldi.
 
 Değişiklikler 1.15.0.0:
 - Yeni ayar: hasadın teslim edilmeyip çiftliğe kalan oranı (oyun varsayılanı %7, balyada %10). Artırırsanız elinizde satacak daha çok ürün kalır.

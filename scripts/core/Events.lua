@@ -364,7 +364,7 @@ InitEventClass(ContractManagerStatsEvent, "ContractManagerStatsEvent")
 
 ContractManagerStatsEvent.STAT_FIELDS = { "completed", "failed", "canceled", "timedOut", "earned", "penalties", "reputation" }
 ContractManagerStatsEvent.MAX_BOARD = 32   -- haritada 8'den fazla ciftlik olabilir
-ContractManagerStatsEvent.MAX_HISTORY = 5
+ContractManagerStatsEvent.MAX_HISTORY = 20   -- Yonetim sayfasi Gecmis filtresi icin; Ayarlar sekmesi ilk 5'i gosterir
 
 function ContractManagerStatsEvent.emptyNew()
     local self = Event.new(ContractManagerStatsEvent_mt)
@@ -392,6 +392,13 @@ function ContractManagerStatsEvent.newResponse(farmId)
         end
     end
     self.board = ContractManagerStatsEvent.buildBoard()
+    -- kalan kota: istemcide sayaclar yok, gosterim icin tasinir (-1 = sinirsiz)
+    local quotaDay, quotaMonth = nil, nil
+    if ContractManagerQuota ~= nil then
+        quotaDay, quotaMonth = ContractManagerQuota.getRemaining(farmId)
+    end
+    self.quotaDay = quotaDay or -1
+    self.quotaMonth = quotaMonth or -1
     return self
 end
 
@@ -431,6 +438,8 @@ function ContractManagerStatsEvent:writeStream(streamId, connection)
             streamWriteFloat32(streamId, entry.payout or entry.reward or 0)
             streamWriteInt32(streamId, entry.finishedDay or 0)
         end
+        streamWriteInt32(streamId, self.quotaDay or -1)
+        streamWriteInt32(streamId, self.quotaMonth or -1)
         streamWriteUInt8(streamId, #(self.board or {}))
         for _, row in ipairs(self.board or {}) do
             streamWriteUIntN(streamId, row.farmId or 0, FarmManager.FARM_ID_SEND_NUM_BITS)
@@ -461,6 +470,8 @@ function ContractManagerStatsEvent:readStream(streamId, connection)
                 finishedDay = streamReadInt32(streamId),
             }
         end
+        self.quotaDay = streamReadInt32(streamId)
+        self.quotaMonth = streamReadInt32(streamId)
         self.board = {}
         local rows = streamReadUInt8(streamId)
         for _ = 1, rows do
@@ -491,6 +502,20 @@ function ContractManagerStatsEvent:run(connection)
         end
         connection:sendEvent(ContractManagerStatsEvent.newResponse(farmId))
         return
+    end
+    if self.isResponse then
+        -- istemcide Registry ve Quota sayaclari yok: gecmis ve kalan kota yalnizca buradan gelir
+        if ContractManagerRegistry ~= nil and ContractManagerRegistry.setRemoteHistory ~= nil then
+            for _, entry in ipairs(self.history or {}) do
+                entry.farmId = self.farmId   -- sunucu yalnizca isteyen ciftligin kaydini yollar
+            end
+            ContractManagerRegistry:setRemoteHistory(self.history or {})
+        end
+        if ContractManagerQuota ~= nil and ContractManagerQuota.setRemoteRemaining ~= nil then
+            local day = (self.quotaDay or -1) >= 0 and self.quotaDay or nil
+            local month = (self.quotaMonth or -1) >= 0 and self.quotaMonth or nil
+            ContractManagerQuota.setRemoteRemaining(day, month)
+        end
     end
     if self.isResponse and ContractManagerSettingsTab ~= nil then
         if ContractManagerReputation ~= nil then

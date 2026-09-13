@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.15.0.0",
+    VERSION = "1.16.0.0",
     LOG_PREFIX = "[CM]",
 
     -- savegame icindeki birlesik durum dosyasi ve devralinacak eski Guard dosyasi
@@ -162,6 +162,19 @@ end
 
 ---Rutin, sik tekrarlayan olaylar icin. debugEnabled kapaliyken hicbir sey yazmaz;
 ---aksi halde tek bir ayar degisikligi bile log'u satirlarca sisirir.
+---Oyunun onay penceresinin yaniti. YesNoDialog geri cagriyi target VARSA `cb(target, deger)`,
+---target YOKSA `cb(deger)` diye cagirir; imza yayinlanmamis oldugu icin iki argumani da tarariz.
+---AdminTools target'siz cagirip IKINCI argumani okuyordu: "Evet" hicbir sey yapmiyordu (2026-09-13).
+function ContractManager.dialogAnswer(a, b)
+    if type(a) == "boolean" then
+        return a
+    end
+    if type(b) == "boolean" then
+        return b
+    end
+    return nil
+end
+
 function ContractManager.debug(fmt, ...)
     if ContractManager.debugEnabled then
         Logging.info("%s %s", ContractManager.LOG_PREFIX, formatLine(fmt, ...))

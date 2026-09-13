@@ -1,4 +1,4 @@
-FS25 KONTRAT YÖNETİCİSİ - v1.15.0.0
+FS25 KONTRAT YÖNETİCİSİ - v1.16.0.0
 ===============================================================================
 
 Bu sürüm, FS25_ContractGuard modunun tamamını yeni Kontrat Yöneticisi çatısı
@@ -71,7 +71,7 @@ BetterContracts'ın üstüne uygulanır; bunu yalnızca bilinçli yapın.
 KONTRAT GEÇMİŞİ
 Sunucu, kabul edilen / biten kontratları ve çiftlik başına istatistiği
 kayıt klasöründeki FS25_ContractManager.xml içinde tutar (son 200 kontrat).
-Oyun içi görüntüleme sonraki sürümde.
+Oyun içinde: Kontrat Yönetimi > Geçmiş, ve Ayarlar sekmesinde son 5 kontrat.
 
 İTİBAR VE SIRALAMA (1.1)
 - Tamamlanan kontrat çiftliğe puan kazandırır; başarısız, iptal ve süre aşımı
@@ -121,9 +121,10 @@ ORTAK KONTRAT - ÇİFTLİK BAŞINA KAYIT (1.9)
   değiştirirseniz ya da başka kontrat seçerseniz o onay düşer.
 
 ORTAK KONTRAT (1.7)
-- Kontratı alan çiftlik başka bir çiftliği ortak edebilir: konsolda
-  cmInvitePartner <kontratNo> <çiftlikNo>. Davet edilen oyuncu bildirim alır ve
-  Kontratlar sayfasındaki "Ortaklığı kabul et" ile katılır.
+- Kontratı alan çiftlik başka bir çiftliği ortak edebilir: Kontratlar ya da
+  Kontrat Yönetimi sayfasındaki "Ortak davet et" ile çiftliği seçin. Davet edilen
+  oyuncuya pencere açılır; Enter ile kabul eder ya da Kontratlar sayfasındaki
+  "Ortaklığı kabul et" ile katılır.
 - Ödül katkıya göre bölünür: teslim edilen litre ve tarlada çalışılan süre
   ölçülür. Katkı yoksa eşit bölünür. Zarar da aynı oranda paylaşılır.
 - Ortak çiftlik kontrat ürününü taşıyabilir ve tarlada çalışabilir; koruma

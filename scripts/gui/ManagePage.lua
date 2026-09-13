@@ -328,9 +328,10 @@ function Page.getActions(mission, farmId, isAdmin, targetFarmId)
         end
         if isAdmin then
             actions[#actions + 1] = "cancel"
-            -- "devret" arayuzden ASKIYA ALINDI (kullanici istegi, 2026-09-10).
-            -- Kural katmani (rules/Transfer.lua), olay ve cmTransferContract konsol
-            -- komutu duruyor; yalnizca buton gosterilmiyor.
+            -- "devret" 2026-09-10'da arayuzden askiya alinmisti, gerekce "konsol komutu duruyor"du.
+            -- 1.14.2.0 konsolu kapatti ve devret yalnizca web panelinden yapilabilir hale geldi;
+            -- buton geri acildi (2026-09-13).
+            actions[#actions + 1] = "transfer"
         end
     end
     if isAdmin then
@@ -458,12 +459,7 @@ end
 ---Pencere yaniti. Imza dogrulanamadigi icin hangi argumanin boolean oldugunu aramak
 ---zorundayiz; yanlis okuma para paylastiran bir eylemi tetiklerdi.
 function Page:onConfirmDialog(a, b)
-    local yes = nil
-    if type(a) == "boolean" then
-        yes = a
-    elseif type(b) == "boolean" then
-        yes = b
-    end
+    local yes = ContractManager.dialogAnswer(a, b)
     local action = self.dialogAction
     self.dialogAction = nil
     if yes ~= true or action == nil then
