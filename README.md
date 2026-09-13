@@ -54,7 +54,7 @@ Please attach the lines of `log.txt` that contain `[CM]`.
 modDesc.xml          mod descriptor, changelog (en/de/fr/tr)
 scripts/             Lua sources (core, rules, gui)
 gui/                 dialog XML, GUI profiles, tab icon
-l10n/                translations
+l10n/                translations (en, de, fr, tr)
 README.txt           Turkish player manual shipped inside the zip
 ```
 
