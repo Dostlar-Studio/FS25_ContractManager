@@ -127,6 +127,13 @@ function Admin.refreshBoard()
     return true, "cm_adminRefreshed"
 end
 
+---Istenen her kontrat icin en fazla kac tur denenir. Oyunun `tryGenerateMission`'i her
+---cagrida TEK rastgele tarla bakar (PlowMission.lua:99-112) ve uymuyorsa hemen nil doner;
+---kendi icinde tekrar denemez. Oyunun normal dongusu bunu alti dakikada bir tekrarlayarak
+---telafi eder. Tek tur denemek "uretilemiyor" demek DEGILDIR (2026-09-13 canli olcum:
+---108 bos tarla varken tek tur sonucu produced=0).
+Admin.FILL_ROUNDS = 25
+
 ---Oyunun uretim dongusunu ELDE cevirir. Normalde update basina en fazla BIR kontrat
 ---uretilir (generateMission -> finishMissionGeneration -> generationTimer sifirlanir),
 ---bu yuzden pano yenilendikten sonra kontratlar damla damla gelirdi. Donus: uretilen sayi.
@@ -144,33 +151,39 @@ function Admin.fillBoard(target)
     local maxTotal = MissionManager ~= nil and MissionManager.MAX_MISSIONS or 50
     target = math.max(0, math.min(target or 0, maxTotal))
     local typeCount = type(manager.missionTypes) == "table" and #manager.missionTypes or 1
-    local created, steps = 0, 0
+    local created, steps, rounds = 0, 0, 0
     for _ = 1, target do
         if #(manager.missions or {}) >= maxTotal then
             break
         end
-        local before = #(manager.missions or {})
-        manager.missionGenerationInProgress = false
-        if not pcall(manager.startMissionGeneration, manager) then
-            ContractManager.warning("Board fill: startMissionGeneration failed")
-            break
-        end
-        -- generateMission her cagrida BIR tur dener; basarida ya da tur listesi
-        -- dolandiginda finishMissionGeneration cagirilir ve bayrak duser.
-        steps = 0
-        while manager.missionGenerationInProgress and steps <= typeCount do
-            if not pcall(manager.generateMission, manager) then
+        local made = false
+        for _ = 1, Admin.FILL_ROUNDS do
+            local before = #(manager.missions or {})
+            manager.missionGenerationInProgress = false
+            if not pcall(manager.startMissionGeneration, manager) then
+                ContractManager.warning("Board fill: startMissionGeneration failed")
                 break
             end
-            steps = steps + 1
+            -- generateMission her cagrida BIR tur dener; basarida ya da tur listesi
+            -- dolandiginda finishMissionGeneration cagirilir ve bayrak duser.
+            steps = 0
+            while manager.missionGenerationInProgress and steps <= typeCount do
+                if not pcall(manager.generateMission, manager) then
+                    break
+                end
+                steps = steps + 1
+            end
+            rounds = rounds + 1
+            if #(manager.missions or {}) > before then
+                made = true
+                break
+            end
         end
-        if #(manager.missions or {}) <= before then
-            -- Oyunun uretimi bu turda hicbir sey veremedi. Bu NORMAL olabilir (uygun tarla yok)
-            -- ya da cagri kalibimiz yanlis olabilir; canli logdan ayirt etmek icin olcum.
-            -- 2026-09-13: "3 removed, 0 generated" gorulduginde eklendi.
+        if not made then
+            -- Butun turlar bosa ciktiysa oyun gercekten uretemiyor demektir.
             ContractManager.warning(
-                "Board fill produced nothing: missions=%d max=%d types=%d steps=%d inProgress=%s",
-                before, maxTotal, typeCount, steps, tostring(manager.missionGenerationInProgress))
+                "Board fill produced nothing after %d rounds: missions=%d max=%d types=%d",
+                rounds, #(manager.missions or {}), maxTotal, typeCount)
             ContractManager.warning("Board fill detail: %s", Admin.describeTrace())
             break
         end
