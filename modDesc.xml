@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.20.3.0</version>
+    <version>1.20.4.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,12 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.20.4.0:
+- Diagnostics: a board refresh that regenerates nothing now lists, per contract type, which ones this mod's rules skipped and which ones the game itself declined, so the cause is unambiguous.
+
+Changelog 1.20.4.0:
+- Diagnose: Erzeugt eine Tafelerneuerung nichts, wird jetzt pro Vertragstyp aufgelistet, welche dieser Mod übersprungen hat und welche das Spiel selbst abgelehnt hat.
 
 Changelog 1.20.3.0:
 - More diagnostics: when a board refresh regenerates nothing, the server log now says how many contracts were on the board, how many types were tried and where the generation loop stopped.
@@ -382,6 +388,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.20.4.0 :
+- Diagnostic : si une actualisation ne régénère rien, le journal indique désormais, par type de contrat, ceux écartés par ce mod et ceux refusés par le jeu lui-même.
+
 Changelog 1.20.3.0 :
 - Diagnostic supplémentaire : si une actualisation du tableau ne régénère rien, le journal du serveur indique désormais le nombre de contrats, les types essayés et où la génération s'est arrêtée.
 
@@ -554,6 +563,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.20.4.0:
+- Teşhis: hiç kontrat üretmeyen pano yenilemesi artık tür tür yazıyor; hangilerini bu modun kuralları atladı, hangilerini oyunun kendisi üretemedi.
 
 Değişiklikler 1.20.3.0:
 - Ek teşhis: pano yenilemesi hiç kontrat üretemezse sunucu logu artık panoda kaç kontrat olduğunu, kaç tür denendiğini ve üretim döngüsünün nerede durduğunu yazıyor.
