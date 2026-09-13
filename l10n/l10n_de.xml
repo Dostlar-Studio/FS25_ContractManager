@@ -142,13 +142,17 @@
         <text name="cm_resTakenBy" text="Von %s reserviert · in %d Min frei, wenn nicht angenommen"/>
         <text name="cm_resReservedButton" text="Von einem anderen Hof reserviert"/>
         <text name="cm_detailProduct" text="Ware"/>
-        <text name="cm_detailFieldYield" text="Feldertrag (geschätzt)"/>
+        <text name="cm_harvest_keepPercentBale_tooltip" text="Dasselbe für Ballenverträge. Spielstandard ist 10%."/>
+        <text name="cm_harvest_keepPercentBale" text="Hof behält (Ballen)"/>
+        <text name="cm_harvest_keepPercent_tooltip" text="Anteil der Ernte, der beim Hof bleibt statt abgeliefert zu werden. Spielstandard ist 7%. Höher bedeutet weniger abliefern und mehr Ware zum Selbstverkaufen."/>
+        <text name="cm_harvest_keepPercent" text="Hof behält (Ernte)"/>
+        <text name="cm_secHarvest" text="Ernteanteil"/>
+        <text name="cm_detailFieldYield" text="Feldertrag"/>
         <text name="cm_detailToDeliver" text="Zu liefern"/>
         <text name="cm_detailEstimated" text="gesch."/>
         <text name="cm_detailDelivered" text="Geliefert"/>
         <text name="cm_detailRemaining" text="Noch nötig"/>
-        <text name="cm_detailSurplus" text="Überschuss"/>
-        <text name="cm_detailSurplusHint" text="bleibt auf deinem Hof"/>
+        <text name="cm_detailSurplus" text="Bleibt bei dir"/>
         <text name="cm_detailProgress" text="Fortschritt"/>
         <text name="cm_secSchedule" text="Zeitboni (Echtzeit)"/>
         <text name="cm_schedule_enabled" text="Zeitboni"/>

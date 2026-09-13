@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.14.2.0</version>
+    <version>1.15.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,10 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.15.0.0:
+- New setting: the share of the harvest that stays with your farm instead of being delivered (game default 7%, 10% for bales). Raise it to leave more crop to sell yourself.
+- Contract details now show the field yield, the amount to deliver and the amount that stays with you as real numbers.
 
 Changelog 1.14.2.0:
 - Console commands (cm*) are disabled; every action is available through the in-game buttons and the web panel.
@@ -166,6 +170,10 @@ KONTAKT & QUELLCODE
 
 Muss auf dem Server und allen Clients aktiviert sein. Nur PC/Mac.
 
+Changelog 1.15.0.0:
+- Neue Einstellung: Anteil der Ernte, der beim Hof bleibt statt abgeliefert zu werden (Spielstandard 7%, 10% bei Ballen). Höher = mehr Ware zum Selbstverkaufen.
+- Die Vertragsdetails zeigen Feldertrag, Liefermenge und den Anteil, der beim Hof bleibt, als echte Zahlen.
+
 Changelog 1.14.2.0:
 - Konsolenbefehle (cm*) sind deaktiviert; alle Aktionen laufen über die Buttons im Spiel und das Web-Panel.
 
@@ -296,6 +304,10 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.15.0.0 :
+- Nouveau réglage : la part de la récolte qui reste à la ferme au lieu d'être livrée (défaut du jeu 7%, 10% pour les balles). Augmentez-la pour garder plus de récolte à vendre.
+- Les détails du contrat affichent le rendement du champ, la quantité à livrer et la part qui vous reste en chiffres réels.
+
 Changelog 1.14.2.0 :
 - Les commandes console (cm*) sont désactivées ; toutes les actions passent par les boutons du jeu et le panneau web.
 
@@ -425,6 +437,10 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.15.0.0:
+- Yeni ayar: hasadın teslim edilmeyip çiftliğe kalan oranı (oyun varsayılanı %7, balyada %10). Artırırsanız elinizde satacak daha çok ürün kalır.
+- Kontrat detayında tarladan çıkacak, teslim edilecek ve size kalacak miktarlar gerçek sayılarla yazılıyor.
 
 Değişiklikler 1.14.2.0:
 - Konsol komutları (cm*) kapatıldı; tüm işlemler oyun içi butonlar ve web paneliyle yapılır.
@@ -561,6 +577,7 @@ Değişiklikler 1.6.0.0:
         <sourceFile filename="scripts/rules/Partnership.lua"/>
         <sourceFile filename="scripts/rules/Limits.lua"/>
         <sourceFile filename="scripts/rules/Generation.lua"/>
+        <sourceFile filename="scripts/rules/Harvest.lua"/>
         <sourceFile filename="scripts/rules/Duration.lua"/>
         <sourceFile filename="scripts/gui/ContractDetails.lua"/>
         <sourceFile filename="scripts/gui/SettingsTab.lua"/>

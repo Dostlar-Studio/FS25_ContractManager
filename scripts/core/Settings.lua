@@ -49,6 +49,10 @@ Settings.SPEC = {
     { id = "reward.partialFactor",          xml = "reward#partialFactor",          type = INT,    default = 100,  min = 0,   max = 100 },
     { id = "reward.leaseCostMultiplier",    xml = "reward#leaseCostMultiplier",    type = FLOAT,  default = 1.0,  min = 0,   max = 10 },
 
+    -- hasattan ciftlige kalan pay: HarvestMission.SUCCESS_FACTOR / BaleMission.FILL_SUCCESS_FACTOR
+    { id = "harvest.keepPercent",           xml = "harvest#keepPercent",           type = INT,    default = 7,    min = 0,   max = 60 },
+    { id = "harvest.keepPercentBale",       xml = "harvest#keepPercentBale",       type = INT,    default = 10,   min = 0,   max = 60 },
+
     { id = "duration.multiplier",           xml = "duration#multiplier",           type = FLOAT,  default = 1.0,  min = 0.1, max = 10 },
     { id = "duration.warnAtMinutes",        xml = "duration#warnAtMinutes",        type = STRING, default = "60,15" },
 

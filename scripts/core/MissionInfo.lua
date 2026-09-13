@@ -31,46 +31,56 @@ Info.PUSH_DELTA_LITERS = 250     -- bu kadar degismeden tekrar yayinlanmaz
 -- olcum (sunucu; saf yardimcilar test edilir)
 -- ---------------------------------------------------------------------------
 
-Info.SUCCESS_FACTOR_DEFAULT = 0.93   -- oyunun AbstractMission.SUCCESS_FACTOR'u okunamazsa
 Info.DELIVERY_TYPES = { harvestMission = true, mowMission = true }   -- urun teslim eden kontrat turleri
-
----Oyunun basari carpani: teslim edilmesi gereken = tarla verimi * carpan (AbstractFieldMission
----getFieldCompletion ayni sabiti kullanir). Okunamazsa varsayilan.
-function Info.getSuccessFactor()
-    local factor = AbstractMission ~= nil and tonumber(AbstractMission.SUCCESS_FACTOR) or nil
-    if factor == nil or factor <= 0 or factor > 1 then
-        return Info.SUCCESS_FACTOR_DEFAULT
-    end
-    return factor
-end
 
 function Info.isDeliveryType(mission)
     local typeName = mission ~= nil and mission.type ~= nil and mission.type.name or nil
     return typeName ~= nil and Info.DELIVERY_TYPES[typeName] == true
 end
 
+---Tarladan cikacak TOPLAM urun. Sirayla: kontratin kendi sayisi, oyunun `getMaxCutLiters`
+---hesabi (BetterContracts pano kontratinda bunu kullaniyor), son care kendi tahminimiz.
+---Ikinci donus: sayi tahmini mi.
+function Info.resolveTotalLiters(mission)
+    local expected = tonumber(mission.expectedLiters) or 0
+    if expected > 0 then
+        return expected, false
+    end
+    if type(mission.getMaxCutLiters) == "function" then
+        local ok, liters = pcall(mission.getMaxCutLiters, mission)
+        if ok and type(liters) == "number" and liters > 0 then
+            return liters, false
+        end
+    end
+    local estimate = Info.estimateFieldYield(mission)
+    if estimate > 0 and Info.isDeliveryType(mission) then
+        return estimate, true
+    end
+    return 0, false
+end
+
 ---Kontratin teslimat sayilari. Teslimatsiz kontratta nil.
----HarvestMission sinifi yayinlanmadi: `expectedLiters` uretimde mi baslangicta mi doluyor bilinmiyor.
----Bos ise (pano kontrati) tarla veriminden tahmin edilir; `estimated` bayragi istemciye gider.
+---`total` tarladan cikacak toplam; bunun bir kismi teslim edilir (`deliver`), kalani
+---ciftlige kalir (`keep`) - orani ContractManagerHarvest belirler (ayardan).
 function Info.measure(mission)
     if mission == nil then
         return nil
     end
-    local yieldLiters = Info.estimateFieldYield(mission)
-    local expected = tonumber(mission.expectedLiters) or 0
-    local estimated = false
-    if expected <= 0 then
-        if not Info.isDeliveryType(mission) or yieldLiters <= 0 then
-            return nil
-        end
-        expected = yieldLiters * Info.getSuccessFactor()
-        estimated = true
+    local total, estimated = Info.resolveTotalLiters(mission)
+    if total <= 0 then
+        return nil
+    end
+    local typeName = mission.type ~= nil and mission.type.name or nil
+    local deliver, keep = total, 0
+    if ContractManagerHarvest ~= nil then
+        deliver, keep = ContractManagerHarvest.split(total, typeName)
     end
     return {
-        expected = math.max(0, math.floor(expected + 0.5)),
+        total = math.max(0, math.floor(total + 0.5)),
+        deliver = math.max(0, deliver),
+        keep = math.max(0, keep),
         deposited = math.max(0, math.floor((tonumber(mission.depositedLiters) or 0) + 0.5)),
         fillTypeIndex = Info.resolveFillType(mission) or 0,
-        yieldLiters = yieldLiters,
         estimated = estimated,
     }
 end
@@ -222,9 +232,9 @@ function Info.broadcast(mission, connection)
     end
     -- kontratin ilk yayini loga: sunucu logundan hangi alanin doldugu gorulsun (alan adlari yayinlanmamis sinifta)
     if Info.lastSent[objectId] == nil and connection == nil then
-        ContractManager.info("MissionInfo '%s': toDeliver=%d%s yield=%d fillType=%d deposited=%d",
-            tostring(mission.title or mission.progressTitle or "?"), data.expected, data.estimated and " (est)" or "",
-            data.yieldLiters or 0, data.fillTypeIndex or 0, data.deposited or 0)
+        ContractManager.info("MissionInfo '%s': total=%d%s toDeliver=%d keep=%d fillType=%d deposited=%d",
+            tostring(mission.title or mission.progressTitle or "?"), data.total, data.estimated and " (est)" or "",
+            data.deliver or 0, data.keep or 0, data.fillTypeIndex or 0, data.deposited or 0)
     end
     local event = ContractManagerMissionInfoEvent.new(objectId, data)
     if connection ~= nil then

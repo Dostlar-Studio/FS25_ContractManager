@@ -675,29 +675,32 @@ end
 function ContractManagerMissionInfoEvent.new(objectId, data)
     local self = ContractManagerMissionInfoEvent.emptyNew()
     self.objectId = objectId or 0
-    self.expected = data ~= nil and data.expected or 0
+    self.total = data ~= nil and data.total or 0
+    self.deliver = data ~= nil and data.deliver or 0
+    self.keep = data ~= nil and data.keep or 0
     self.deposited = data ~= nil and data.deposited or 0
     self.fillTypeIndex = data ~= nil and data.fillTypeIndex or 0
-    self.yieldLiters = data ~= nil and data.yieldLiters or 0
     self.estimated = data ~= nil and data.estimated == true
     return self
 end
 
 function ContractManagerMissionInfoEvent:writeStream(streamId, connection)
     NetworkUtil.writeNodeObjectId(streamId, self.objectId or 0)
-    streamWriteInt32(streamId, self.expected or 0)
+    streamWriteInt32(streamId, self.total or 0)
+    streamWriteInt32(streamId, self.deliver or 0)
+    streamWriteInt32(streamId, self.keep or 0)
     streamWriteInt32(streamId, self.deposited or 0)
     streamWriteInt32(streamId, self.fillTypeIndex or 0)
-    streamWriteInt32(streamId, self.yieldLiters or 0)
     streamWriteBool(streamId, self.estimated == true)
 end
 
 function ContractManagerMissionInfoEvent:readStream(streamId, connection)
     self.objectId = NetworkUtil.readNodeObjectId(streamId)
-    self.expected = streamReadInt32(streamId)
+    self.total = streamReadInt32(streamId)
+    self.deliver = streamReadInt32(streamId)
+    self.keep = streamReadInt32(streamId)
     self.deposited = streamReadInt32(streamId)
     self.fillTypeIndex = streamReadInt32(streamId)
-    self.yieldLiters = streamReadInt32(streamId)
     self.estimated = streamReadBool(streamId)
     self:run(connection)
 end
@@ -711,10 +714,11 @@ function ContractManagerMissionInfoEvent:run(connection)
         return
     end
     ContractManagerMissionInfo.applyRemote(self.objectId, {
-        expected = self.expected,
+        total = self.total,
+        deliver = self.deliver,
+        keep = self.keep,
         deposited = self.deposited,
         fillTypeIndex = self.fillTypeIndex,
-        yieldLiters = self.yieldLiters,
         estimated = self.estimated == true,
     })
 end

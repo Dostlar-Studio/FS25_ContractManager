@@ -142,13 +142,17 @@
         <text name="cm_resTakenBy" text="%s rezerve etti · alınmazsa %d dk sonra serbest"/>
         <text name="cm_resReservedButton" text="Başka çiftlik rezerve etti"/>
         <text name="cm_detailProduct" text="Ürün"/>
-        <text name="cm_detailFieldYield" text="Tarladan çıkacak (tahmini)"/>
+        <text name="cm_harvest_keepPercentBale_tooltip" text="Balya kontratları için aynısı. Oyun varsayılanı %10."/>
+        <text name="cm_harvest_keepPercentBale" text="Çiftliğe kalan (balya)"/>
+        <text name="cm_harvest_keepPercent_tooltip" text="Hasadın teslim edilmeyip çiftliğe kalan oranı. Oyun varsayılanı %7. Artırırsanız daha az teslim edersiniz, elinizde satacak daha çok ürün kalır."/>
+        <text name="cm_harvest_keepPercent" text="Çiftliğe kalan (hasat)"/>
+        <text name="cm_secHarvest" text="Hasat payı"/>
+        <text name="cm_detailFieldYield" text="Tarladan çıkacak"/>
         <text name="cm_detailToDeliver" text="Teslim edilecek"/>
         <text name="cm_detailEstimated" text="tahmini"/>
         <text name="cm_detailDelivered" text="Teslim edilen"/>
         <text name="cm_detailRemaining" text="Kalan"/>
-        <text name="cm_detailSurplus" text="Fazlası"/>
-        <text name="cm_detailSurplusHint" text="çiftliğinizde kalır"/>
+        <text name="cm_detailSurplus" text="Size kalacak"/>
         <text name="cm_detailProgress" text="İlerleme"/>
         <text name="cm_secSchedule" text="Zamanlı bonuslar (gerçek saat)"/>
         <text name="cm_schedule_enabled" text="Zamanlı bonuslar"/>
