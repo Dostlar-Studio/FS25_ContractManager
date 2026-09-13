@@ -214,6 +214,9 @@ Tab.SPEC = {
     { section = "cm_secInterface" },
     { id = "ui.managePage", kind = "bool" },
 
+    { section = "cm_secCompat" },
+    { id = "compat.overrideBetterContracts", kind = "bool" },
+
     { section = "cm_secIntegrations" },
     { id = "integrations.discord", kind = "bool" },
 
@@ -665,7 +668,12 @@ function Tab:insertIntoSettingsPage()
 
     -- odak: stok sayfa acilirken kontrollerimizi kaydet
     local controls = self.controls
+    -- Bu kanca HER ekran acilisinda (magaza, harita, her diyalog) ~130 kontrolu tariyordu.
+    -- Yalnizca oyunun ayar ekrani acilirken calissin. 2026-09-13 denetimi.
     FocusManager.setGui = Utils.appendedFunction(FocusManager.setGui, function(_, gui)
+        if gui ~= nil and gui ~= "ingameMenu" and gui ~= "InGameMenu" then
+            return
+        end
         for _, control in ipairs(controls) do
             if not control.focusId or not FocusManager.currentFocusData.idToElementMapping[control.focusId] then
                 FocusManager:loadElementFromCustomValues(control, nil, nil, false, false)

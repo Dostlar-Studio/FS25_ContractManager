@@ -609,6 +609,10 @@ function Part.applyRemote(uniqueId, ownerFarmId, farms, pending)
         entry.partners[farmId] = true
     end
     Part.list[uniqueId] = entry
+    -- acik yonetim sayfasi eski veriyi gostermesin
+    if ContractManagerManagePage ~= nil and ContractManagerManagePage.onRemoteChange ~= nil then
+        ContractManagerManagePage.onRemoteChange()
+    end
 end
 
 ---istek yonlendirme (sunucu). Donus: ok, l10n anahtari

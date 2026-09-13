@@ -79,6 +79,29 @@ function Hud.describe(mission, farmId, reward)
     return isOwner, payout, share
 end
 
+---Yalnizca ROL (ucuz). true = sahip, false = ortak, nil = uye degil.
+---`describe` ile ayni karari verir ama katilimci listesi kurmaz.
+function Hud.role(mission, farmId)
+    if mission == nil or farmId == nil then
+        return nil
+    end
+    local Part = ContractManagerPartnership
+    local entry = Part ~= nil and Part.get(mission) or nil
+    if entry == nil then
+        if mission.farmId == farmId then
+            return true
+        end
+        return nil
+    end
+    if entry.owner == farmId then
+        return true
+    end
+    if Part.isPartner(mission, farmId) then
+        return false
+    end
+    return nil
+end
+
 -- ---------------------------------------------------------------------------
 -- HUD (istemci)
 -- ---------------------------------------------------------------------------
@@ -134,7 +157,17 @@ function Hud.afterMissionUpdate(mission, dt)
         mission.cmHudTimer = 0
     end
 
-    local isOwner, payout, share = Hud.describe(mission, farmId, reward(mission))
+    -- ROL her kare bakilir (ucuz: tek tablo aramasi) ki uyelik bitince cubuk aninda kalksin.
+    -- PAY hesabi pahali (Part.getParticipants tablo kuruyor, getReward tum bonus zincirini
+    -- gezmiyor) - o yalnizca REFRESH_MS'de bir hesaplanir. 2026-09-13 denetimi.
+    local isOwner = Hud.role(mission, farmId)
+    local cached = mission.cmHudCache
+    if refresh or cached == nil then
+        local _, p, sh = Hud.describe(mission, farmId, reward(mission))
+        cached = { payout = p, share = sh }
+        mission.cmHudCache = cached
+    end
+    local payout, share = cached.payout, cached.share
     if isOwner == true then
         -- oyunun cubugu; yalnizca metnini zenginlestir
         if mission.progressBar ~= nil and refresh then

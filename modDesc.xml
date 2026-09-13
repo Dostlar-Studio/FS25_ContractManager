@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.19.0.0</version>
+    <version>1.20.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,18 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.20.0.0:
+- Fixed: restarting the game from the server panel without restarting the process stacked the generation and harvest multipliers on top of themselves and carried old reservations over. The game's own values are now remembered on the game side.
+- The management page now refreshes while it is open when something changes on the server, instead of showing stale rows.
+- The BetterContracts override is now a setting in the tab instead of an XML-only switch.
+- Performance: the HUD bar no longer recomputes the partner share every frame, and the settings hook no longer scans its controls on every screen.
+
+Changelog 1.20.0.0:
+- Behoben: Ein Neustart des Spiels über das Serverpanel ohne Prozess-Neustart stapelte die Generierungs- und Ernte-Multiplikatoren und übernahm alte Reservierungen. Die Originalwerte des Spiels werden jetzt spielseitig gemerkt.
+- Die Verwaltungsseite aktualisiert sich jetzt im geöffneten Zustand, wenn sich auf dem Server etwas ändert.
+- Der BetterContracts-Überschreibschalter ist jetzt eine Einstellung im Tab statt nur in der XML.
+- Leistung: Der HUD-Balken berechnet den Partneranteil nicht mehr jedes Bild, und der Einstellungs-Hook durchsucht seine Steuerelemente nicht mehr bei jedem Bildschirm.
 
 Changelog 1.19.0.0:
 - Fixed: an action you confirmed could land on a different contract if the board changed while the confirmation was open. The target is now pinned when you confirm, the question names the contract, and the action is dropped if that contract is gone.
@@ -352,6 +364,12 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.20.0.0 :
+- Corrigé : redémarrer la partie depuis le panneau du serveur sans relancer le processus empilait les multiplicateurs de génération et de récolte et conservait les anciennes réservations. Les valeurs d'origine du jeu sont désormais mémorisées côté jeu.
+- La page de gestion se rafraîchit maintenant lorsqu'elle est ouverte et que quelque chose change sur le serveur.
+- Le contournement de BetterContracts est désormais un réglage dans l'onglet et non plus uniquement dans le XML.
+- Performances : la barre du HUD ne recalcule plus la part du partenaire à chaque image, et le hook des réglages ne parcourt plus ses contrôles à chaque écran.
+
 Changelog 1.19.0.0 :
 - Corrigé : une action confirmée pouvait s'appliquer à un autre contrat si le tableau changeait pendant la confirmation. La cible est désormais fixée à la confirmation, la question nomme le contrat, et l'action est abandonnée si ce contrat a disparu.
 - Le mod vérifie maintenant que le serveur et le client parlent la même version et le dit clairement au lieu d'afficher des valeurs corrompues.
@@ -509,6 +527,12 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.20.0.0:
+- Düzeltme: sunucu panelinden oyunu durdurup başlatmak (süreç yeniden başlamadan) üretim ve hasat çarpanlarını üst üste bindiriyor, eski rezervasyonları taşıyordu. Oyunun kendi değerleri artık oyun tarafında saklanıyor.
+- Yönetim sayfası artık açıkken sunucuda bir şey değişince tazeleniyor, eski satırları göstermiyor.
+- BetterContracts'ın üstüne uygulama anahtarı artık ayar sekmesinde; yalnızca XML'den değiştirilmiyor.
+- Performans: HUD çubuğu ortak payını her karede hesaplamıyor, ayar sekmesi kancası her ekranda kontrollerini taramıyor.
 
 Değişiklikler 1.19.0.0:
 - Düzeltme: onayladığınız işlem, onay açıkken pano değişirse başka bir kontrata uygulanabiliyordu. Hedef artık onay anında sabitleniyor, soru kontratın adını yazıyor ve o kontrat panodan düşmüşse işlem uygulanmıyor.
