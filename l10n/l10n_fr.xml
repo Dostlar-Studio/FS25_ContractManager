@@ -100,6 +100,7 @@
         <text name="cm_adminNoFarm" text="Ferme invalide."/>
         <text name="cm_adminLimit" text="La ferme a atteint sa limite de contrats."/>
         <text name="cm_adminFailed" text="L'action a échoué."/>
+        <text name="cm_adminNoFields" text="Le tableau ne peut pas être actualisé pour le moment : le jeu n'a aucun champ disponible pour un nouveau contrat. Rien n'a été supprimé."/>
         <text name="cm_secReputation" text="Réputation"/>
         <text name="cm_reputation_enabled" text="Système de réputation"/>
         <text name="cm_reputation_enabled_tooltip" text="Les contrats terminés rapportent des points ; échecs, annulations et expirations en font perdre. Les points donnent un bonus de récompense et un emplacement de contrat supplémentaire."/>

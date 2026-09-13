@@ -100,6 +100,7 @@
         <text name="cm_adminNoFarm" text="Ungültiger Hof."/>
         <text name="cm_adminLimit" text="Hof hat sein Vertragslimit erreicht."/>
         <text name="cm_adminFailed" text="Aktion fehlgeschlagen."/>
+        <text name="cm_adminNoFields" text="Die Tafel kann gerade nicht erneuert werden: Das Spiel hat kein Feld für einen neuen Vertrag frei. Es wurde nichts entfernt."/>
         <text name="cm_secReputation" text="Ruf"/>
         <text name="cm_reputation_enabled" text="Rufsystem"/>
         <text name="cm_reputation_enabled_tooltip" text="Abgeschlossene Verträge geben Punkte, Fehlschlag/Abbruch/Ablauf kosten Punkte. Punkte geben Belohnungsbonus und einen Extra-Vertragsplatz."/>

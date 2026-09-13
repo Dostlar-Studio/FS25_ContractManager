@@ -100,6 +100,7 @@
         <text name="cm_adminNoFarm" text="Invalid farm."/>
         <text name="cm_adminLimit" text="Farm has reached its contract limit."/>
         <text name="cm_adminFailed" text="Action failed."/>
+        <text name="cm_adminNoFields" text="The board cannot be refreshed right now: the game has no field available for a new contract. Nothing was removed."/>
         <text name="cm_secReputation" text="Reputation"/>
         <text name="cm_reputation_enabled" text="Reputation system"/>
         <text name="cm_reputation_enabled_tooltip" text="Completed contracts earn points, failures/cancels/timeouts lose points. Points give a reward bonus and an extra contract slot."/>
