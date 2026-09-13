@@ -34,26 +34,58 @@ function ContractManagerSyncEvent.newState()
 end
 
 function ContractManagerSyncEvent:writeStream(streamId, connection)
+    streamWriteUInt8(streamId, ContractManager.PROTOCOL)
     if streamWriteBool(streamId, self.isState) then
         ContractManagerSettings:writeStream(streamId)
     end
 end
 
 function ContractManagerSyncEvent:readStream(streamId, connection)
+    self.protocol = streamReadUInt8(streamId)
     self.isState = streamReadBool(streamId)
     if self.isState then
-        -- yalnizca sunucudan gelen durum kabul edilir; istemci ayar dayatamaz
-        if connection ~= nil and not connection:getIsServer() then
+        -- AKISI HER ZAMAN TUKET. Once burada erken cikiliyordu; okunmayan baytlar ayni
+        -- pakette gelen SONRAKI olaylarin basligi sanilip cop veriden cozuluyordu
+        -- (degistirilmis bir istemcinin tek satirla sunucuyu bozmasi icin yeterliydi).
+        local fromServer = connection == nil or connection:getIsServer()
+        ContractManagerSettings:readStream(streamId, not fromServer)
+        if not fromServer then
             ContractManager.warning("Ignored settings state sent by a client")
             return
         end
-        ContractManagerSettings:readStream(streamId)
     end
     self:run(connection)
 end
 
+---Baglanti basina istek sinirlamasi: bir istemci arka arkaya istek gonderip sunucuya
+---kontrat basina paket urettirebiliyordu (senkron yaniti panodaki her kontrat icin bir olay,
+---istatistik yaniti tum ciftlikleri gezen bir siralama uretir).
+ContractManagerSyncEvent.REQUEST_INTERVAL_MS = 3000
+local requestGate = setmetatable({}, { __mode = "k" })
+
+function ContractManagerSyncEvent.allowRequest(connection, key, intervalMs)
+    if connection == nil then
+        return true
+    end
+    local now = g_currentMission ~= nil and tonumber(g_currentMission.time) or 0
+    local perConnection = requestGate[connection]
+    if perConnection == nil then
+        perConnection = {}
+        requestGate[connection] = perConnection
+    end
+    local last = perConnection[key]
+    if last ~= nil and now - last < (intervalMs or ContractManagerSyncEvent.REQUEST_INTERVAL_MS) then
+        return false
+    end
+    perConnection[key] = now
+    return true
+end
+
 function ContractManagerSyncEvent:run(connection)
     if connection ~= nil and not connection:getIsServer() then
+        if not ContractManagerSyncEvent.allowRequest(connection, "sync") then
+            return
+        end
         -- sunucudayiz, istemci durum istedi
         connection:sendEvent(ContractManagerSyncEvent.newState())
         if ContractManagerReservation ~= nil then
@@ -66,6 +98,19 @@ function ContractManagerSyncEvent:run(connection)
             ContractManagerMissionInfo.sendAllTo(connection)
         end
         return
+    end
+    if self.isState and self.protocol ~= nil and self.protocol ~= ContractManager.PROTOCOL then
+        -- Sunucu ile istemci farkli bicimde konusuyor: olay akislari sessizce bozulur
+        -- (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu). Acik uyari ver.
+        ContractManager.error(
+            "Protocol mismatch: server speaks %s, this client speaks %s. Install the same mod version on both.",
+            tostring(self.protocol), tostring(ContractManager.PROTOCOL))
+        if ContractManagerInfoPopup ~= nil and ContractManagerInfoPopup.show ~= nil then
+            ContractManagerInfoPopup.show(ContractManager.text("cm_tabTitle", "Contract Manager"),
+                ContractManager.text("cm_versionMismatch",
+                    "The server runs a different version of Contract Manager. Install the same version on both sides."),
+                false)
+        end
     end
     if self.isState then
         -- Her ayar degisikliginde sunucu tum ayarlari yayinlar; bunu Info olarak
@@ -489,6 +534,9 @@ end
 
 function ContractManagerStatsEvent:run(connection)
     if connection ~= nil and not connection:getIsServer() then
+        if not ContractManagerSyncEvent.allowRequest(connection, "stats") then
+            return
+        end
         -- sunucu: istek geldi; yalnizca istemcinin KENDI ciftligini yanitla
         local farmId = self.farmId
         if g_currentMission ~= nil and g_currentMission.userManager ~= nil and g_farmManager ~= nil then

@@ -10,6 +10,7 @@
         <text name="cm_penalty" text="Kontrat cezası"/>
         <text name="cm_timeWarning" text="Kontrat süresi dolmak üzere: %s (%d dk kaldı)"/>
         <text name="cm_tabTitle" text="Kontrat Yöneticisi"/>
+        <text name="cm_versionMismatch" text="Sunucuda Kontrat Yöneticisi&apos;nin farklı bir sürümü çalışıyor. İki tarafa da aynı sürümü kurun."/>
         <text name="cm_noPermission" text="Kontrat kurallarını yalnızca sunucu yöneticisi değiştirebilir."/>
         <text name="cm_secGuard" text="Ürün koruması"/>
         <text name="cm_secReward" text="Ödül ve ceza"/>

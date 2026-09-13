@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.18.0.0</version>
+    <version>1.19.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,16 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.19.0.0:
+- Fixed: an action you confirmed could land on a different contract if the board changed while the confirmation was open. The target is now pinned when you confirm, the question names the contract, and the action is dropped if that contract is gone.
+- The mod now checks that the server and the client speak the same version and says so plainly instead of showing corrupted numbers.
+- Hardened the network layer: a rejected settings packet no longer corrupts the rest of the packet, and sync and statistics requests are rate limited per connection.
+
+Changelog 1.19.0.0:
+- Behoben: Eine bestätigte Aktion konnte einen anderen Vertrag treffen, wenn sich die Tafel während der Bestätigung änderte. Das Ziel wird jetzt beim Bestätigen festgehalten, die Frage nennt den Vertrag, und die Aktion entfällt, wenn dieser Vertrag weg ist.
+- Der Mod prüft jetzt, ob Server und Client dieselbe Version sprechen, und sagt es deutlich, statt falsche Zahlen anzuzeigen.
+- Netzwerkschicht gehärtet: Ein abgelehntes Einstellungspaket beschädigt den Rest des Pakets nicht mehr, und Sync- sowie Statistikanfragen sind pro Verbindung begrenzt.
 
 Changelog 1.18.0.0:
 - Fixed: if the contract's starting measurement was lost (for example by turning the guard off and on again), a failed contract confiscated everything in your trailers, including crops you harvested from your own fields. The starting amount is now measured instead of assumed to be zero.
@@ -342,6 +352,11 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.19.0.0 :
+- Corrigé : une action confirmée pouvait s'appliquer à un autre contrat si le tableau changeait pendant la confirmation. La cible est désormais fixée à la confirmation, la question nomme le contrat, et l'action est abandonnée si ce contrat a disparu.
+- Le mod vérifie maintenant que le serveur et le client parlent la même version et le dit clairement au lieu d'afficher des valeurs corrompues.
+- Couche réseau durcie : un paquet de réglages rejeté ne corrompt plus le reste du paquet, et les requêtes de synchronisation et de statistiques sont limitées par connexion.
+
 Changelog 1.18.0.0 :
 - Corrigé : si la mesure de départ du contrat était perdue (par exemple en désactivant puis réactivant la protection), un contrat échoué confisquait tout le contenu de vos remorques, y compris la récolte de vos propres champs. La quantité de départ est désormais mesurée au lieu d'être supposée nulle.
 - La confiscation est désormais plafonnée à ce que le contrat pouvait produire, moins ce qui a déjà été livré.
@@ -494,6 +509,11 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.19.0.0:
+- Düzeltme: onayladığınız işlem, onay açıkken pano değişirse başka bir kontrata uygulanabiliyordu. Hedef artık onay anında sabitleniyor, soru kontratın adını yazıyor ve o kontrat panodan düşmüşse işlem uygulanmıyor.
+- Mod artık sunucu ile istemcinin aynı sürümü konuşup konuşmadığını denetliyor ve bozuk sayı göstermek yerine açıkça uyarıyor.
+- Ağ katmanı sağlamlaştırıldı: reddedilen ayar paketi artık paketin kalanını bozmuyor, senkron ve istatistik istekleri bağlantı başına sınırlandı.
 
 Değişiklikler 1.18.0.0:
 - Düzeltme: kontratın başlangıç ölçüsü kaybolduğunda (örneğin korumayı kapatıp açmak) başarısız kontrat römorklarınızdaki her şeyi geri alıyordu, kendi tarlanızdan hasat ettiğiniz ürün dahil. Başlangıç miktarı artık sıfır varsayılmıyor, ölçülüyor.

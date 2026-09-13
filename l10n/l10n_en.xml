@@ -10,6 +10,7 @@
         <text name="cm_penalty" text="Contract penalty"/>
         <text name="cm_timeWarning" text="Contract about to expire: %s (%d min left)"/>
         <text name="cm_tabTitle" text="Contract Manager"/>
+        <text name="cm_versionMismatch" text="The server runs a different version of Contract Manager. Install the same version on both sides."/>
         <text name="cm_noPermission" text="Only the server admin can change contract rules."/>
         <text name="cm_secGuard" text="Product guard"/>
         <text name="cm_secReward" text="Reward and penalty"/>

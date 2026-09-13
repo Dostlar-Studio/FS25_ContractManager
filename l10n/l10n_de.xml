@@ -10,6 +10,7 @@
         <text name="cm_penalty" text="Vertragsstrafe"/>
         <text name="cm_timeWarning" text="Vertrag läuft bald ab: %s (noch %d Min.)"/>
         <text name="cm_tabTitle" text="Vertragsmanager"/>
+        <text name="cm_versionMismatch" text="Der Server nutzt eine andere Version des Vertragsmanagers. Installiere auf beiden Seiten dieselbe Version."/>
         <text name="cm_noPermission" text="Nur der Serveradmin kann Vertragsregeln ändern."/>
         <text name="cm_secGuard" text="Produktschutz"/>
         <text name="cm_secReward" text="Belohnung und Strafe"/>

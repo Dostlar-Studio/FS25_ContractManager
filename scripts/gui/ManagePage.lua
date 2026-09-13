@@ -67,7 +67,12 @@ function Page.needsConfirm(action)
 end
 
 ---onay sorusu (saf). Hedef ciftlik gerektiren eylemlerde ciftlik adi yazilir.
-function Page.confirmQuestion(action, targetFarmName)
+---`missionTitle` verilirse soru hedefi adiyla yazar: hedefin kaymasi kullaniciya gorunur olsun.
+function Page.confirmQuestion(action, targetFarmName, missionTitle)
+    if missionTitle ~= nil and missionTitle ~= "" then
+        return string.format("%s  (%s)",
+            Page.confirmQuestion(action, targetFarmName), tostring(missionTitle))
+    end
     if action == "invite" then
         return string.format(text("cm_pageConfirmInvite", "Send invite to %s?"), tostring(targetFarmName))
     end
@@ -416,9 +421,46 @@ function Page:getSelected()
     return self.rows[self.selectedIndex]
 end
 
+---Kontrat hala panoda mi? Secim SIRA NUMARASINA bagli ve liste her `refresh`'te yeniden
+---kuruluyor; onay beklerken araya giren bir degisiklik ayni indeksi BASKA kontrata
+---kaydiriyordu ve "Zorla iptal" yanlis kontrata gidebiliyordu (2026-09-13 denetimi).
+function Page.missionStillListed(mission)
+    if mission == nil then
+        return false
+    end
+    for _, m in ipairs(g_missionManager ~= nil and g_missionManager.missions or {}) do
+        if m == mission then
+            return true
+        end
+    end
+    return false
+end
+
+---Onay basladiginda hedefi sabitle.
+function Page:pinTarget()
+    local row = self:getSelected()
+    self.pendingMission = row ~= nil and row.mission or nil
+    return self.pendingMission
+end
+
+---Calistirma aninda hedefi al. Donus: kontrat, "kayboldu mu".
+function Page:takeTarget()
+    local pinned = self.pendingMission
+    self.pendingMission = nil
+    if pinned == nil then
+        local row = self:getSelected()
+        return row ~= nil and row.mission or nil, false
+    end
+    if not Page.missionStillListed(pinned) then
+        return nil, true
+    end
+    return pinned, false
+end
+
 function Page:onClickRow(index)
     self.selectedIndex = (self.selectedIndex == index) and 0 or index
     self.pendingAction = nil
+    self.pendingMission = nil
     self:refresh()
 end
 
@@ -445,7 +487,9 @@ function Page:showConfirmDialog(action)
     if YesNoDialog == nil or YesNoDialog.show == nil then
         return false
     end
-    local question = Page.confirmQuestion(action, Page.farmName(self.targetFarmId))
+    local pinned = self.pendingMission
+    local question = Page.confirmQuestion(action, Page.farmName(self.targetFarmId),
+        pinned ~= nil and pinned.title or nil)
     local title = text("cm_tabTitle", "Contract Manager")
     local ok = pcall(YesNoDialog.show, self.onConfirmDialog, self, question, title,
         text("cm_pageConfirmButton", "Confirm"), text("cm_pageDialogNo", "Cancel"))
@@ -476,6 +520,7 @@ function Page:onClickAction(action)
         return
     end
     if Page.needsConfirm(action) and self.pendingAction ~= action then
+        self:pinTarget()
         if self:showConfirmDialog(action) then
             return
         end
@@ -489,8 +534,15 @@ end
 
 ---eylem calistir (saf yonlendirme; olaylar kendi dogrulamasini yapar)
 function Page:runAction(action)
-    local row = self:getSelected()
-    local mission = row ~= nil and row.mission or nil
+    local mission, gone = self:takeTarget()
+    if gone then
+        -- onay beklerken kontrat panodan dustu: sessizce baska kontrata uygulama
+        if ContractManagerAdmin ~= nil and ContractManagerAdmin.showResult ~= nil then
+            ContractManagerAdmin.showResult("cm_adminNotFound", false)
+        end
+        self:refresh()
+        return
+    end
     -- Istemcide mission.uniqueId NIL'dir (sunucu onu hic gondermiyor), bu yuzden
     -- kontrat AG kimligiyle gosterilir; sunucu kendi uniqueId'sine cevirir.
     local uniqueId = ContractManager.getMissionKey(mission)

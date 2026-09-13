@@ -364,7 +364,8 @@ function Settings:writeStream(streamId)
     end
 end
 
-function Settings:readStream(streamId)
+---`discard` true ise degerler okunur ama UYGULANMAZ: akisi bozmadan reddetmek icin.
+function Settings:readStream(streamId, discard)
     for _, spec in ipairs(self.SPEC) do
         local value
         if spec.type == BOOL then
@@ -376,15 +377,24 @@ function Settings:readStream(streamId)
         else
             value = streamReadString(streamId)
         end
-        self.values[spec.id] = self.sanitize(spec, value)
+        if not discard then
+            self.values[spec.id] = self.sanitize(spec, value)
+        end
     end
-    self.types = {}
+    if not discard then
+        self.types = {}
+    end
     local count = streamReadUInt8(streamId)
     for _ = 1, count do
         local name = streamReadString(streamId)
         local enabled = streamReadBool(streamId)
         local weight = streamReadFloat32(streamId)
-        self:setTypeConfig(name, enabled, weight)
+        if not discard then
+            self:setTypeConfig(name, enabled, weight)
+        end
+    end
+    if discard then
+        return
     end
     -- istemcideki kopya diske yazilmaz
     self.dirty = false
