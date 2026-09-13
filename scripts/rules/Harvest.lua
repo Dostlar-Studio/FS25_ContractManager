@@ -80,13 +80,19 @@ end
 -- sabitlerin yazilmasi
 -- ---------------------------------------------------------------------------
 
+---Orijinaller OYUNUN sinif tablosunda: harita yeniden yuklenince mod tablosu sifirlanir
+---ve bizim yazdigimiz deger "oyunun degeri" sanilirdi; boylece oyunun gercek degeri bir daha
+---geri konulamazdi (bkz. Generation.captureOriginals). 2026-09-13 denetimi.
 function Harvest.captureOriginals()
-    if Harvest.originals ~= nil then
-        return
+    if HarvestMission ~= nil and HarvestMission.cmOriginalSuccessFactor == nil then
+        HarvestMission.cmOriginalSuccessFactor = tonumber(HarvestMission.SUCCESS_FACTOR)
+    end
+    if BaleMission ~= nil and BaleMission.cmOriginalFillSuccessFactor == nil then
+        BaleMission.cmOriginalFillSuccessFactor = tonumber(BaleMission.FILL_SUCCESS_FACTOR)
     end
     Harvest.originals = {
-        harvest = HarvestMission ~= nil and tonumber(HarvestMission.SUCCESS_FACTOR) or nil,
-        bale = BaleMission ~= nil and tonumber(BaleMission.FILL_SUCCESS_FACTOR) or nil,
+        harvest = HarvestMission ~= nil and HarvestMission.cmOriginalSuccessFactor or nil,
+        bale = BaleMission ~= nil and BaleMission.cmOriginalFillSuccessFactor or nil,
     }
 end
 

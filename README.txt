@@ -1,4 +1,4 @@
-FS25 KONTRAT YÖNETİCİSİ - v1.19.0.0
+FS25 KONTRAT YÖNETİCİSİ - v1.20.0.0
 ===============================================================================
 
 Bu sürüm, FS25_ContractGuard modunun tamamını yeni Kontrat Yöneticisi çatısı
@@ -67,8 +67,9 @@ BETTERCONTRACTS İLE BİRLİKTE
 FS25_BetterContracts da yüklüyse ödül, ceza, limit, üretim ve süre kuralları
 otomatik olarak geri çekilir (iki mod aynı noktalara yazar, çarpanlar
 katlanırdı). Koruma (Guard) ve kontrat geçmişi çalışmaya devam eder.
-compat#overrideBetterContracts="true" yaparsanız bu modun kuralları
-BetterContracts'ın üstüne uygulanır; bunu yalnızca bilinçli yapın.
+Ayarlar > Kontrat Yöneticisi > Uyumluluk > "BetterContracts'ın üstüne uygula"
+açarsanız bu modun kuralları BetterContracts'ın üstüne uygulanır; bunu yalnızca
+bilinçli yapın (ayar dosyasındaki karşılığı compat#overrideBetterContracts).
 
 KONTRAT GEÇMİŞİ
 Sunucu, kabul edilen / biten kontratları ve çiftlik başına istatistiği

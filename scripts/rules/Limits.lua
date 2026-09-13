@@ -57,9 +57,12 @@ function Limits.applyConstant()
     if MissionManager == nil then
         return
     end
-    if Limits.originalMaxPerFarm == nil and type(MissionManager.MAX_MISSIONS_PER_FARM) == "number" then
-        Limits.originalMaxPerFarm = MissionManager.MAX_MISSIONS_PER_FARM
+    -- orijinal deger OYUNUN tablosunda: harita yeniden yuklenince mod tablosu sifirlanir
+    -- ve zaten degistirilmis deger "orijinal" sanilirdi (bkz. Generation.captureOriginals).
+    if MissionManager.cmOriginalMaxPerFarm == nil and type(MissionManager.MAX_MISSIONS_PER_FARM) == "number" then
+        MissionManager.cmOriginalMaxPerFarm = MissionManager.MAX_MISSIONS_PER_FARM
     end
+    Limits.originalMaxPerFarm = MissionManager.cmOriginalMaxPerFarm
     local limit = Limits.getFarmLimit()
     if limit == nil then
         if Limits.originalMaxPerFarm ~= nil then

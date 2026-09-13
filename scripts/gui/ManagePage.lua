@@ -806,7 +806,18 @@ function Page:refresh()
     end
 end
 
+---Sayfa kapandi. Kendi bayragimizi tutuyoruz: oyunun `isOpen` alanina guvenmiyoruz
+---(TabbedMenuFrameElement govdesi yayinlanmamis kaynakta yok).
+function Page:onFrameClose()
+    Page.isOpen = false
+    Page.pendingMission = nil
+    if ContractManagerManagePage:superClass().onFrameClose ~= nil then
+        ContractManagerManagePage:superClass().onFrameClose(self)
+    end
+end
+
 function Page:onFrameOpen()
+    Page.isOpen = true
     ContractManagerManagePage:superClass().onFrameOpen(self)
     if self.targetFarmId == nil then
         local ids = Page.getFarmIds(self:getLocalFarmId())
@@ -947,10 +958,14 @@ function Page.preferredPosition(menu)
     return index ~= nil and index + 1 or nil
 end
 
+---Yarim kalan kaydi tamamen geri al. `removePage` hata atmadan is gormeyebilir
+---(kayda ORNEK verilmisti, removePage'e SINIF tablosu geciyorduk) ve pcall yine true doner;
+---bu yuzden her durumda elle temizlik de yapilir. `pagingElement` ve `pageEnablingPredicates`
+---atlanirsa pageFrames ile pagingElement.pages sayilari ayrisir ve yanlis sekme isaretli
+---gorunur - movePage yorumlarinda tarif edilen durum. 2026-09-13 denetimi.
 local function rollback(menu, page)
-    if menu.removePage ~= nil and pcall(menu.removePage, menu, ContractManagerManagePage) then
-        pcall(function() if menu.rebuildTabList ~= nil then menu:rebuildTabList() end end)
-        return
+    if menu.removePage ~= nil then
+        pcall(menu.removePage, menu, page)
     end
     pcall(function()
         for index = #(menu.pageFrames or {}), 1, -1 do
@@ -958,8 +973,23 @@ local function rollback(menu, page)
         end
         if type(menu.pageTabs) == "table" then menu.pageTabs[page] = nil end
         if type(menu.pageRoots) == "table" then menu.pageRoots[page] = nil end
+        if type(menu.pageEnablingPredicates) == "table" then menu.pageEnablingPredicates[page] = nil end
+        if type(menu.pageTypeControllers) == "table" then menu.pageTypeControllers[page] = nil end
+        if menu.pagingElement ~= nil and menu.pagingElement.removeElement ~= nil then
+            pcall(menu.pagingElement.removeElement, menu.pagingElement, page)
+        end
+        if type(menu.pagingElement) == "table" and type(menu.pagingElement.pages) == "table" then
+            for index = #menu.pagingElement.pages, 1, -1 do
+                local entry = menu.pagingElement.pages[index]
+                if entry == page or (type(entry) == "table" and entry.element == page) then
+                    table.remove(menu.pagingElement.pages, index)
+                end
+            end
+        end
         if menu.rebuildTabList ~= nil then menu:rebuildTabList() end
     end)
+    ContractManagerManagePage.installed = false
+    ContractManagerManagePage.page = nil
 end
 
 ---Ikonu oyunun dilim (slice) sistemine kaydeder.
@@ -1111,4 +1141,19 @@ if g_messageCenter ~= nil and MessageType ~= nil and MessageType.CURRENT_MISSION
 end
 if g_messageCenter ~= nil and ContractManager ~= nil and ContractManager.MESSAGE_SETTINGS_CHANGED ~= nil then
     g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED, function() Page.onSettingsChanged() end, Page)
+end
+
+---Sunucudan veri gelince acik sayfayi tazele. Onceden sayfa YALNIZCA yerel tiklamalarda
+---yenileniyordu: baskasi bir kontrati rezerve ettiginde ya da ortaklik degistiginde ekran
+---eski veriyi gosteriyor, buton eski metniyle duruyordu. 2026-09-13 denetimi.
+function Page.onRemoteChange()
+    if Page.installed and Page.isOpen and Page.page ~= nil then
+        pcall(function() Page.page:refresh() end)
+    end
+end
+
+if g_messageCenter ~= nil and MessageType ~= nil then
+    if MessageType.MISSION_DELETED ~= nil then
+        g_messageCenter:subscribe(MessageType.MISSION_DELETED, function() Page.onRemoteChange() end, Page)
+    end
 end

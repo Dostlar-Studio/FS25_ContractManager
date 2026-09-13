@@ -172,6 +172,13 @@ function Res.sendAllTo(connection)
 end
 
 ---istemci: yayini uygula
+---Sunucudan senkron gelince acik yonetim sayfasi tazelensin (varsa).
+local function notifyPage()
+    if ContractManagerManagePage ~= nil and ContractManagerManagePage.onRemoteChange ~= nil then
+        ContractManagerManagePage.onRemoteChange()
+    end
+end
+
 function Res.applyRemote(uniqueId, farmId, secondsLeft, farmName)
     if farmId == 0 or secondsLeft <= 0 then
         Res.list[uniqueId] = nil
@@ -181,6 +188,7 @@ function Res.applyRemote(uniqueId, farmId, secondsLeft, farmName)
     if ContractManagerMapMarkers ~= nil then
         pcall(ContractManagerMapMarkers.onReservationChanged, uniqueId)
     end
+    notifyPage()
 end
 
 -- ---------------------------------------------------------------------------
@@ -303,6 +311,26 @@ function Res.getDetailRow(mission)
         return nil
     end
     return { title = text("cm_detailReserved"), value = string.format("%s · %d %s", tostring(r.farmName), math.ceil(left / 60), text("cm_unitMinute", "min")) }
+end
+
+---Harita yeniden yuklendiginde (panelden durdur-baslat) surec olmez ama oyun saati
+---sifirdan baslar. Sifirlama kancasi yoktu: eski oturumun rezervasyonlari tasiniyor ve
+---`untilMs` degerleri cok ileride gorundugu icin o ciftlik HICBIR kontrati rezerve
+---edemiyordu. 2026-09-13 denetimi.
+function Res.reset()
+    Res.list = {}
+end
+
+function Res:loadMap()
+    Res.reset()
+end
+
+function Res:deleteMap()
+    Res.reset()
+end
+
+if addModEventListener ~= nil then
+    addModEventListener(Res)
 end
 
 if MissionManager ~= nil and MissionManager.startMission ~= nil and AbstractMission ~= nil and AbstractMission.finish ~= nil then

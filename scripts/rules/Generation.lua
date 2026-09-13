@@ -29,13 +29,23 @@ function Generation.isEnabled()
     return ContractManager:getRulesEnabled()
 end
 
+---Oyunun acilistaki degerleri OYUNUN sinif tablosunda saklanir, mod tablosunda degil.
+---Mod scriptleri harita yuklemesi basina yeniden calisir, oyunun siniflari ise surec boyunca
+---yasar: mod tablosunda tutulursa ikinci yuklemede ZATEN CARPILMIS deger "orijinal" sanilir
+---ve carpan uzerine biner (refreshMultiplier=2 -> ikinci yuklemede 4x). 2026-09-13 denetimi.
 function Generation.captureOriginals()
-    if Generation.originals ~= nil or MissionManager == nil then
+    if MissionManager == nil then
         return
     end
+    if MissionManager.cmOriginalMaxMissions == nil then
+        MissionManager.cmOriginalMaxMissions = MissionManager.MAX_MISSIONS
+    end
+    if MissionManager.cmOriginalInterval == nil then
+        MissionManager.cmOriginalInterval = MissionManager.MISSION_GENERATION_INTERVAL
+    end
     Generation.originals = {
-        maxMissions = MissionManager.MAX_MISSIONS,
-        interval = MissionManager.MISSION_GENERATION_INTERVAL,
+        maxMissions = MissionManager.cmOriginalMaxMissions,
+        interval = MissionManager.cmOriginalInterval,
     }
 end
 
