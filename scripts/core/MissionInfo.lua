@@ -20,6 +20,7 @@ ContractManagerMissionInfo = {
     byObjectId = {},   -- istemci: objectId -> { expected, deposited, fillTypeIndex, yieldLiters }
     lastSent = {},     -- sunucu: objectId -> son gonderilen deposited
     timer = 0,
+    dirty = false,     -- ayar degisti: tum olcumler yeniden yayinlanacak
 }
 
 local Info = ContractManagerMissionInfo
@@ -247,7 +248,7 @@ function Info.broadcast(mission, connection)
         return false
     end
     -- kontratin ilk yayini loga: sunucu logundan hangi alanin doldugu gorulsun (alan adlari yayinlanmamis sinifta)
-    if Info.lastSent[objectId] == nil and connection == nil then
+    if Info.lastSent[objectId] == nil and connection == nil and not Info.dirty then
         ContractManager.info("MissionInfo '%s': total=%d%s toDeliver=%d keep=%d fillType=%d deposited=%d",
             tostring(mission.title or mission.progressTitle or "?"), data.total, data.estimated and " (est)" or "",
             data.deliver or 0, data.keep or 0, data.fillTypeIndex or 0, data.deposited or 0)
@@ -282,6 +283,29 @@ function Info.shouldPush(objectId, deposited)
     return math.abs((deposited or 0) - last) >= Info.PUSH_DELTA_LITERS
 end
 
+---Butun olcumleri gecersiz kil: bir sonraki guncelleme turunda hepsi yeniden yayinlanir.
+---Hasat payi ayari degisince gerekir - panodaki kontratlar aksi halde URETILDIKLERI andaki
+---oraniyla gorunmeye devam ediyordu (canli, 2026-09-15). Kaydiraci suruklemek saniyede
+---bircok degisiklik uretiyor; isaret koyup tek turda toplu yayinlamak bunu tek yayina indirir.
+function Info.markAllDirty()
+    Info.dirty = true
+end
+
+---Panodakiler dahil TUM kontratlarin olcumunu yeniden yayinla. Donus: yayin sayisi.
+function Info.broadcastAll()
+    if g_missionManager == nil then
+        return 0
+    end
+    Info.lastSent = {}
+    local sent = 0
+    for _, m in ipairs(g_missionManager.missions or {}) do
+        if Info.broadcast(m) then
+            sent = sent + 1
+        end
+    end
+    return sent
+end
+
 function Info:update(dt)
     local mission = g_currentMission
     if mission == nil or not mission:getIsServer() or g_missionManager == nil then
@@ -292,6 +316,12 @@ function Info:update(dt)
         return
     end
     Info.timer = 0
+    if Info.dirty then
+        Info.dirty = false
+        local sent = Info.broadcastAll()
+        ContractManager.info("Harvest share changed: %d contract measurements refreshed", sent)
+        return
+    end
     for _, m in ipairs(g_missionManager.missions or {}) do
         if m.status == MissionStatus.RUNNING or m.status == MissionStatus.PREPARING then
             local data = Info.measure(m)

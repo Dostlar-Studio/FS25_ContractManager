@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.21.1.0</version>
+    <version>1.21.2.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,12 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.21.2.0:
+- Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.21.2.0:
+- Behoben: Nach Änderung des Ernteanteils zeigte das Vertragsfenster weiter den alten Prozentwert. Die tatsächlich geforderte Menge war bereits korrekt, nur die Anzeige veraltet. Die Werte aller Verträge auf der Tafel werden jetzt aktualisiert.
 
 Changelog 1.21.1.0:
 - Fixed: refreshing the board often produced no contracts at all. The game tries a single random field per contract type and gives up immediately if it does not fit, relying on repetition over time; the refresh only ran one round and concluded nothing could be generated. It now retries.
@@ -400,6 +406,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.21.2.0 :
+- Corrigé : après modification de la part de récolte, le panneau affichait encore l'ancien pourcentage. La quantité réellement exigée était déjà correcte, seul l'affichage était périmé. Les valeurs de tous les contrats du tableau sont désormais rafraîchies.
+
 Changelog 1.21.1.0 :
 - Corrigé : l'actualisation du tableau ne produisait souvent aucun contrat. Le jeu n'essaie qu'un seul champ au hasard par type et abandonne aussitôt s'il ne convient pas ; l'actualisation ne faisait qu'un seul passage. Elle réessaie désormais.
 
@@ -581,6 +590,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.21.2.0:
+- Düzeltme: hasat payı ayarı değiştirildiğinde kontrat panelinde eski yüzde kalıyordu. Oyunun gerçekten istediği teslimat miktarı zaten doğruydu, yalnızca gösterilen sayı eskiydi. Ayar değişince panodaki tüm kontratların ölçümü yenileniyor.
 
 Değişiklikler 1.21.1.0:
 - Düzeltme: pano yenilemesi çoğu zaman hiç kontrat üretmiyordu. Oyun her kontrat türü için tek bir rastgele tarla deniyor ve uymuyorsa hemen vazgeçiyor; yenileme ise yalnızca tek tur deneyip üretilemiyor sonucuna varıyordu. Artık tekrar deniyor.
