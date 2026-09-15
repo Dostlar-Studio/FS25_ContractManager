@@ -133,13 +133,23 @@ function Harvest.onMissionStart()
         settings():get("harvest.keepPercent"), settings():get("harvest.keepPercentBale"))
 end
 
-function Harvest.onSettingsChanged()
-    if Harvest.applied then
-        Harvest.applyConstants()
+---Ayar degisti. Sabitleri yeniden yaz VE kontrat olcumlerini gecersiz kil: panodaki
+---kontratlar uretildikleri andaki oranla gorunmeye devam ediyordu (canli, 2026-09-15).
+function Harvest.onSettingsChanged(key)
+    if not Harvest.applied then
+        return
+    end
+    Harvest.applyConstants()
+    if key ~= nil and tostring(key):sub(1, 8) ~= "harvest." then
+        return
+    end
+    if ContractManagerMissionInfo ~= nil and ContractManagerMissionInfo.markAllDirty ~= nil then
+        ContractManagerMissionInfo.markAllDirty()
     end
 end
 
 if g_messageCenter ~= nil and MessageType ~= nil and MessageType.CURRENT_MISSION_START ~= nil then
     g_messageCenter:subscribe(MessageType.CURRENT_MISSION_START, function() Harvest.onMissionStart() end, Harvest)
-    g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED, function() Harvest.onSettingsChanged() end, Harvest)
+    g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED,
+        function(_, key) Harvest.onSettingsChanged(key) end, Harvest)
 end
