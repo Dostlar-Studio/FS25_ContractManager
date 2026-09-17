@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.21.2.0</version>
+    <version>1.21.3.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -36,8 +36,14 @@ CONTACT & SOURCE
 
 Must be enabled on the server and all clients. PC/Mac only.
 
+Changelog 1.21.3.0:
+- Fixed: the contract history in the settings tab showed the wrong outcome for every contract (a completed contract was listed as failed, a timed-out one as cancelled, a cancelled one as none). The management page was already correct; both now use the same lookup.
+
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.21.3.0:
+- Behoben: Der Vertragsverlauf im Einstellungsreiter zeigte für jeden Vertrag das falsche Ergebnis (abgeschlossen als fehlgeschlagen, abgelaufen als abgebrochen, abgebrochen als keins). Die Verwaltungsseite war bereits korrekt; beide nutzen jetzt dieselbe Zuordnung.
 
 Changelog 1.21.2.0:
 - Behoben: Nach Änderung des Ernteanteils zeigte das Vertragsfenster weiter den alten Prozentwert. Die tatsächlich geforderte Menge war bereits korrekt, nur die Anzeige veraltet. Die Werte aller Verträge auf der Tafel werden jetzt aktualisiert.
@@ -406,6 +412,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.21.3.0 :
+- Corrigé : l'historique des contrats dans l'onglet des réglages affichait un résultat erroné pour chaque contrat (terminé indiqué comme échoué, expiré comme annulé, annulé comme aucun). La page de gestion était déjà correcte ; les deux utilisent désormais la même table.
+
 Changelog 1.21.2.0 :
 - Corrigé : après modification de la part de récolte, le panneau affichait encore l'ancien pourcentage. La quantité réellement exigée était déjà correcte, seul l'affichage était périmé. Les valeurs de tous les contrats du tableau sont désormais rafraîchies.
 
@@ -590,6 +599,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.21.3.0:
+- Düzeltme: ayarlar sekmesindeki kontrat geçmişi her kontratın sonucunu yanlış gösteriyordu (tamamlanan kontrat başarısız, süresi dolan iptal, iptal edilen yok diye görünüyordu). Yönetim sayfası zaten doğruydu; ikisi artık aynı eşlemeyi kullanıyor.
 
 Değişiklikler 1.21.2.0:
 - Düzeltme: hasat payı ayarı değiştirildiğinde kontrat panelinde eski yüzde kalıyordu. Oyunun gerçekten istediği teslimat miktarı zaten doğruydu, yalnızca gösterilen sayı eskiydi. Ayar değişince panodaki tüm kontratların ölçümü yenileniyor.

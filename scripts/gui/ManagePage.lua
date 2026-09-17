@@ -247,8 +247,7 @@ function Page.formatMission(mission)
 end
 
 ---gecmis satiri metni (saf)
-local FINISH_TEXT = { [2] = "cm_stateSuccess", [3] = "cm_stateFailed", [4] = "cm_stateTimedOut", [5] = "cm_stateCanceled" }
-
+-- Bitis durumu anahtari tek kaynaktan: SettingsTab.finishStateKey (oyunun MissionFinishState adlarindan kurulur)
 function Page.formatHistory(entry)
     if entry == nil then
         return "-"
@@ -256,7 +255,7 @@ function Page.formatHistory(entry)
     return string.format("%s %s · %s · %s · %s",
         text("cm_day", "Day"), tostring(entry.finishedDay or 0),
         text("cm_type_" .. tostring(entry.typeName), tostring(entry.typeName)),
-        text(FINISH_TEXT[entry.finishState or 0] or "cm_stateNone", "-"),
+        text(ContractManagerSettingsTab.finishStateKey(entry.finishState), "-"),
         money(entry.payout or entry.reward or 0))
 end
 

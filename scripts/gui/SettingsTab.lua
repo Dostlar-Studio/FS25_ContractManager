@@ -534,7 +534,30 @@ function Tab:populate()
     end
 end
 
-local FINISH_STATE_KEYS = { "cm_stateNone", "cm_stateSuccess", "cm_stateFailed", "cm_stateCanceled", "cm_stateTimedOut" }
+-- Bitis durumu -> l10n anahtari. Oyunun sabitleri 1 TABANLI (canli sonda: NONE=1 SUCCESS=2 FAILED=3
+-- TIMED_OUT=4 CANCELED=5); tablo oyunun kendi adlarindan kurulur, oyun yoksa (harness) sabit degerler.
+local FINISH_KEY_BY_NAME = { NONE = "cm_stateNone", SUCCESS = "cm_stateSuccess", FAILED = "cm_stateFailed",
+    TIMED_OUT = "cm_stateTimedOut", CANCELED = "cm_stateCanceled" }
+local FINISH_FALLBACK = { [1] = "cm_stateNone", [2] = "cm_stateSuccess", [3] = "cm_stateFailed", [4] = "cm_stateTimedOut", [5] = "cm_stateCanceled" }
+local finishKeyCache = nil
+
+---bitis durumu kodunun l10n anahtari (saf; test edilir)
+function Tab.finishStateKey(state)
+    if finishKeyCache == nil then
+        finishKeyCache = {}
+        if type(MissionFinishState) == "table" then
+            for name, value in pairs(MissionFinishState) do
+                if FINISH_KEY_BY_NAME[name] ~= nil and type(value) == "number" then
+                    finishKeyCache[value] = FINISH_KEY_BY_NAME[name]
+                end
+            end
+        end
+        if next(finishKeyCache) == nil then
+            finishKeyCache = FINISH_FALLBACK
+        end
+    end
+    return finishKeyCache[state] or "cm_stateNone"
+end
 
 function Tab.formatMoney(value)
     if g_i18n ~= nil and g_i18n.formatMoney ~= nil then
@@ -571,7 +594,7 @@ function Tab.buildStatsLines(stats, history, board)
     for i, entry in ipairs(history or {}) do
         -- satir butcesi: 8 + HISTORY_ROWS + BOARD_ROWS. Kapak olmazsa siralamanin kuyrugu sessizce kesilir.
         if i > Tab.HISTORY_ROWS then break end
-        local stateKey = FINISH_STATE_KEYS[(entry.finishState or 0) + 1] or "cm_stateNone"
+        local stateKey = Tab.finishStateKey(entry.finishState)
         lines[#lines + 1] = string.format("%s %d · %s · %s · %s",
             text("cm_day"), entry.finishedDay or 0,
             text("cm_type_" .. tostring(entry.typeName), tostring(entry.typeName)),
