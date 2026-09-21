@@ -97,8 +97,25 @@ if DialogElement ~= nil then
             if id == preselectFarmId then state = index end
         end
         self.farmOption:setState(state)
+        ContractManager.rememberCursor(self)
         g_gui:showDialog(Dialog.GUI_NAME)
         return true
+    end
+
+    ---Kok <GUI onOpen> buraya baglidir; imleci dunyadan acilan pencerede de goster.
+    function Dialog:onOpen()
+        if DialogElement.onOpen ~= nil then
+            DialogElement.onOpen(self)
+        end
+        ContractManager.setCursor(true)
+    end
+
+    ---Kok <GUI onClose> buraya baglidir; imleci acilis oncesi durumuna dondur.
+    function Dialog:onClose()
+        if DialogElement.onClose ~= nil then
+            DialogElement.onClose(self)
+        end
+        ContractManager.restoreCursor(self)
     end
 
     function Dialog:onClickSend()

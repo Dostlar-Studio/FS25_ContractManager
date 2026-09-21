@@ -4,8 +4,12 @@
     Oyunun stok diyalog kalibi: fs25_dialogBg > ust/orta/alt seritler + icerik + buton kutusu.
     Secici oyunun kendi MultiTextOption'i (fs25_dialogMultiTextOption); oklar ve arka plan
     autoAddDefaultElements ile gelir. Butonlar buttonOK (Enter) / buttonBack (Esc).
+    KOK <GUI> uzerindeki onOpen/onClose ZORUNLU: Gui:showDialog/closeDialog kok elemanin
+    onOpenCallback/onCloseCallback'ini cagirir. Tanimli degilse ne oyunun ScreenElement:onOpen/onClose
+    kodu (imlec goster/geri al) ne de bizim onClose'umuz calisir; imlec ekranda kalir ve
+    InfoPopup'ta isOpen hic sifirlanmadigi icin sonraki pencereler kuyrukta kalir (2026-09-21).
 -->
-<GUI name="ContractManagerFarmPickDialog">
+<GUI name="ContractManagerFarmPickDialog" onOpen="onOpen" onClose="onClose">
 <GuiElement profile="fs25_dialogBg" id="dialogBg">
     <ThreePartBitmap profile="fs25_dialogBgTop"/>
     <ThreePartBitmap profile="fs25_dialogBgMiddle"/>

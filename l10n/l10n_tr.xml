@@ -307,5 +307,10 @@
         <text name="cm_pageConfirmGeneric" text="Onay: %s?"/>
         <text name="cm_partDeclined" text="Davet reddedildi."/>
         <text name="cm_productLost" text="%s: %d litre kontrat ürünü teslim edilmeden kayboldu."/>
+        <text name="cm_colContract" text="Kontrat"/>
+        <text name="cm_colFarm" text="Çiftlik"/>
+        <text name="cm_colProgress" text="%"/>
+        <text name="cm_colReward" text="Ödül"/>
+        <text name="cm_colTime" text="Süre"/>
     </texts>
 </l10n>

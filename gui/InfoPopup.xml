@@ -2,8 +2,12 @@
 <!--
     FS25_ContractManager - bilgi penceresi (ortaklik: davet gitti / kabul edildi / reddedildi).
     FarmPickDialog ile ayni stok kalip; Bilgi: tek Tamam (Enter/Esc kapatir). Davet: Enter = kabul et, Esc = daha sonra.
+    KOK <GUI> uzerindeki onOpen/onClose ZORUNLU: Gui:showDialog/closeDialog kok elemanin
+    onOpenCallback/onCloseCallback'ini cagirir. Tanimli degilse ne oyunun ScreenElement:onOpen/onClose
+    kodu (imlec goster/geri al) ne de bizim onClose'umuz calisir; imlec ekranda kalir ve
+    InfoPopup'ta isOpen hic sifirlanmadigi icin sonraki pencereler kuyrukta kalir (2026-09-21).
 -->
-<GUI name="ContractManagerInfoPopup">
+<GUI name="ContractManagerInfoPopup" onOpen="onOpen" onClose="onClose">
 <GuiElement profile="fs25_dialogBg" id="dialogBg">
     <ThreePartBitmap profile="fs25_dialogBgTop"/>
     <ThreePartBitmap profile="fs25_dialogBgMiddle"/>

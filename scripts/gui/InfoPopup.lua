@@ -87,8 +87,17 @@ if DialogElement ~= nil then
         self.dialogText:setText(tostring(text or ""))
         self:applyAction(action)
         self.isOpen = true
+        ContractManager.rememberCursor(self)
         g_gui:showDialog(Popup.GUI_NAME)
         return true
+    end
+
+    ---Kok <GUI onOpen> buraya baglidir (bkz. ContractManager.rememberCursor aciklamasi).
+    function Popup:onOpen()
+        if DialogElement.onOpen ~= nil then
+            DialogElement.onOpen(self)
+        end
+        ContractManager.setCursor(true)
     end
 
     ---Enter / Tamam: eylem varsa calistir (hata pencereyi kilitlemesin), sonra kapat.
@@ -114,6 +123,7 @@ if DialogElement ~= nil then
         if DialogElement.onClose ~= nil then
             DialogElement.onClose(self)
         end
+        ContractManager.restoreCursor(self)
         self.isOpen = false
         self.action = nil
         local nextItem = table.remove(Popup.queue, 1)

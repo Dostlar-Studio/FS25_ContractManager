@@ -69,4 +69,101 @@
         <height value="66px" />
         <textOffset value="20px 0px" />
     </Profile>
+
+    <!--
+        SUTUNLAR (1.23.0.0). Tek uzun "a · b · c" satiri yerine oyunun kendi liste
+        sayfalarindaki gibi hizali sutunlar. Olculer cm_rowLabel'in KANITLANMIS
+        1000px'lik bandina sigar; buton zaten sagda -20px'te 300px yer kapliyor.
+
+        NEDEN hucreler satir kabinin ICINDE: BoxLayout/ScrollingLayout yalnizca DOGRUDAN
+        cocuklarinin konumunu ezer; torunlar kendi position/size/textAlignment'ini korur
+        (FS25_FarmMarket arastirmasi, BoxLayoutElement.lua:416-428).
+
+        DIKKAT: bu profillerde textSelectedColor/textFocusedColor TANIMLANMAZ. Tanimlanirsa
+        satir odaklandiginda setTextColor ile verdigimiz durum rengi kaybolur.
+    -->
+    <Profile name="cm_cellBase" extends="fs25_textDefault" with="anchorMiddleLeft">
+        <textSize value="17px" />
+        <textVerticalAlignment value="middle" />
+    </Profile>
+
+    <!-- kontrat: tur + tarla; en genis sutun -->
+    <Profile name="cm_cellName" extends="cm_cellBase">
+        <size value="360px 100%" />
+        <position value="20px 0px" />
+    </Profile>
+
+    <!-- ciftlik adi -->
+    <Profile name="cm_cellFarm" extends="cm_cellBase">
+        <size value="240px 100%" />
+        <position value="390px 0px" />
+    </Profile>
+
+    <!-- sayisal sutunlar saga dayali: rakamlar alt alta hizalanir -->
+    <Profile name="cm_cellProgress" extends="cm_cellBase">
+        <size value="80px 100%" />
+        <position value="640px 0px" />
+        <textAlignment value="right" />
+    </Profile>
+
+    <Profile name="cm_cellReward" extends="cm_cellBase">
+        <size value="150px 100%" />
+        <position value="730px 0px" />
+        <textAlignment value="right" />
+        <textBold value="true" />
+    </Profile>
+
+    <Profile name="cm_cellTime" extends="cm_cellBase">
+        <size value="110px 100%" />
+        <position value="890px 0px" />
+        <textAlignment value="right" />
+    </Profile>
+
+    <!--
+        Sutun basligi satiri: hucreler sutunlarla AYNI x/genislik/hizalamayi kullanmali,
+        yoksa baslik ile deger kaymis gorunur. Bu yuzden her baslik kendi sutununu
+        extends eder; yalnizca gorunum (gri, kucuk, buyuk harf) degisir.
+    -->
+    <Profile name="cm_columnHeaderRow" extends="fs25_multiTextOptionContainer">
+        <size value="100% 34px" />
+    </Profile>
+    <Profile name="cm_cellHeaderName" extends="cm_cellName">
+        <textSize value="14px" />
+        <textUpperCase value="true" />
+        <textBold value="true" />
+        <textColor value="$preset_fs25_colorGreyText" />
+    </Profile>
+    <Profile name="cm_cellHeaderFarm" extends="cm_cellFarm">
+        <textSize value="14px" />
+        <textUpperCase value="true" />
+        <textBold value="true" />
+        <textColor value="$preset_fs25_colorGreyText" />
+    </Profile>
+    <Profile name="cm_cellHeaderProgress" extends="cm_cellProgress">
+        <textSize value="14px" />
+        <textUpperCase value="true" />
+        <textBold value="true" />
+        <textColor value="$preset_fs25_colorGreyText" />
+    </Profile>
+    <Profile name="cm_cellHeaderReward" extends="cm_cellReward">
+        <textSize value="14px" />
+        <textUpperCase value="true" />
+        <textColor value="$preset_fs25_colorGreyText" />
+    </Profile>
+    <Profile name="cm_cellHeaderTime" extends="cm_cellTime">
+        <textSize value="14px" />
+        <textUpperCase value="true" />
+        <textBold value="true" />
+        <textColor value="$preset_fs25_colorGreyText" />
+    </Profile>
+
+    <!-- detay satiri: solda etiket, sagda deger (oyunun bilgi kutulari gibi) -->
+    <Profile name="cm_cellDetailLabel" extends="cm_cellBase">
+        <size value="420px 100%" />
+        <position value="20px 0px" />
+    </Profile>
+    <Profile name="cm_cellDetailValue" extends="cm_cellBase">
+        <size value="560px 100%" />
+        <position value="440px 0px" />
+    </Profile>
 </GUIProfiles>

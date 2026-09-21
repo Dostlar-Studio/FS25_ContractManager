@@ -44,6 +44,39 @@
                 </Button>
                 <Text profile="cm_rowLabel" name="buttonLabel"/>
             </Bitmap>
+
+            <!--
+                Kontrat satiri (1.23.0.0): tek uzun metin yerine hizali sutunlar.
+                Hucreler satir kabinin COCUKLARI oldugu icin ScrollingLayout onlarin
+                konumunu ezmez; her biri kendi profilindeki x/genislik/hizalamayi korur.
+                Kod hucreleri ADA gore bulur (elements[n] sirasina bagli degildir).
+            -->
+            <Bitmap profile="cm_rowContainer" id="missionRowPrefab">
+                <Text profile="cm_cellName" name="cellName"/>
+                <Text profile="cm_cellFarm" name="cellFarm"/>
+                <Text profile="cm_cellProgress" name="cellProgress"/>
+                <Text profile="cm_cellReward" name="cellReward"/>
+                <Text profile="cm_cellTime" name="cellTime"/>
+                <Button profile="cm_rowButton" id="missionRowButton" name="rowButton" text="..." onClick="onClickRowButton">
+                    <ThreePartBitmap profile="cm_rowButtonBg" name="background"/>
+                </Button>
+            </Bitmap>
+
+            <!-- sutun basligi: ayni x olculeri, gri ve buyuk harf; icerikle birlikte kayar
+                 (ScrollingLayout icinde SABIT baslik yok, stok sayfalar da boyle yapiyor) -->
+            <Bitmap profile="cm_columnHeaderRow" id="columnHeaderPrefab">
+                <Text profile="cm_cellHeaderName" name="cellName"/>
+                <Text profile="cm_cellHeaderFarm" name="cellFarm"/>
+                <Text profile="cm_cellHeaderProgress" name="cellProgress"/>
+                <Text profile="cm_cellHeaderReward" name="cellReward"/>
+                <Text profile="cm_cellHeaderTime" name="cellTime"/>
+            </Bitmap>
+
+            <!-- detay/ortak satiri: solda etiket, sagda deger -->
+            <Bitmap profile="cm_rowContainer" id="detailRowPrefab">
+                <Text profile="cm_cellDetailLabel" name="cellLabel"/>
+                <Text profile="cm_cellDetailValue" name="cellValue"/>
+            </Bitmap>
         </ScrollingLayout>
 
         <ThreePartBitmap profile="cm_sliderBg" id="cmSliderBg">

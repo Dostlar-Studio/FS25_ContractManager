@@ -307,5 +307,10 @@
         <text name="cm_pageConfirmGeneric" text="Bestätigen: %s?"/>
         <text name="cm_partDeclined" text="Einladung abgelehnt."/>
         <text name="cm_productLost" text="%s: %d Liter Vertragsware sind verschwunden, ohne abgeliefert zu werden."/>
+        <text name="cm_colContract" text="Vertrag"/>
+        <text name="cm_colFarm" text="Hof"/>
+        <text name="cm_colProgress" text="%"/>
+        <text name="cm_colReward" text="Lohn"/>
+        <text name="cm_colTime" text="Zeit"/>
     </texts>
 </l10n>

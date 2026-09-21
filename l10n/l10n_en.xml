@@ -307,5 +307,10 @@
         <text name="cm_pageConfirmGeneric" text="Confirm: %s?"/>
         <text name="cm_partDeclined" text="Invite declined."/>
         <text name="cm_productLost" text="%s: %d litres of contract product disappeared without being delivered."/>
+        <text name="cm_colContract" text="Contract"/>
+        <text name="cm_colFarm" text="Farm"/>
+        <text name="cm_colProgress" text="%"/>
+        <text name="cm_colReward" text="Reward"/>
+        <text name="cm_colTime" text="Time"/>
     </texts>
 </l10n>

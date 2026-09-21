@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.22.0.0",
+    VERSION = "1.23.0.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     PROTOCOL = 1,
@@ -176,6 +176,45 @@ function ContractManager.dialogAnswer(a, b)
         return b
     end
     return nil
+end
+
+-- ---------------------------------------------------------------------------
+-- Fare imleci (mod pencereleri)
+--
+-- Oyunun tabani (ScreenElement:onOpen/onClose) imleci gosterip geri alir, AMA yalnizca
+-- kok <GUI> etiketinde onOpen/onClose geri cagrilari TANIMLIYSA: Gui:showDialog/closeDialog
+-- kok elemanin onOpenCallback/onCloseCallback'ini cagirir. Tanimli degilse ne tabanin
+-- kodu ne de bizim onClose'umuz calisir (FarmMarket'te canlida yasandi: pencere kapandi,
+-- imlec ekranda kaldi, hareket kisitlandi - 2026-09-13).
+-- ---------------------------------------------------------------------------
+
+function ContractManager.cursorVisible()
+    if g_inputBinding ~= nil and g_inputBinding.getShowMouseCursor ~= nil then
+        local ok, value = pcall(g_inputBinding.getShowMouseCursor, g_inputBinding)
+        if ok then
+            return value == true
+        end
+    end
+    return false
+end
+
+function ContractManager.setCursor(visible)
+    if g_inputBinding ~= nil and g_inputBinding.setShowMouseCursor ~= nil then
+        pcall(g_inputBinding.setShowMouseCursor, g_inputBinding, visible == true)
+    end
+end
+
+---Pencere acilmadan ONCE cagrilir: o anki imlec durumunu pencerede saklar.
+---Tabanin lastMouseCursorState'i guvenilmez oldugu icin kendi durumumuzu tutuyoruz.
+function ContractManager.rememberCursor(dialog)
+    if dialog ~= nil then
+        dialog.cmCursorWas = ContractManager.cursorVisible()
+    end
+end
+
+---Kapanista: acilis oncesindeki duruma don (dunyada gizli, menude gorunur).
+function ContractManager.restoreCursor(dialog)
+    ContractManager.setCursor(dialog ~= nil and dialog.cmCursorWas == true)
 end
 
 function ContractManager.debug(fmt, ...)

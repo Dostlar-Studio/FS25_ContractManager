@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.22.0.0</version>
+    <version>1.23.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -36,6 +36,11 @@ CONTACT & SOURCE
 
 Must be enabled on the server and all clients. PC/Mac only.
 
+Changelog 1.23.0.0:
+- The contract page is now a proper table: contract, farm, progress, reward and time each have their own column with a heading, instead of one long line of dot-separated values. Numbers are right aligned so they line up, and in the history the outcome is colour coded.
+- The selected contract and the partner lines are now label on the left, value on the right.
+- Fixed: the farm picker and the partnership popup never ran their close code, so the mouse cursor stayed on screen after closing and further popups were queued but never shown.
+
 Changelog 1.22.0.0:
 - New: if contract product disappears without being delivered, the farm now gets a warning and the server log records it. On servers where a cleanup mod deletes bales at midnight, the product was vanishing silently and the contract failed for no visible reason. Can be turned off under Protection.
 
@@ -48,6 +53,11 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.23.0.0:
+- Die Vertragsseite ist jetzt eine echte Tabelle: Vertrag, Hof, Fortschritt, Lohn und Zeit haben eigene Spalten mit Ueberschrift statt einer langen Zeile mit Trennpunkten. Zahlen sind rechtsbuendig und im Verlauf ist das Ergebnis farblich markiert.
+- Beim ausgewaehlten Vertrag und bei den Partnerzeilen steht die Bezeichnung links, der Wert rechts.
+- Behoben: Die Hofauswahl und das Partnerschaftsfenster fuehrten ihren Schliess-Code nie aus; der Mauszeiger blieb nach dem Schliessen sichtbar und weitere Fenster landeten in der Warteschlange, ohne je zu erscheinen.
 
 Changelog 1.22.0.0:
 - Neu: Verschwindet Vertragsware, ohne abgeliefert zu werden, erhaelt der Hof jetzt eine Warnung und das Serverlog haelt es fest. Auf Servern, deren Aufraeum-Mod um Mitternacht Ballen loescht, verschwand die Ware stillschweigend und der Vertrag scheiterte ohne sichtbaren Grund. Abschaltbar unter Schutz.
@@ -426,6 +436,11 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.23.0.0 :
+- La page des contrats est desormais un vrai tableau : contrat, ferme, progression, paie et temps ont chacun leur colonne avec un en-tete, au lieu d'une longue ligne separee par des points. Les nombres sont alignes a droite et, dans l'historique, le resultat est colore.
+- Pour le contrat selectionne et les lignes de partenaires, le libelle est a gauche et la valeur a droite.
+- Corrige : le selecteur de ferme et la fenetre de partenariat n'executaient jamais leur code de fermeture ; le curseur restait affiche et les fenetres suivantes etaient mises en file sans jamais s'afficher.
+
 Changelog 1.22.0.0 :
 - Nouveau : si le produit d'un contrat disparait sans etre livre, la ferme recoit desormais une alerte et le journal du serveur l'enregistre. Sur les serveurs ou un mod de nettoyage supprime les balles a minuit, le produit disparaissait en silence et le contrat echouait sans raison visible. Desactivable dans Protection.
 
@@ -620,6 +635,11 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.23.0.0:
+- Kontrat sayfası artık gerçek bir tablo: kontrat, çiftlik, ilerleme, ödül ve süre kendi sütununda, başlıklarıyla birlikte duruyor; eskiden hepsi nokta ile ayrılmış tek uzun satırdı. Sayılar sağa dayalı olduğu için alt alta hizalanıyor, geçmişte sonuç renkle ayırt ediliyor.
+- Seçili kontrat ve ortak satırlarında etiket solda, değer sağda.
+- Düzeltme: çiftlik seçme ve ortaklık penceresi kapanış kodunu hiç çalıştırmıyordu; pencere kapandıktan sonra fare imleci ekranda kalıyor ve sonraki pencereler sıraya girip hiç görünmüyordu.
 
 Değişiklikler 1.22.0.0:
 - Yeni: kontrat ürünü teslim edilmeden azalırsa çiftlik artık uyarı alıyor ve sunucu loguna yazılıyor. Temizlik modunun gece yarısı balyaları sildiği sunucularda ürün sessizce yok oluyor ve kontrat görünür bir sebep olmadan başarısız oluyordu. Koruma bölümünden kapatılabilir.

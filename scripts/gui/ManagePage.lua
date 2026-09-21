@@ -259,6 +259,99 @@ function Page.formatHistory(entry)
         money(entry.payout or entry.reward or 0))
 end
 
+-- ---------------------------------------------------------------------------
+-- Sutunlar (1.23.0.0)
+--
+-- Eskiden satir tek uzun metindi: "Hasat · Tarla 12 · ARSLAN · %35 · 18.160 € · 42 dk".
+-- Goz her satirda ayni bilgiyi farkli yerde ariyordu. Artik oyunun kendi liste
+-- sayfalari gibi sabit sutunlar var; sayisal sutunlar saga dayali oldugu icin
+-- rakamlar alt alta hizalaniyor. Hucre metinleri SAF uretilir (test edilir),
+-- yerlesim profillerden gelir (gui/guiProfiles.xml cm_cell*).
+-- ---------------------------------------------------------------------------
+
+Page.CELL_NAMES = { "cellName", "cellFarm", "cellProgress", "cellReward", "cellTime" }
+
+---Sutun basliklari (saf)
+function Page.columnTitles()
+    return {
+        cellName = text("cm_colContract", "Contract"),
+        cellFarm = text("cm_colFarm", "Farm"),
+        cellProgress = text("cm_colProgress", "%"),
+        cellReward = text("cm_colReward", "Reward"),
+        cellTime = text("cm_colTime", "Time"),
+    }
+end
+
+---Kontrat satirinin hucreleri (saf). Bos sutun "" doner, nil donmez.
+function Page.missionCells(mission)
+    local cells = { cellName = "-", cellFarm = "", cellProgress = "", cellReward = "", cellTime = "" }
+    if mission == nil then
+        return cells
+    end
+    local title = tostring(mission.title or (mission.type ~= nil and mission.type.name) or "?")
+    local fieldId = nil
+    if mission.field ~= nil and mission.field.getId ~= nil then
+        fieldId = mission.field:getId()
+    end
+    if fieldId ~= nil and fieldId ~= 0 then
+        title = string.format("%s · %s %s", title, text("cm_pageField", "Field"), tostring(fieldId))
+    end
+    cells.cellName = title
+    if mission.farmId ~= nil and mission.farmId ~= 0 then
+        cells.cellFarm = Page.farmName(mission.farmId)
+    end
+    if type(mission.completion) == "number" and mission.status == MissionStatus.RUNNING then
+        cells.cellProgress = string.format("%%%d", math.floor(mission.completion * 100 + 0.5))
+    end
+    cells.cellReward = money(Page.missionReward(mission))
+    local left = minutesText(mission)
+    if left ~= nil and mission.status ~= MissionStatus.CREATED then
+        cells.cellTime = left
+    end
+    return cells
+end
+
+---Gecmis satirinin hucreleri (saf). Durum sutunu ciftlik sutununda durur:
+---gecmiste "kimin" degil "nasil bitti" onemli.
+function Page.historyCells(entry)
+    local cells = { cellName = "-", cellFarm = "", cellProgress = "", cellReward = "", cellTime = "" }
+    if entry == nil then
+        return cells
+    end
+    cells.cellName = text("cm_type_" .. tostring(entry.typeName), tostring(entry.typeName))
+    cells.cellFarm = text(ContractManagerSettingsTab.finishStateKey(entry.finishState), "-")
+    cells.cellReward = money(entry.payout or entry.reward or 0)
+    cells.cellTime = string.format("%s %s", text("cm_day", "Day"), tostring(entry.finishedDay or 0))
+    return cells
+end
+
+---Gecmis satirinin durum rengi (saf). Donus: r, g, b, a ya da nil (varsayilan renk).
+---Oyunun paletinden: basarili yesil, basarisiz/sure asimi kirmizi, iptal gri.
+function Page.historyStateColor(finishState)
+    local Tab = ContractManagerSettingsTab
+    local key = Tab ~= nil and Tab.finishStateKey(finishState) or nil
+    if key == "cm_stateSuccess" then
+        return 0.45, 0.72, 0.16, 1
+    elseif key == "cm_stateFailed" or key == "cm_stateTimedOut" then
+        return 0.84, 0.24, 0.24, 1
+    elseif key == "cm_stateCanceled" then
+        return 0.72, 0.72, 0.72, 1
+    end
+    return nil
+end
+
+---Detay satiri: solda etiket, sagda deger (saf). "Kalan: 42 dk" -> iki sutun.
+function Page.splitDetailLine(line)
+    if type(line) ~= "string" then
+        return "", ""
+    end
+    local label, value = line:match("^(.-):%s(.*)$")
+    if label == nil then
+        return line, ""
+    end
+    return label, value
+end
+
 ---filtreye gore satirlar (saf). Donus: { {kind="mission"|"history", mission=, entry=, label=}, ... }
 function Page.buildRows(filter, farmId, isAdmin)
     local rows = {}
@@ -587,10 +680,71 @@ local function updateFocusIds(element)
 end
 
 function Page:setRowText(element, value)
+    if element == nil then
+        return
+    end
     if element.cmLastText ~= value then
         element.cmLastText = value
         element:setText(value)
     end
+end
+
+---Kabin icindeki hucreyi ADIYLA bul. elements[n] sirasina guvenmiyoruz: XML'e bir
+---eleman eklenince sira kayiyor ve yanlis hucreye yaziliyordu.
+local function childByName(box, name)
+    for _, child in pairs(box ~= nil and box.elements or {}) do
+        if child.name == name then
+            return child
+        end
+    end
+    return nil
+end
+Page.childByName = childByName
+
+---Satir kabina hucre tablosu baglar. Hucre yoksa (eski XML) nil kalir; cagiran taraf
+---tek metinli eski gorunume duser, sayfa hicbir durumda bos kalmaz.
+local function attachCells(box)
+    local cells, found = {}, 0
+    for _, name in ipairs(Page.CELL_NAMES) do
+        local cell = childByName(box, name)
+        cells[name] = cell
+        if cell ~= nil then
+            found = found + 1
+        end
+        -- profildeki renk: durum rengi verilip geri alinirken buraya donulur
+        if cell ~= nil and type(cell.textColor) == "table" then
+            cell.cmBaseColor = { cell.textColor[1], cell.textColor[2], cell.textColor[3], cell.textColor[4] }
+        end
+    end
+    -- Hic hucre yoksa tablo BIRAKILMAZ: setCells false donsun ve cagiran eski
+    -- tek metinli gorunume dussun (eski XML ile calisan kurulumlar).
+    box.cmCells = found > 0 and cells or nil
+    return box.cmCells
+end
+
+---Hucrelere metin yaz; renk verilirse yalnizca durum sutununa uygulanir.
+function Page:setCells(box, values, colorCell, r, g, b, a)
+    local cells = box ~= nil and box.cmCells or nil
+    if cells == nil then
+        return false
+    end
+    for _, name in ipairs(Page.CELL_NAMES) do
+        local cell = cells[name]
+        if cell ~= nil then
+            self:setRowText(cell, values[name] or "")
+            if cell.setTextColor ~= nil then
+                -- Renk her tazelemede yeniden verilir: onceki satirdan kalan renk kalmasin.
+                if name == colorCell and r ~= nil then
+                    cell:setTextColor(r, g, b, a)
+                    cell.cmColored = true
+                elseif cell.cmColored then
+                    cell:setTextColor(unpack(cell.cmBaseColor or { 1, 1, 1, 1 }))
+                    cell.cmColored = false
+                end
+            end
+        end
+    end
+    return true
 end
 
 function Page:buildContent()
@@ -605,12 +759,29 @@ function Page:buildContent()
         return header
     end
 
-    -- kontrat listesi
+    -- kontrat listesi: sutun basligi + satirlar
     self.listHeader = cloneText("cm_pageContracts")
+    if self.columnHeaderPrefab ~= nil then
+        local header = self.columnHeaderPrefab:clone(layout)
+        updateFocusIds(header)
+        attachCells(header)
+        local titles = Page.columnTitles()
+        for _, name in ipairs(Page.CELL_NAMES) do
+            local cell = header.cmCells[name]
+            if cell ~= nil then
+                cell:setText(titles[name] or "")
+            end
+        end
+        self.columnHeader = header
+    end
+    -- Yeni sutunlu satir yoksa (eski XML) eski tek metinli satira duseriz.
+    local rowPrefab = self.missionRowPrefab or buttonPrefab
     for index = 1, Page.MAX_ROWS do
-        local box = buttonPrefab:clone(layout)
+        local box = rowPrefab:clone(layout)
         updateFocusIds(box)
-        local button, label = box.elements[1], box.elements[2]
+        local button = childByName(box, "rowButton") or box.elements[1]
+        local label = childByName(box, "buttonLabel")
+        attachCells(box)
         button.onClickCallback = function() self:onClickRow(index) end
         button:setText(text("cm_pageSelect", "..."))
         box.cmButton, box.cmLabel, box.cmPaintable = button, label, true
@@ -621,24 +792,27 @@ function Page:buildContent()
     self.emptyRow.cmLabel = self.emptyRow.elements[1]
     self.emptyRow.cmPaintable = true
 
-    -- secili kontrat
+    -- secili kontrat: solda etiket, sagda deger
+    local detailPrefab = self.detailRowPrefab or textPrefab
+    local function cloneDetailRow()
+        local box = detailPrefab:clone(layout)
+        updateFocusIds(box)
+        box.cmDetailLabel = childByName(box, "cellLabel")
+        box.cmDetailValue = childByName(box, "cellValue")
+        box.cmLabel = box.cmDetailLabel or box.elements[1]
+        box.cmPaintable = true
+        return box
+    end
+
     self.detailHeader = cloneText("cm_pageSelected")
     for index = 1, Page.MAX_DETAIL do
-        local box = textPrefab:clone(layout)
-        updateFocusIds(box)
-        box.cmLabel = box.elements[1]
-        box.cmPaintable = true
-        self.detailElements[index] = box
+        self.detailElements[index] = cloneDetailRow()
     end
 
     -- ortaklik (kontrata katilan ciftlikler)
     self.partnerHeader = cloneText("cm_pagePartners")
     for index = 1, Page.MAX_PARTNER do
-        local box = textPrefab:clone(layout)
-        updateFocusIds(box)
-        box.cmLabel = box.elements[1]
-        box.cmPaintable = true
-        self.partnerElements[index] = box
+        self.partnerElements[index] = cloneDetailRow()
     end
 
     -- eylemler
@@ -662,6 +836,21 @@ function Page:buildContent()
     textPrefab:delete()
     buttonPrefab:delete()
     optionPrefab:delete()
+    for _, prefab in pairs({ self.missionRowPrefab, self.columnHeaderPrefab, self.detailRowPrefab }) do
+        prefab:delete()   -- pairs: biri eksikse digerleri yine silinir
+    end
+    self.missionRowPrefab, self.columnHeaderPrefab, self.detailRowPrefab = nil, nil, nil
+end
+
+---Detay/ortak satirini iki sutuna yaz; sutun yoksa eski tek metin.
+function Page:setDetailRow(box, line)
+    if box.cmDetailValue ~= nil and box.cmDetailLabel ~= nil then
+        local label, value = Page.splitDetailLine(line)
+        self:setRowText(box.cmDetailLabel, label)
+        self:setRowText(box.cmDetailValue, value)
+        return
+    end
+    self:setRowText(box.cmLabel, line)
 end
 
 ---Satir arka planlari: oyunun ayar sayfasi bunu updateAlternatingElements ile yapar.
@@ -698,10 +887,23 @@ function Page:refresh()
         local row = self.rows[index]
         box:setVisible(row ~= nil)
         if row ~= nil then
-            self:setRowText(box.cmLabel, row.label)
+            local cells, colorCell, r, g, b, a
+            if row.entry ~= nil then
+                cells = Page.historyCells(row.entry)
+                colorCell = "cellFarm"   -- gecmiste bu sutun bitis durumudur
+                r, g, b, a = Page.historyStateColor(row.entry.finishState)
+            else
+                cells = Page.missionCells(row.mission)
+            end
+            if not self:setCells(box, cells, colorCell, r, g, b, a) then
+                self:setRowText(box.cmLabel, row.label)   -- sutunsuz eski gorunum
+            end
             -- buton kisa etiket kullanir; "cm_pageSelected" bolum basliginin metnidir
             self:setRowText(box.cmButton, index == self.selectedIndex and text("cm_pageSelectedMark", "*") or text("cm_pageSelect", "..."))
         end
+    end
+    if self.columnHeader ~= nil then
+        self.columnHeader:setVisible(#self.rows > 0)
     end
     if self.emptyRow ~= nil then
         self.emptyRow:setVisible(#self.rows == 0)
@@ -724,7 +926,7 @@ function Page:refresh()
         local line = lines[index]
         box:setVisible(line ~= nil)
         if line ~= nil then
-            self:setRowText(box.cmLabel, line)
+            self:setDetailRow(box, line)
         end
     end
 
@@ -738,7 +940,7 @@ function Page:refresh()
         local line = partnerLines[index]
         box:setVisible(line ~= nil)
         if line ~= nil then
-            self:setRowText(box.cmLabel, line)
+            self:setDetailRow(box, line)
         end
     end
 
