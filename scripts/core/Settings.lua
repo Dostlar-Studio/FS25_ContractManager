@@ -31,6 +31,7 @@ local BOOL, INT, FLOAT, STRING = "bool", "int", "float", "string"
 Settings.SPEC = {
     { id = "guard.enabled",                 xml = "guard#enabled",                 type = BOOL,   default = true },
     { id = "guard.confiscateOnFail",        xml = "guard#confiscateOnFail",        type = BOOL,   default = true },
+    { id = "guard.warnProductLoss",         xml = "guard#warnProductLoss",         type = BOOL,   default = true },
     { id = "guard.blockCancelAfterProgress",xml = "guard#blockCancelAfterProgress",type = BOOL,   default = true },
 
     { id = "generation.maxTotal",           xml = "generation#maxTotal",           type = INT,    default = 0,    min = 0,   max = 200 },   -- 0 = oyun varsayilani

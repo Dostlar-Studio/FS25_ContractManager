@@ -26,6 +26,8 @@
         <text name="cm_guard_blockCancelAfterProgress_tooltip" text="Hasat ya da teslimat başladıysa kontrat iptal edilemez."/>
         <text name="cm_guard_confiscateOnFail" text="Başarısızlıkta ürünü geri al"/>
         <text name="cm_guard_confiscateOnFail_tooltip" text="Süre aşımı veya zorunlu başarısızlıkta kabulden beri biriken net ürün geri alınır."/>
+        <text name="cm_guard_warnProductLoss" text="Ürün kaybını bildir"/>
+        <text name="cm_guard_warnProductLoss_tooltip" text="Kontrat ürünü teslim edilmeden azalırsa uyarı gösterilir. Sunucudaki temizlik modları balyaları silebiliyor."/>
         <text name="cm_reward_multiplier" text="Ödül çarpanı"/>
         <text name="cm_reward_multiplier_tooltip" text="Oyunun hesapladığı kontrat ödülü bu çarpanla çarpılır."/>
         <text name="cm_reward_failPenaltyPercent" text="Başarısızlık cezası"/>
@@ -304,5 +306,6 @@
         <text name="cm_pageConfirmFarm" text="%s için uygulansın mı?"/>
         <text name="cm_pageConfirmGeneric" text="Onay: %s?"/>
         <text name="cm_partDeclined" text="Davet reddedildi."/>
+        <text name="cm_productLost" text="%s: %d litre kontrat ürünü teslim edilmeden kayboldu."/>
     </texts>
 </l10n>

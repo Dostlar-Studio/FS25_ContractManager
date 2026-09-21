@@ -169,6 +169,7 @@ ContractManagerNotificationEvent.QUOTA = 6        -- text = "day"/"month", amoun
 ContractManagerNotificationEvent.PARTNER_INVITE = 7 -- text = kontrat basligi, amount = davet eden ciftlik
 ContractManagerNotificationEvent.PARTNER_ACCEPTED = 8 -- sahibe: text = kontrat basligi, amount = kabul eden ciftlik
 ContractManagerNotificationEvent.PARTNER_DECLINED = 9 -- sahibe: text = kontrat basligi, amount = reddeden ciftlik
+ContractManagerNotificationEvent.PRODUCT_LOST = 10 -- text = kontrat basligi, amount = kaybolan litre
 
 function ContractManagerNotificationEvent.emptyNew()
     return Event.new(ContractManagerNotificationEvent_mt)
@@ -215,6 +216,8 @@ function ContractManagerNotificationEvent.buildText(code, text, amount)
         return string.format(g_i18n:getText("cm_partDeclinedNotify"), amount or 0, tostring(text))
     elseif code == ContractManagerNotificationEvent.QUOTA then
         return string.format(g_i18n:getText(text == "day" and "cm_quotaDay" or "cm_quotaMonth"), amount or 0)
+    elseif code == ContractManagerNotificationEvent.PRODUCT_LOST then
+        return string.format(g_i18n:getText("cm_productLost"), tostring(text), amount or 0)
     elseif code == ContractManagerNotificationEvent.LEASE_DENIED then
         if (amount or 0) > 0 then
             return string.format(g_i18n:getText("cm_leaseDeniedRep"), amount)

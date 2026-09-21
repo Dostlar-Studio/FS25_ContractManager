@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.21.4.0</version>
+    <version>1.22.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -36,6 +36,9 @@ CONTACT & SOURCE
 
 Must be enabled on the server and all clients. PC/Mac only.
 
+Changelog 1.22.0.0:
+- New: if contract product disappears without being delivered, the farm now gets a warning and the server log records it. On servers where a cleanup mod deletes bales at midnight, the product was vanishing silently and the contract failed for no visible reason. Can be turned off under Protection.
+
 Changelog 1.21.4.0:
 - Fixed: a settings change was only written to disk when the game saved. On a server that restarts without saving, every change made after the last autosave was lost and the old value came back. Changes are now written a few seconds after you make them.
 - The log now records who changed a setting and what the previous value was, so an unexpected change can be traced. The same information is sent to the Discord panel.
@@ -45,6 +48,9 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.22.0.0:
+- Neu: Verschwindet Vertragsware, ohne abgeliefert zu werden, erhaelt der Hof jetzt eine Warnung und das Serverlog haelt es fest. Auf Servern, deren Aufraeum-Mod um Mitternacht Ballen loescht, verschwand die Ware stillschweigend und der Vertrag scheiterte ohne sichtbaren Grund. Abschaltbar unter Schutz.
 
 Changelog 1.21.4.0:
 - Behoben: Eine Einstellungsänderung wurde erst beim Speichern des Spiels auf die Festplatte geschrieben. Auf einem Server, der ohne Speichern neu startet, ging jede Änderung nach dem letzten Autosave verloren und der alte Wert kam zurück. Änderungen werden jetzt wenige Sekunden später geschrieben.
@@ -420,6 +426,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.22.0.0 :
+- Nouveau : si le produit d'un contrat disparait sans etre livre, la ferme recoit desormais une alerte et le journal du serveur l'enregistre. Sur les serveurs ou un mod de nettoyage supprime les balles a minuit, le produit disparaissait en silence et le contrat echouait sans raison visible. Desactivable dans Protection.
+
 Changelog 1.21.4.0 :
 - Corrigé : un changement de réglage n'était écrit sur le disque qu'à la sauvegarde de la partie. Sur un serveur qui redémarre sans sauvegarder, tout changement effectué après la dernière sauvegarde automatique était perdu et l'ancienne valeur revenait. Les changements sont désormais écrits quelques secondes après.
 - Le journal indique maintenant qui a modifié un réglage et quelle était la valeur précédente, afin de retracer un changement inattendu. La même information est envoyée au panneau Discord.
@@ -611,6 +620,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.22.0.0:
+- Yeni: kontrat ürünü teslim edilmeden azalırsa çiftlik artık uyarı alıyor ve sunucu loguna yazılıyor. Temizlik modunun gece yarısı balyaları sildiği sunucularda ürün sessizce yok oluyor ve kontrat görünür bir sebep olmadan başarısız oluyordu. Koruma bölümünden kapatılabilir.
 
 Değişiklikler 1.21.4.0:
 - Düzeltme: ayar değişikliği diske yalnız oyun kaydedilirken yazılıyordu. Kayıt almadan yeniden başlayan bir sunucuda son otomatik kayıttan sonra yapılan her değişiklik kayboluyor ve eski değer geri geliyordu. Değişiklikler artık yapıldıktan birkaç saniye sonra yazılıyor.

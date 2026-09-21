@@ -26,6 +26,8 @@
         <text name="cm_guard_blockCancelAfterProgress_tooltip" text="Un contrat ne peut plus être annulé une fois la récolte ou la livraison commencée."/>
         <text name="cm_guard_confiscateOnFail" text="Confisquer le produit en cas d'échec"/>
         <text name="cm_guard_confiscateOnFail_tooltip" text="En cas d'expiration ou d'échec forcé, le produit net accumulé depuis l'acceptation est repris."/>
+        <text name="cm_guard_warnProductLoss" text="Alerter en cas de perte"/>
+        <text name="cm_guard_warnProductLoss_tooltip" text="Affiche une alerte quand le produit du contrat disparait sans etre livre. Les mods de nettoyage d'un serveur peuvent supprimer les balles."/>
         <text name="cm_reward_multiplier" text="Multiplicateur de récompense"/>
         <text name="cm_reward_multiplier_tooltip" text="La récompense calculée par le jeu est multipliée par cette valeur."/>
         <text name="cm_reward_failPenaltyPercent" text="Pénalité d'échec"/>
@@ -304,5 +306,6 @@
         <text name="cm_pageConfirmFarm" text="Appliquer à %s ?"/>
         <text name="cm_pageConfirmGeneric" text="Confirmer : %s ?"/>
         <text name="cm_partDeclined" text="Invitation refusée."/>
+        <text name="cm_productLost" text="%s : %d litres de produit du contrat ont disparu sans etre livres."/>
     </texts>
 </l10n>

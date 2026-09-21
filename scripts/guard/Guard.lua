@@ -5,8 +5,13 @@ ContractGuard = {
     WARNING_CROSS_FARM = 3,
     UPDATE_INTERVAL_MS = 1000,
     MIN_TRACKED_LITERS = 1,
+    -- Urun kaybi denetimi: pahali bir tarama (tum araclar + balyalar), bu yuzden seyrek.
+    -- Sunucudaki temizlik modlari urunu oyun ici gece yarisinda bir anda siliyor; 30 sn yeterli.
+    LOSS_CHECK_INTERVAL_MS = 30000,
+    LOSS_MIN_LITERS = 100,          -- bunun altindaki dusus bildirilmez (kirinti, tasima farki)
     loaded = false,
     updateTimer = 0,
+    lossTimer = 0,
     savedBaselines = {}
 }
 
@@ -423,6 +428,85 @@ function ContractGuard:initializeMission(mission, fromLoadedGame)
     )
 end
 
+-- ---------------------------------------------------------------------------
+-- Urun kaybi: kontrat urunu azaldi ama teslim edilmedi
+--
+-- NEDEN: ana sunucuda FS25_FarmsCleanup her oyun gunu gece yarisinda (uyku zaman
+-- atlamasi dahil) haritadaki balyalari ve paletleri doluluguna bakmadan siliyor
+-- (2026-09-17 canli inceleme). Balya kontrati gece yarisini gecerse urun yok oluyor,
+-- oyuncu bunu ancak teslimata gidince anliyor ve kontrat basarisiz oluyor.
+-- Guard bunu engelleyemez (baska modun silmesi), ama GORUNUR yapabilir.
+--
+-- Kayip = (onceki hacim - simdiki hacim) - (teslim edilen artisi). Teslimat, satis ve
+-- baska ciftlige aktarma da hacmi dusurur; ilki dusulur, digerleri "kayip" sayilir -
+-- ikisi de oyuncu icin ayni sonucu verir: kontrata yetecek urun artik yok.
+-- ---------------------------------------------------------------------------
+
+---Saf: bir olcum araliginda kaybolan litre. Donus 0 = bildirilecek kayip yok.
+function ContractGuard.evaluateLoss(prevVolume, prevDeposited, volume, deposited, minLiters)
+    if prevVolume == nil or volume == nil then
+        return 0
+    end
+    local drop = prevVolume - volume
+    if drop <= 0 then
+        return 0
+    end
+    local delivered = math.max(0, (deposited or 0) - (prevDeposited or 0))
+    local lost = drop - delivered
+    if lost < (minLiters or 0) then
+        return 0
+    end
+    return lost
+end
+
+---Sunucuda seyrek: aktif korunan kontratlarin urunu teslim edilmeden azaldi mi?
+---Donus: bildirilen kontrat sayisi.
+function ContractGuard:checkProductLoss()
+    if not self:getSetting("guard.warnProductLoss", true) then
+        return 0
+    end
+    local volumeCache, reported = {}, 0
+    for _, mission in ipairs(self:getMissions()) do
+        if self:isMissionActive(mission) and self:isProtectedMission(mission) then
+            local fillTypeIndex = self:getMissionFillType(mission)
+            local key = tostring(mission.farmId) .. "|" .. tostring(fillTypeIndex)
+            if volumeCache[key] == nil then
+                volumeCache[key] = self:getFarmFillVolume(mission.farmId, fillTypeIndex)
+            end
+            local volume, deposited = volumeCache[key], mission.depositedLiters or 0
+            local lost = ContractGuard.evaluateLoss(mission.contractGuardLastVolume,
+                mission.contractGuardLastDeposited, volume, deposited, self.LOSS_MIN_LITERS)
+            mission.contractGuardLastVolume = volume
+            mission.contractGuardLastDeposited = deposited
+            if lost > 0 then
+                reported = reported + 1
+                self:reportProductLoss(mission, lost)
+            end
+        else
+            mission.contractGuardLastVolume = nil
+            mission.contractGuardLastDeposited = nil
+        end
+    end
+    return reported
+end
+
+function ContractGuard:reportProductLoss(mission, lost)
+    local liters = math.floor(lost + 0.5)
+    local title = mission.title or self:getMissionTypeName(mission) or "?"
+    Logging.info("[CM/Guard] Product loss: farm %s lost %d l of '%s' for contract '%s' without delivering it",
+        tostring(mission.farmId), liters, tostring(self:getFillTypeTitle(self:getMissionFillType(mission))), tostring(title))
+
+    local Notify = ContractManagerNotificationEvent
+    if Notify ~= nil and Notify.sendToFarm ~= nil and Notify.PRODUCT_LOST ~= nil then
+        for _, farmId in ipairs(self:getMemberFarmIds(mission)) do
+            Notify.sendToFarm(Notify.PRODUCT_LOST, farmId, title, liters)
+        end
+    end
+    if ContractManager ~= nil and ContractManager.publish ~= nil then
+        ContractManager.publish(ContractManager.MESSAGE_PRODUCT_LOST, mission, liters)
+    end
+end
+
 function ContractGuard:missionHasProgress(mission)
     if not self:isProtectedMission(mission) then
         return false
@@ -619,12 +703,22 @@ function ContractGuard:loadMap(mapName)
     self.mission = g_currentMission
     self.loaded = true
     self.updateTimer = 0
+    self.lossTimer = 0
     Logging.info("[CM/Guard] Loaded v%s (server-authoritative protection enabled)", self.VERSION)
 end
 
 function ContractGuard:update(dt)
     if not self.loaded or self.mission == nil or not self.mission:getIsServer() then
         return
+    end
+
+    self.lossTimer = self.lossTimer + dt
+    if self.lossTimer >= self.LOSS_CHECK_INTERVAL_MS then
+        self.lossTimer = 0
+        local ok, err = pcall(self.checkProductLoss, self)
+        if not ok then
+            Logging.warning("[CM/Guard] Product loss check failed: %s", tostring(err))
+        end
     end
 
     self.updateTimer = self.updateTimer + dt
@@ -648,6 +742,7 @@ function ContractGuard:deleteMap()
     self.loaded = false
     self.mission = nil
     self.updateTimer = 0
+    self.lossTimer = 0
     self.savedBaselines = {}
     Logging.info("[CM/Guard] Unloaded")
 end

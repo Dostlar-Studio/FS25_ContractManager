@@ -26,6 +26,8 @@
         <text name="cm_guard_blockCancelAfterProgress_tooltip" text="Nach Beginn von Ernte oder Lieferung kann der Vertrag nicht mehr abgebrochen werden."/>
         <text name="cm_guard_confiscateOnFail" text="Ware bei Fehlschlag einziehen"/>
         <text name="cm_guard_confiscateOnFail_tooltip" text="Bei Zeitablauf oder erzwungenem Fehlschlag wird die seit Annahme angesammelte Nettoware eingezogen."/>
+        <text name="cm_guard_warnProductLoss" text="Warnung bei Warenverlust"/>
+        <text name="cm_guard_warnProductLoss_tooltip" text="Zeigt eine Warnung, wenn Vertragsware verschwindet, ohne abgeliefert zu werden. Aufraeum-Mods auf einem Server koennen Ballen loeschen."/>
         <text name="cm_reward_multiplier" text="Belohnungsfaktor"/>
         <text name="cm_reward_multiplier_tooltip" text="Die vom Spiel berechnete Belohnung wird mit diesem Wert multipliziert."/>
         <text name="cm_reward_failPenaltyPercent" text="Strafe bei Fehlschlag"/>
@@ -304,5 +306,6 @@
         <text name="cm_pageConfirmFarm" text="Für %s ausführen?"/>
         <text name="cm_pageConfirmGeneric" text="Bestätigen: %s?"/>
         <text name="cm_partDeclined" text="Einladung abgelehnt."/>
+        <text name="cm_productLost" text="%s: %d Liter Vertragsware sind verschwunden, ohne abgeliefert zu werden."/>
     </texts>
 </l10n>

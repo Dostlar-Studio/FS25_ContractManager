@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.21.4.0",
+    VERSION = "1.22.0.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     PROTOCOL = 1,
@@ -261,6 +261,7 @@ ContractManager.MESSAGE_CONTRACT_FINISHED = "CONTRACT_MANAGER_CONTRACT_FINISHED"
 ContractManager.MESSAGE_CONTRACT_PAID = "CONTRACT_MANAGER_CONTRACT_PAID"         -- (mission, historyEntry)
 ContractManager.MESSAGE_CONTRACT_WARNING = "CONTRACT_MANAGER_CONTRACT_WARNING"   -- (mission, minutesLeft)
 ContractManager.MESSAGE_GUARD_BLOCKED = "CONTRACT_MANAGER_GUARD_BLOCKED"         -- (code, farmId, fillTypeIndex, amount)
+ContractManager.MESSAGE_PRODUCT_LOST = "CONTRACT_MANAGER_PRODUCT_LOST"           -- (mission, liters)
 ContractManager.MESSAGE_REPUTATION_CHANGED = "CONTRACT_MANAGER_REPUTATION_CHANGED" -- (farmId, points, delta)
 ContractManager.MESSAGE_CONTRACT_TRANSFERRED = "CONTRACT_MANAGER_CONTRACT_TRANSFERRED" -- (mission, oldFarmId, newFarmId)
 ContractManager.MESSAGE_PARTNERSHIP_CHANGED = "CONTRACT_MANAGER_PARTNERSHIP_CHANGED" -- (mission, ownerFarmId, partnerFarmId)

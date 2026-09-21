@@ -126,6 +126,7 @@ Tab.SPEC = {
     { id = "guard.enabled", kind = "bool" },
     { id = "guard.blockCancelAfterProgress", kind = "bool" },
     { id = "guard.confiscateOnFail", kind = "bool" },
+    { id = "guard.warnProductLoss", kind = "bool" },
 
     { section = "cm_secReward" },
     { id = "reward.multiplier", kind = "range", min = 0.5, max = 5, step = 0.05, format = "x%.2f" },
