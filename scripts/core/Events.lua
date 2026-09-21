@@ -314,6 +314,36 @@ function ContractManager.getIsConnectionAdmin(connection)
     return okAdmin and isAdmin == true
 end
 
+---Kullanici adi (log icin). Alan adi yayinlanmamis: DiscordBridge canlida ikisini de
+---deniyor (EventLog.lua), ayni kalip. Bulunamazsa nil.
+function ContractManager.getUserName(user)
+    if type(user) ~= "table" then
+        return nil
+    end
+    if type(user.nickname) == "string" and user.nickname ~= "" then
+        return user.nickname
+    end
+    if user.getNickname ~= nil then
+        local ok, name = pcall(user.getNickname, user)
+        if ok and type(name) == "string" and name ~= "" then
+            return name
+        end
+    end
+    return nil
+end
+
+---Baglantinin sahibi olan oyuncunun adi (log icin). Cozulemezse nil.
+function ContractManager.getConnectionUserName(connection)
+    if g_currentMission == nil or g_currentMission.userManager == nil or connection == nil then
+        return nil
+    end
+    local ok, user = pcall(g_currentMission.userManager.getUserByConnection, g_currentMission.userManager, connection)
+    if not ok then
+        return nil
+    end
+    return ContractManager.getUserName(user)
+end
+
 -- ---------------------------------------------------------------------------
 -- ContractManagerSettingChangeEvent: istemci (admin) -> sunucu, tek ayar degisikligi.
 -- Sunucu yetkiyi dogrular, uygular, SyncEvent ile herkese yayar. Yetkisiz istemciye
@@ -373,19 +403,20 @@ function ContractManagerSettingChangeEvent:run(connection)
         return -- sunucudan istemciye bu olay gonderilmez
     end
     if not ContractManager.getIsConnectionAdmin(connection) then
-        ContractManager.warning("Rejected setting change '%s' from a non-admin client", tostring(self.key))
+        ContractManager.warning("Rejected setting change '%s' from a non-admin client (%s)",
+            tostring(self.key), tostring(ContractManager.getConnectionUserName(connection) or "unknown"))
         if connection ~= nil and ContractManagerSyncEvent ~= nil then
             connection:sendEvent(ContractManagerSyncEvent.newState())
         end
         return
     end
-    ContractManagerSettingsTab.applyOnServer(self.key, self.value)
+    ContractManagerSettingsTab.applyOnServer(self.key, self.value, ContractManager.getConnectionUserName(connection))
 end
 
 ---yerel: sunucu/host ise dogrudan uygula, istemci ise sunucuya gonder
 function ContractManagerSettingChangeEvent.send(key, value)
     if g_currentMission ~= nil and g_currentMission:getIsServer() then
-        return ContractManagerSettingsTab.applyOnServer(key, value)
+        return ContractManagerSettingsTab.applyOnServer(key, value, "host")
     end
     if g_client ~= nil then
         local ok = pcall(function()

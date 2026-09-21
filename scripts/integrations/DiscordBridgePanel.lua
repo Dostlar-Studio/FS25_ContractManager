@@ -144,7 +144,8 @@ function Panel.commandSet(cmd)
     if err ~= nil then
         return false, err
     end
-    local applied = ContractManagerSettingsTab.applyOnServer(key, value)
+    local by = (type(cmd.by) == "string" and cmd.by ~= "") and ("web: " .. cmd.by) or "web panel"
+    local applied = ContractManagerSettingsTab.applyOnServer(key, value, by)
     if applied == nil then
         return false, "setting not applied: " .. tostring(key)
     end

@@ -192,9 +192,9 @@ function Discord.install()
     g_messageCenter:subscribe(ContractManager.MESSAGE_CONTRACT_TRANSFERRED, function(_, mission, oldFarmId, newFarmId)
         Discord.emit("cm_contract_transferred", { id = mission and mission.uniqueId, title = mission and mission.title, fromFarmId = oldFarmId, farmId = newFarmId })
     end, Discord)
-    g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED, function(_, key, value)
+    g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED, function(_, key, value, who)
         if key ~= nil then
-            Discord.emit("cm_settings_changed", { key = tostring(key), value = value })
+            Discord.emit("cm_settings_changed", { key = tostring(key), value = value, by = who })
         end
     end, Discord)
 end

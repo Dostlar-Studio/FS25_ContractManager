@@ -352,7 +352,9 @@ end
 ---TUM ayar tablosunu butun istemcilere yayinliyor ve orada 127 kontrolluk arayuzu
 ---yeniden kuruyordu. Sunucu logunda calisma kisminin %57'si tek bir satirdi
 ---(2026-09-09 incelemesi). Deger gercekten degismediyse hicbir sey yapilmaz.
-function Tab.applyOnServer(key, value)
+---`who`: degisikligi yapanin adi (oyuncu, "host" ya da "web: <ad>"). Log ve Discord olayi
+---bunu tasir; "ayari kim degistirdi" sorusu canlida cevapsiz kalmisti (2026-09-17).
+function Tab.applyOnServer(key, value, who)
     local before = Tab.getValue(key)
     local applied = Tab.applyValue(key, value)
     if before ~= nil and applied ~= nil and before == applied then
@@ -361,8 +363,10 @@ function Tab.applyOnServer(key, value)
     if ContractManagerSyncEvent ~= nil then
         ContractManagerSyncEvent.broadcastState()
     end
-    ContractManager.publish(ContractManager.MESSAGE_SETTINGS_CHANGED, key, applied)
-    ContractManager.info("Setting '%s' -> %s", tostring(key), tostring(applied))
+    who = (type(who) == "string" and who ~= "") and who or "unknown"
+    ContractManager.publish(ContractManager.MESSAGE_SETTINGS_CHANGED, key, applied, who)
+    ContractManager.info("Setting '%s': %s -> %s (changed by %s)",
+        tostring(key), tostring(before), tostring(applied), who)
     return applied
 end
 
@@ -397,7 +401,7 @@ function Tab:onControlChanged(state, element)
     if ContractManagerSettingChangeEvent ~= nil then
         ContractManagerSettingChangeEvent.send(spec.key, value)
     else
-        Tab.applyOnServer(spec.key, value)
+        Tab.applyOnServer(spec.key, value, "host")
     end
 end
 

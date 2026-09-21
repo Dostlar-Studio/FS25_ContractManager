@@ -151,6 +151,13 @@ function Persistence:deleteMap()
     self:reset()
 end
 
+---Ayarlarin gecikmeli yazma sayaci (oyun kaydini beklemeden).
+function Persistence:update(dt)
+    if ContractManagerSettings ~= nil then
+        ContractManagerSettings:updateSaveTimer(dt)
+    end
+end
+
 if FSCareerMissionInfo ~= nil and FSCareerMissionInfo.saveToXMLFile ~= nil then
     FSCareerMissionInfo.saveToXMLFile = ContractManager.appendKeepingReturn(FSCareerMissionInfo.saveToXMLFile, function()
         Persistence:save()

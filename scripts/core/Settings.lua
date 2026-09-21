@@ -3,8 +3,10 @@
 --
 -- modSettings/FS25_ContractManager.xml okur/yazar. Tum degerler SPEC tablosunda
 -- tanimlidir: tur, varsayilan, sinir. Bozuk deger varsayilana duser ve loglanir.
--- Diske yazma yalnizca dirty iken ve saveIfDirty() cagrilinca olur (menu kapanisi,
--- oyun kaydi) - her degisiklikte yazmak oyunu kasar.
+-- Diske yazma yalnizca dirty iken olur: degisiklikten SAVE_DELAY_MS sonra (markDirty ->
+-- updateSaveTimer) ve ayrica oyun kaydinda (saveIfDirty). Her degisiklikte hemen yazmak
+-- oyunu kasar (kaydirac suruklerken her adim bir yazma olurdu), yalniz oyun kaydinda
+-- yazmak ise degisikligi kaybettirir: sunucu gece kayit ALMADAN yeniden basliyor.
 --
 -- Kontrat tur ayarlari (enabled/weight) dinamiktir: tur adlari oyun icinde
 -- g_missionManager.missionTypes'tan gelir; dosyada olmayan tur varsayilanla doner.
@@ -18,6 +20,8 @@ ContractManagerSettings = {
     types = {},          -- name -> { enabled = bool, weight = number }
     dirty = false,
     loaded = false,
+    SAVE_DELAY_MS = 3000,   -- degisiklikten sonra diske yazmadan once beklenen sure
+    saveTimer = nil,        -- nil = bekleyen yazma yok
 }
 
 local Settings = ContractManagerSettings
@@ -203,7 +207,7 @@ function Settings:set(id, value)
     end
     if self.values[id] ~= clean then
         self.values[id] = clean
-        self.dirty = true
+        self:markDirty()
     end
     return clean
 end
@@ -231,7 +235,7 @@ function Settings:setTypeConfig(typeName, enabled, weight)
     local entry = self.types[typeName]
     if entry == nil or entry.enabled ~= enabled or entry.weight ~= weight then
         self.types[typeName] = { enabled = enabled, weight = weight }
-        self.dirty = true
+        self:markDirty()
     end
 end
 
@@ -299,8 +303,13 @@ function Settings:load()
     end
     xmlFile:delete()
 
-    -- setTypeConfig dirty isaretler; dosyadan okunan durum kirli sayilmaz
-    self.dirty = fixedCount > 0
+    -- setTypeConfig dirty isaretler; dosyadan okunan durum kirli sayilmaz.
+    -- Duzeltilen deger varsa duzeltilmis hali gecikmeli olarak diske yazilir.
+    self.dirty = false
+    self.saveTimer = nil
+    if fixedCount > 0 then
+        self:markDirty()
+    end
     ContractManager.info("Settings loaded (%d types, %d corrected)", index, fixedCount)
 end
 
@@ -327,6 +336,7 @@ function Settings:save()
     xmlFile:save()
     xmlFile:delete()
     self.dirty = false
+    self.saveTimer = nil
     return true
 end
 
@@ -335,6 +345,36 @@ function Settings:saveIfDirty()
         return self:save()
     end
     return false
+end
+
+---Degisiklik isareti + gecikmeli yazma sayaci.
+---Sayac YALNIZ bosken kurulur: aksi halde kaydiraci surukleyen oyuncu her adimda sayaci
+---sifirlayip yazmayi suresiz erteleyebilirdi.
+function Settings:markDirty()
+    self.dirty = true
+    if self.saveTimer == nil then
+        self.saveTimer = self.SAVE_DELAY_MS
+    end
+end
+
+---Sunucuda her kare (Persistence:update). Sayac dolunca kirli ayarlar diske yazilir.
+---NEDEN: eskiden tek yazma noktasi oyun kaydiydi. Sunucu her gece kayit ALMADAN yeniden
+---baslatildigi icin son kayittan sonra yapilan ayar degisikligi kayboluyordu
+---(2026-09-17 canli log incelemesi: hasat payi elle degistirildi, restart sonrasi eski deger).
+---Istemci kendi modSettings dosyasina YAZMAZ; onun degerleri sunucudan senkronla gelir.
+function Settings:updateSaveTimer(dt)
+    if self.saveTimer == nil then
+        return false
+    end
+    if g_currentMission == nil or not g_currentMission:getIsServer() then
+        return false
+    end
+    self.saveTimer = self.saveTimer - (dt or 0)
+    if self.saveTimer > 0 then
+        return false
+    end
+    self.saveTimer = nil
+    return self:saveIfDirty()
 end
 
 -- ---------------------------------------------------------------------------

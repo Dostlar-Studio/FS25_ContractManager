@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.21.3.0</version>
+    <version>1.21.4.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -36,11 +36,19 @@ CONTACT & SOURCE
 
 Must be enabled on the server and all clients. PC/Mac only.
 
+Changelog 1.21.4.0:
+- Fixed: a settings change was only written to disk when the game saved. On a server that restarts without saving, every change made after the last autosave was lost and the old value came back. Changes are now written a few seconds after you make them.
+- The log now records who changed a setting and what the previous value was, so an unexpected change can be traced. The same information is sent to the Discord panel.
+
 Changelog 1.21.3.0:
 - Fixed: the contract history in the settings tab showed the wrong outcome for every contract (a completed contract was listed as failed, a timed-out one as cancelled, a cancelled one as none). The management page was already correct; both now use the same lookup.
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.21.4.0:
+- Behoben: Eine Einstellungsänderung wurde erst beim Speichern des Spiels auf die Festplatte geschrieben. Auf einem Server, der ohne Speichern neu startet, ging jede Änderung nach dem letzten Autosave verloren und der alte Wert kam zurück. Änderungen werden jetzt wenige Sekunden später geschrieben.
+- Das Log hält jetzt fest, wer eine Einstellung geändert hat und welcher Wert vorher galt, damit eine unerwartete Änderung nachvollziehbar ist. Dieselbe Information geht an das Discord-Panel.
 
 Changelog 1.21.3.0:
 - Behoben: Der Vertragsverlauf im Einstellungsreiter zeigte für jeden Vertrag das falsche Ergebnis (abgeschlossen als fehlgeschlagen, abgelaufen als abgebrochen, abgebrochen als keins). Die Verwaltungsseite war bereits korrekt; beide nutzen jetzt dieselbe Zuordnung.
@@ -412,6 +420,10 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.21.4.0 :
+- Corrigé : un changement de réglage n'était écrit sur le disque qu'à la sauvegarde de la partie. Sur un serveur qui redémarre sans sauvegarder, tout changement effectué après la dernière sauvegarde automatique était perdu et l'ancienne valeur revenait. Les changements sont désormais écrits quelques secondes après.
+- Le journal indique maintenant qui a modifié un réglage et quelle était la valeur précédente, afin de retracer un changement inattendu. La même information est envoyée au panneau Discord.
+
 Changelog 1.21.3.0 :
 - Corrigé : l'historique des contrats dans l'onglet des réglages affichait un résultat erroné pour chaque contrat (terminé indiqué comme échoué, expiré comme annulé, annulé comme aucun). La page de gestion était déjà correcte ; les deux utilisent désormais la même table.
 
@@ -599,6 +611,10 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.21.4.0:
+- Düzeltme: ayar değişikliği diske yalnız oyun kaydedilirken yazılıyordu. Kayıt almadan yeniden başlayan bir sunucuda son otomatik kayıttan sonra yapılan her değişiklik kayboluyor ve eski değer geri geliyordu. Değişiklikler artık yapıldıktan birkaç saniye sonra yazılıyor.
+- Log artık ayarı kimin değiştirdiğini ve önceki değerin ne olduğunu yazıyor; beklenmedik bir değişiklik böylece takip edilebiliyor. Aynı bilgi Discord paneline de gidiyor.
 
 Değişiklikler 1.21.3.0:
 - Düzeltme: ayarlar sekmesindeki kontrat geçmişi her kontratın sonucunu yanlış gösteriyordu (tamamlanan kontrat başarısız, süresi dolan iptal, iptal edilen yok diye görünüyordu). Yönetim sayfası zaten doğruydu; ikisi artık aynı eşlemeyi kullanıyor.
