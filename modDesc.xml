@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.24.0.0</version>
+    <version>1.24.1.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -36,6 +36,11 @@ CONTACT & SOURCE
 
 Must be enabled on the server and all clients. PC/Mac only.
 
+Changelog 1.24.1.0:
+- Fixed: buttons on the game's Contracts page (Refresh board, Reserve, Invite partner) could appear more than once. The game reuses the same button list between redraws and our buttons piled up on it. The list is now reset to the game's own buttons before ours are added.
+- Fixed: the Reserved label could stay on the Accept button after looking at a reserved contract.
+- An error while building these buttons is now written to the log instead of being silently swallowed, and the log says why the Invite partner button is hidden.
+
 Changelog 1.24.0.0:
 - The contract list is now sorted before it is cut off, so the most urgent or the best paying contract is always on the page. Previously the list took the first twelve contracts in engine order and dropped the rest, which on a full board hid most of them. You can sort by reward, time left or farm, the list shows twenty rows, and the heading tells you how many of the total you are seeing.
 - The statistics now show your run of failed contracts, which is what lowers your reward multiplier.
@@ -58,6 +63,11 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.24.1.0:
+- Behoben: Schaltflaechen auf der Vertragsseite des Spiels (Tafel aktualisieren, Reservieren, Partner einladen) konnten mehrfach erscheinen. Das Spiel verwendet dieselbe Schaltflaechenliste zwischen Aktualisierungen weiter, und unsere Schaltflaechen haeuften sich darauf an. Die Liste wird jetzt vor dem Hinzufuegen auf die Schaltflaechen des Spiels zurueckgesetzt.
+- Behoben: Die Beschriftung Reserviert konnte nach dem Ansehen eines reservierten Vertrags auf der Annehmen-Schaltflaeche bleiben.
+- Ein Fehler beim Aufbau dieser Schaltflaechen landet jetzt im Log statt still verschluckt zu werden, und das Log nennt den Grund, warum Partner einladen ausgeblendet ist.
 
 Changelog 1.24.0.0:
 - Die Vertragsliste wird jetzt sortiert, bevor sie gekuerzt wird; der dringendste oder bestbezahlte Vertrag steht damit immer auf der Seite. Zuvor wurden die ersten zwoelf Vertraege in Engine-Reihenfolge genommen und der Rest verworfen, bei voller Tafel also die Mehrzahl. Sortierbar nach Lohn, Restzeit oder Hof; die Liste zeigt zwanzig Zeilen und die Ueberschrift nennt Angezeigte und Gesamtzahl.
@@ -446,6 +456,11 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.24.1.0 :
+- Corrige : les boutons de la page Contrats du jeu (Actualiser le tableau, Reserver, Inviter un partenaire) pouvaient apparaitre plusieurs fois. Le jeu reutilise la meme liste de boutons entre deux affichages et nos boutons s'y accumulaient. La liste est desormais remise aux boutons du jeu avant d'ajouter les notres.
+- Corrige : l'etiquette Reserve pouvait rester sur le bouton Accepter apres avoir consulte un contrat reserve.
+- Une erreur lors de la creation de ces boutons est maintenant ecrite dans le journal au lieu d'etre ignoree, et le journal indique pourquoi Inviter un partenaire est masque.
+
 Changelog 1.24.0.0 :
 - La liste des contrats est desormais triee avant d'etre tronquee : le contrat le plus urgent ou le mieux paye figure toujours sur la page. Auparavant les douze premiers contrats dans l'ordre du moteur etaient pris et le reste ignore, soit la majorite sur un tableau plein. Tri par paie, temps restant ou ferme ; vingt lignes affichees et l'en-tete indique le nombre affiche sur le total.
 - Les statistiques affichent maintenant la serie de contrats echoues, celle qui fait baisser le multiplicateur de paie.
@@ -650,6 +665,11 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.24.1.0:
+- Düzeltme: oyunun Kontratlar sayfasındaki butonlar (Panoyu yenile, Rezerve et, Ortak davet et) birden fazla kez görünebiliyordu. Oyun aynı buton listesini çizimler arasında tekrar kullanıyor ve bizim butonlarımız üst üste birikiyordu. Liste artık bizimkiler eklenmeden önce oyunun kendi butonlarına sıfırlanıyor.
+- Düzeltme: rezerve edilmiş bir kontrata bakıldıktan sonra Kabul butonunda Rezerve yazısı kalabiliyordu.
+- Bu butonlar kurulurken çıkan hata artık sessizce yutulmuyor, loga yazılıyor; log, Ortak davet et butonunun neden gizlendiğini de söylüyor.
 
 Değişiklikler 1.24.0.0:
 - Kontrat listesi artık kesilmeden önce sıralanıyor; en acil ya da en çok ödeyen kontrat her zaman sayfada oluyor. Eskiden motor sırasından ilk on iki kontrat alınıp geri kalanı atılıyordu, yani pano doluyken çoğu görünmüyordu. Ödüle, kalan süreye veya çiftliğe göre sıralayabilirsiniz; liste yirmi satır gösteriyor ve başlıkta kaçta kaçını gördüğünüz yazıyor.

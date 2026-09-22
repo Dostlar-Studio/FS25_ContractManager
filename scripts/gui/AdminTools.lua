@@ -444,9 +444,11 @@ function Admin.installButtons()
         ContractManager.info("BetterContracts present; admin buttons skipped (console commands available)")
         return false
     end
-    InGameMenuContractsFrame.setButtonsForState = Utils.appendedFunction(InGameMenuContractsFrame.setButtonsForState, function(frame, state)
-        pcall(Admin.appendMenuButtons, frame)
-    end)
+    -- Tek kanca + birikme korumasi Main.lua'da (ContractManager.installButtonBar)
+    ContractManager.registerButtonAppender("admin", 30, Admin.appendMenuButtons)
+    if not ContractManager.installButtonBar() then
+        return false
+    end
     Admin.buttonsInstalled = true
     ContractManager.info("Admin buttons installed on contracts page")
     return true

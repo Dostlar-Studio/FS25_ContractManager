@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.24.0.0",
+    VERSION = "1.24.1.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     PROTOCOL = 2,
@@ -176,6 +176,99 @@ function ContractManager.dialogAnswer(a, b)
         return b
     end
     return nil
+end
+
+-- ---------------------------------------------------------------------------
+-- Stok Kontratlar sayfasinin alt buton cubugu (1.24.1.0)
+--
+-- Uc modul (ortaklik, rezervasyon, yonetici) ayni InGameMenuContractsFrame.setButtonsForState
+-- fonksiyonuna AYRI AYRI ekleme yapiyordu ve hatalari pcall ile SESSIZCE yutuyordu.
+-- Test sunucusunda (2026-09-22) "Panoyu yenile" iki kez goruldu: kanca tek, kurulum tek;
+-- demek ki oyun ayni buton tablosunu cagrilar arasinda yeniden kullaniyor ve eklediklerimiz
+-- BIRIKIYOR. Oyunun kaynagi yayinlanmadigi icin tablonun ne zaman yeniden kuruldugunu
+-- bilemiyoruz; bu yuzden her iki durumda da dogru calisan bir yol:
+--   * Her tablonun ILK gorulen (saf stok) hali saklanir; ayni tablo tekrar gelirse once
+--     o hale geri dondurulur, sonra eklemeler yapilir. Yeni tablo gelirse yeni kopya alinir.
+--   * Kanca oyunun SINIFINA bir kez takilir (sinif surec boyunca yasar, mod her harita
+--     yuklemesinde yeniden calisir); cagrilan dagitici her yuklemede guncellenir.
+--   * Bir ekleyicinin hatasi digerlerini durdurmaz ve LOGA yazilir (ekleyici basina bir kez).
+-- Ekleyiciler stok girdilerini YERINDE degistirmemeli (saklanan kopya ayni nesneyi tutar);
+-- degistirmek gerekirse tablodaki yuvaya yeni bir girdi konur.
+-- ---------------------------------------------------------------------------
+
+ContractManager.buttonAppenders = {}
+local buttonSnapshots = setmetatable({}, { __mode = "k" })
+local buttonErrorsReported = {}
+
+---Ekleyici kaydet (ad benzersiz; ayni adla tekrar kayit onu gunceller). Kucuk sira once calisir.
+function ContractManager.registerButtonAppender(name, order, fn)
+    for _, entry in ipairs(ContractManager.buttonAppenders) do
+        if entry.name == name then
+            entry.fn, entry.order = fn, order
+            table.sort(ContractManager.buttonAppenders, function(a, b) return a.order < b.order end)
+            return
+        end
+    end
+    table.insert(ContractManager.buttonAppenders, { name = name, order = order, fn = fn })
+    table.sort(ContractManager.buttonAppenders, function(a, b) return a.order < b.order end)
+end
+
+---Tabloyu saf stok haline dondur (ilk goruldugunde kopyasini al). Donus: geri donduruldu mu.
+function ContractManager.restoreStockButtons(list)
+    if type(list) ~= "table" then
+        return false
+    end
+    local snapshot = buttonSnapshots[list]
+    if snapshot == nil then
+        snapshot = {}
+        for index, info in ipairs(list) do
+            snapshot[index] = info
+        end
+        buttonSnapshots[list] = snapshot
+        return false
+    end
+    for index = #list, 1, -1 do
+        list[index] = nil
+    end
+    for index, info in ipairs(snapshot) do
+        list[index] = info
+    end
+    return true
+end
+
+---Dagitici: stok hale don, sonra ekleyicileri sirayla calistir.
+function ContractManager.runButtonAppenders(frame)
+    if frame == nil or type(frame.menuButtonInfo) ~= "table" then
+        return
+    end
+    ContractManager.restoreStockButtons(frame.menuButtonInfo)
+    for _, entry in ipairs(ContractManager.buttonAppenders) do
+        local ok, err = pcall(entry.fn, frame)
+        if not ok and not buttonErrorsReported[entry.name] then
+            buttonErrorsReported[entry.name] = true
+            ContractManager.warning("Contracts page button '%s' failed: %s", entry.name, tostring(err))
+        end
+    end
+end
+
+---Kancayi oyunun sinifina bir kez tak. Donus: kanca yerinde mi.
+function ContractManager.installButtonBar()
+    local cls = InGameMenuContractsFrame
+    if cls == nil or cls.setButtonsForState == nil then
+        return false
+    end
+    cls.cmButtonDispatch = ContractManager.runButtonAppenders
+    if cls.cmButtonHookInstalled then
+        return true
+    end
+    cls.setButtonsForState = Utils.appendedFunction(cls.setButtonsForState, function(frame, state)
+        local dispatch = InGameMenuContractsFrame ~= nil and InGameMenuContractsFrame.cmButtonDispatch or nil
+        if dispatch ~= nil then
+            dispatch(frame)
+        end
+    end)
+    cls.cmButtonHookInstalled = true
+    return true
 end
 
 -- ---------------------------------------------------------------------------

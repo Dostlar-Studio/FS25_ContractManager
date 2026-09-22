@@ -776,16 +776,31 @@ function Part.stripCancelButton(frame)
     return removed
 end
 
+---Davet butonu neden cikmadi? Her sebep oturum basina bir kez loglanir. Test sunucusunda
+---(2026-09-22) buton gorunmedi ve logda HICBIR iz yoktu; sebep ancak tahminle bulunabiliyordu.
+local skipReported = {}
+function Part.reportInviteSkip(reason, detail)
+    if skipReported[reason] then
+        return
+    end
+    skipReported[reason] = true
+    ContractManager.info("Partner invite button hidden: %s%s", tostring(reason),
+        detail ~= nil and (" (" .. tostring(detail) .. ")") or "")
+end
+
 ---Sahip icin davet butonlari (saf; frame.menuButtonInfo'ya ekler). Donus: eklenen sayi.
 function Part.appendOwnerButtons(frame, mission, farmId)
     local ids = otherFarmIds(farmId)
     Part.stockTarget = Part.resolveStockTarget(ids, Part.stockTarget)
     if Part.stockTarget == nil then
+        Part.reportInviteSkip("no other farm to invite", string.format("own farm %s, farms seen %d", tostring(farmId), #ids))
         return 0
     end
     local entry = Part.get(mission)
     local partners = entry ~= nil and Part.countPartners(entry) or 0
-    if partners >= (settings():get("partnership.maxPartners") or 1) then
+    local maxPartners = settings():get("partnership.maxPartners") or 1
+    if partners >= maxPartners then
+        Part.reportInviteSkip("partner limit reached", string.format("%d/%d", partners, maxPartners))
         return 0
     end
     -- Pencere varsa tek buton: "Ortak davet et" -> ciftlik secme penceresi acilir.
@@ -833,7 +848,14 @@ function Part.onClickOpenDialog()
 end
 
 function Part.appendMenuButton(frame)
-    if not Part.isEnabled() or frame.menuButtonInfo == nil then
+    if frame.menuButtonInfo == nil then
+        return
+    end
+    if not Part.isEnabled() then
+        -- Istemcide deger sunucudan senkronla gelir; gelmediyse varsayilan (kapali) kalir.
+        Part.reportInviteSkip("partnership disabled on this machine",
+            string.format("partnership.enabled=%s, rules=%s", tostring(settings():get("partnership.enabled")),
+                tostring(ContractManager:getRulesEnabled())))
         return
     end
     local mission = ContractManagerAdmin ~= nil and ContractManagerAdmin.getSelectedMission(frame) or nil
@@ -966,9 +988,9 @@ if addConsoleCommand ~= nil and ContractManager.consoleCommands then
     addConsoleCommand("cmAcceptPartner", "ContractManager: accept a partnership invite", "consoleAccept", Part)
     addConsoleCommand("cmLeavePartner", "ContractManager: leave a shared contract", "consoleLeave", Part)
 end
-if InGameMenuContractsFrame ~= nil and InGameMenuContractsFrame.setButtonsForState ~= nil
-    and not ContractManager:isBetterContractsLoaded() then
-    InGameMenuContractsFrame.setButtonsForState = Utils.appendedFunction(InGameMenuContractsFrame.setButtonsForState, function(frame, state)
-        pcall(Part.appendMenuButton, frame)
-    end)
+-- Tek kanca + birikme korumasi Main.lua'da (ContractManager.installButtonBar).
+-- Ortaklik once calisir: stok "Iptal"i ayiklamasi yonetici butonlarindan etkilenmesin.
+if not ContractManager:isBetterContractsLoaded() then
+    ContractManager.registerButtonAppender("partnership", 10, Part.appendMenuButton)
+    ContractManager.installButtonBar()
 end

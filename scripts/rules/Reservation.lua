@@ -273,14 +273,20 @@ function Res.replaceAcceptButton(frame, r, secondsLeft)
         or InputAction == nil or InputAction.MENU_ACCEPT == nil then
         return false
     end
-    for _, info in ipairs(frame.menuButtonInfo) do
+    for index, info in ipairs(frame.menuButtonInfo) do
         if type(info) == "table" and info.inputAction == InputAction.MENU_ACCEPT then
-            info.text = text("cm_resReservedButton", "Reserved")
-            info.callback = function()
-                if ContractManagerAdmin ~= nil and ContractManagerAdmin.showLine ~= nil then
-                    ContractManagerAdmin.showLine(Res.reservedMessage(r, secondsLeft), false)
-                end
-            end
+            -- Stok girdiyi YERINDE degistirmek yok: oyun ayni tabloyu (ve ayni girdiyi) sonraki
+            -- cizimlerde yeniden kullaniyor; "Rezerve" etiketi rezervasyonsuz kontratlarda da
+            -- kalirdi. Yuvaya yeni bir girdi konur; stok hali ContractManager saklar.
+            frame.menuButtonInfo[index] = {
+                inputAction = info.inputAction,
+                text = text("cm_resReservedButton", "Reserved"),
+                callback = function()
+                    if ContractManagerAdmin ~= nil and ContractManagerAdmin.showLine ~= nil then
+                        ContractManagerAdmin.showLine(Res.reservedMessage(r, secondsLeft), false)
+                    end
+                end,
+            }
             return true
         end
     end
@@ -294,9 +300,10 @@ function Res.installButton()
     if ContractManager:isBetterContractsLoaded() then
         return false
     end
-    InGameMenuContractsFrame.setButtonsForState = Utils.appendedFunction(InGameMenuContractsFrame.setButtonsForState, function(frame, state)
-        pcall(Res.appendMenuButton, frame)
-    end)
+    ContractManager.registerButtonAppender("reservation", 20, Res.appendMenuButton)
+    if not ContractManager.installButtonBar() then
+        return false
+    end
     Res.buttonsInstalled = true
     return true
 end
