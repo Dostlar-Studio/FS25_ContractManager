@@ -92,7 +92,6 @@
         <text name="cm_adminRefreshButton" text="Panoyu yenile"/>
         <text name="cm_adminCancelButton" text="Zorla iptal"/>
         <text name="cm_adminConfirmRefresh" text="Kabul edilmemiş tüm kontratlar silinip yeniden üretilecek. Devam edilsin mi?"/>
-        <text name="cm_adminConfirmCancel" text="&quot;%s&quot; kontratı zorla iptal edilecek (koruma engeli aşılır, para cezası uygulanmaz). Devam edilsin mi?"/>
         <text name="cm_adminCancelled" text="Kontrat iptal edildi."/>
         <text name="cm_adminRefreshed" text="Kontrat panosu yenilendi."/>
         <text name="cm_adminAssigned" text="Kontrat çiftliğe atandı."/>

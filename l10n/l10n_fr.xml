@@ -92,7 +92,6 @@
         <text name="cm_adminRefreshButton" text="Actualiser le tableau"/>
         <text name="cm_adminCancelButton" text="Annulation forcée"/>
         <text name="cm_adminConfirmRefresh" text="Tous les contrats non acceptés seront supprimés et régénérés. Continuer ?"/>
-        <text name="cm_adminConfirmCancel" text="Le contrat &quot;%s&quot; sera annulé de force (protection contournée, sans pénalité financière). Continuer ?"/>
         <text name="cm_adminCancelled" text="Contrat annulé."/>
         <text name="cm_adminRefreshed" text="Tableau des contrats actualisé."/>
         <text name="cm_adminAssigned" text="Contrat attribué à la ferme."/>

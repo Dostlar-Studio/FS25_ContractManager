@@ -395,23 +395,9 @@ function Admin.onClickRefresh()
     end, nil, text("cm_adminConfirmRefresh"))
 end
 
-function Admin.onClickCancel()
-    local frame = g_inGameMenu ~= nil and g_inGameMenu.pageContracts or nil
-    local mission = Admin.getSelectedMission(frame)
-    if mission == nil or (ContractManager.getMissionKey(mission) == nil
-        and ContractManager.getMissionObjectId(mission) == 0) then
-        Admin.showResult("cm_adminNotFound", false)
-        return
-    end
-    local title = mission.title or "?"
-    YesNoDialog.show(function(a, b)
-        if ContractManager.dialogAnswer(a, b) == true then
-            ContractManagerAdminEvent.send(Admin.ACTION_CANCEL, ContractManager.getMissionKey(mission),
-                nil, ContractManager.getMissionObjectId(mission))
-        end
-    end, nil, string.format(text("cm_adminConfirmCancel"), tostring(title)))
-end
-
+---Oyunun Kontratlar sayfasina yalniz "Panoyu yenile" eklenir. "Zorla iptal" 1.24.4.0'da
+---kullanici istegiyle Kontrat Yonetimi sayfasina tasindi (orada onayli olarak zaten vardi);
+---alt cubuk 6 buton gosterdigi icin oyuncunun kontrat eylemine yer birakmak da gerekiyordu.
 function Admin.appendMenuButtons(frame)
     if not ContractManagerSettingsTab.getIsLocalAdmin() or frame.menuButtonInfo == nil then
         return
@@ -421,15 +407,6 @@ function Admin.appendMenuButtons(frame)
         text = text("cm_adminRefreshButton"),
         callback = Admin.onClickRefresh,
     })
-    local mission = Admin.getSelectedMission(frame)
-    if mission ~= nil and mission.status ~= nil and mission.status ~= MissionStatus.CREATED
-        and mission.status ~= MissionStatus.FINISHED and mission.status ~= MissionStatus.DISMISSED then
-        table.insert(frame.menuButtonInfo, {
-            inputAction = InputAction.MENU_EXTRA_2,
-            text = text("cm_adminCancelButton"),
-            callback = Admin.onClickCancel,
-        })
-    end
 end
 
 function Admin.installButtons()

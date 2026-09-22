@@ -92,7 +92,6 @@
         <text name="cm_adminRefreshButton" text="Refresh board"/>
         <text name="cm_adminCancelButton" text="Force cancel"/>
         <text name="cm_adminConfirmRefresh" text="All unaccepted contracts will be removed and regenerated. Continue?"/>
-        <text name="cm_adminConfirmCancel" text="Contract &quot;%s&quot; will be force-cancelled (guard block bypassed, no money penalty). Continue?"/>
         <text name="cm_adminCancelled" text="Contract cancelled."/>
         <text name="cm_adminRefreshed" text="Contract board refreshed."/>
         <text name="cm_adminAssigned" text="Contract assigned to farm."/>

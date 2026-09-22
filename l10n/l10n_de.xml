@@ -92,7 +92,6 @@
         <text name="cm_adminRefreshButton" text="Tafel erneuern"/>
         <text name="cm_adminCancelButton" text="Zwangsabbruch"/>
         <text name="cm_adminConfirmRefresh" text="Alle nicht angenommenen Verträge werden entfernt und neu erzeugt. Fortfahren?"/>
-        <text name="cm_adminConfirmCancel" text="Vertrag &quot;%s&quot; wird zwangsweise abgebrochen (Schutzsperre umgangen, keine Geldstrafe). Fortfahren?"/>
         <text name="cm_adminCancelled" text="Vertrag abgebrochen."/>
         <text name="cm_adminRefreshed" text="Vertragstafel erneuert."/>
         <text name="cm_adminAssigned" text="Vertrag dem Hof zugewiesen."/>
