@@ -109,10 +109,13 @@ function Admin.refreshBoard()
     if #doomed > 0 then
         probe = Admin.fillBoard(1)
         if probe == 0 then
+            -- fillBoard izlemeyi kapatir; son izleme orada saklanir
+            local reason = Admin.diagnoseFailure(Admin.lastTrace)
             ContractManager.warning(
-                "Board refresh aborted: the game cannot generate a contract right now; %d contracts kept",
-                #doomed)
-            return false, "cm_adminNoFields"
+                "Board refresh aborted (%s): %d contracts kept; %s",
+                reason == "cm_adminBlockedByRules" and "blocked by CM rules" or "game found no field",
+                #doomed, Admin.describeTrace(Admin.lastTrace))
+            return false, reason
         end
     end
 
@@ -191,17 +194,40 @@ function Admin.fillBoard(target)
     end
     manager.generationTimer = -1
     if ContractManagerGeneration ~= nil and ContractManagerGeneration.stopTrace ~= nil then
-        ContractManagerGeneration.stopTrace()
+        -- izleme kapaninca kayboluyordu; teshis icin sonuncusu saklanir
+        Admin.lastTrace = ContractManagerGeneration.stopTrace()
     end
     return created
+end
+
+---Uretim neden bos dondu (saf)? Izlemede oyuna HIC deneme gitmediyse sucu oyunda degil
+---bizim kapimizdadir: tur agirliklari ya da kapatilmis turler. Canlida bu ayrim yoneticiyi
+---yaniltti (2026-09-17 incelemesi: 400 denemenin 297'si CM agirlik kapisinda kaldi, oyuna
+---giden 103 deneme uygun tarla bulamadi ve mesaj yalnizca "oyun uretemiyor" diyordu).
+---Donus: gosterilecek l10n anahtari.
+function Admin.diagnoseFailure(trace)
+    if type(trace) ~= "table" then
+        return "cm_adminNoFields"
+    end
+    local attempted, blocked = 0, 0
+    for _, count in pairs(trace.attempted or {}) do attempted = attempted + count end
+    for _, count in pairs(trace.blocked or {}) do blocked = blocked + count end
+    if attempted == 0 and blocked > 0 then
+        return "cm_adminBlockedByRules"
+    end
+    return "cm_adminNoFields"
 end
 
 ---Izleme sayacini tek satira dok: hangi turler kuralimizca engellendi, hangileri oyuna
 ---gitti ve kac tanesi kontrat uretti. "blocked" bizim kapimiz, "attempted ... produced=0"
 ---oyunun uygun tarla bulamamasi demektir.
-function Admin.describeTrace()
-    local trace = ContractManagerGeneration ~= nil and ContractManagerGeneration.trace or nil
+---`trace` verilmezse CALISAN izleme kullanilir. Eski izlemeye ORTULU olarak dusulmez:
+---"su an ne oluyor" ile "gecen sefer ne olmustu" ayri sorular (bkz. test_23).
+function Admin.describeTrace(trace)
     if trace == nil then
+        trace = ContractManagerGeneration ~= nil and ContractManagerGeneration.trace or nil
+    end
+    if type(trace) ~= "table" then
         return "trace unavailable"
     end
     local function dump(bucket)
@@ -213,11 +239,11 @@ function Admin.describeTrace()
         return #parts > 0 and table.concat(parts, ", ") or "-"
     end
     local produced = 0
-    for _, count in pairs(trace.produced) do
+    for _, count in pairs(trace.produced or {}) do
         produced = produced + count
     end
     return string.format("blocked by rule [%s] | tried in game [%s] | produced=%d",
-        dump(trace.blocked), dump(trace.attempted), produced)
+        dump(trace.blocked or {}), dump(trace.attempted or {}), produced)
 end
 
 function Admin.assign(uniqueId, farmId)

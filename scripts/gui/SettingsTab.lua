@@ -594,6 +594,11 @@ function Tab.buildStatsLines(stats, history, board)
     lines[#lines + 1] = string.format("%s: %d", text("cm_statFailed"), stats.failed or 0)
     lines[#lines + 1] = string.format("%s: %d", text("cm_statCanceled"), stats.canceled or 0)
     lines[#lines + 1] = string.format("%s: %d", text("cm_statTimedOut"), stats.timedOut or 0)
+    -- Ust uste basarisizlik odul carpanini dusuruyor (Reward.lua:92) ama oyuncu bunu
+    -- hicbir yerde gormuyordu; yalnizca seri varken yazilir.
+    if (stats.failStreak or 0) > 0 then
+        lines[#lines + 1] = string.format("%s: %d", text("cm_statStreak"), stats.failStreak)
+    end
     lines[#lines + 1] = string.format("%s: %s", text("cm_statEarned"), Tab.formatMoney(stats.earned))
     lines[#lines + 1] = string.format("%s: %s", text("cm_statPenalties"), Tab.formatMoney(stats.penalties))
     for i, entry in ipairs(history or {}) do

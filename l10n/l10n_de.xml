@@ -312,5 +312,12 @@
         <text name="cm_colProgress" text="%"/>
         <text name="cm_colReward" text="Lohn"/>
         <text name="cm_colTime" text="Zeit"/>
+        <text name="cm_sortLabel" text="Sortieren"/>
+        <text name="cm_sortSmart" text="Empfohlen"/>
+        <text name="cm_sortReward" text="Lohn"/>
+        <text name="cm_sortTime" text="Restzeit"/>
+        <text name="cm_sortFarm" text="Hof"/>
+        <text name="cm_statStreak" text="Fehlschlaege in Folge"/>
+        <text name="cm_adminBlockedByRules" text="Tafel nicht aktualisiert: Die Vertragserzeugung wurde von deinen eigenen Einstellungen blockiert (Typgewichte oder deaktivierte Typen). Es wurde nichts geloescht."/>
     </texts>
 </l10n>

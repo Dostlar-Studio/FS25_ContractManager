@@ -312,5 +312,12 @@
         <text name="cm_colProgress" text="%"/>
         <text name="cm_colReward" text="Paie"/>
         <text name="cm_colTime" text="Temps"/>
+        <text name="cm_sortLabel" text="Trier"/>
+        <text name="cm_sortSmart" text="Conseille"/>
+        <text name="cm_sortReward" text="Paie"/>
+        <text name="cm_sortTime" text="Temps restant"/>
+        <text name="cm_sortFarm" text="Ferme"/>
+        <text name="cm_statStreak" text="Echecs consecutifs"/>
+        <text name="cm_adminBlockedByRules" text="Tableau non actualise : la generation a ete bloquee par vos propres reglages (poids des types ou types desactives). Rien n'a ete supprime."/>
     </texts>
 </l10n>

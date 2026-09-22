@@ -312,5 +312,12 @@
         <text name="cm_colProgress" text="%"/>
         <text name="cm_colReward" text="Reward"/>
         <text name="cm_colTime" text="Time"/>
+        <text name="cm_sortLabel" text="Sort"/>
+        <text name="cm_sortSmart" text="Suggested"/>
+        <text name="cm_sortReward" text="Reward"/>
+        <text name="cm_sortTime" text="Time left"/>
+        <text name="cm_sortFarm" text="Farm"/>
+        <text name="cm_statStreak" text="Failures in a row"/>
+        <text name="cm_adminBlockedByRules" text="Board not refreshed: contract generation was blocked by your own settings (type weights or disabled types). Nothing was deleted."/>
     </texts>
 </l10n>

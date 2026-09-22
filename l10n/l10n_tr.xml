@@ -312,5 +312,12 @@
         <text name="cm_colProgress" text="%"/>
         <text name="cm_colReward" text="Ödül"/>
         <text name="cm_colTime" text="Süre"/>
+        <text name="cm_sortLabel" text="Sırala"/>
+        <text name="cm_sortSmart" text="Önerilen"/>
+        <text name="cm_sortReward" text="Ödül"/>
+        <text name="cm_sortTime" text="Kalan süre"/>
+        <text name="cm_sortFarm" text="Çiftlik"/>
+        <text name="cm_statStreak" text="Üst üste başarısız"/>
+        <text name="cm_adminBlockedByRules" text="Pano yenilenmedi: kontrat üretimi mod ayarlarınızla engellendi (tür ağırlıkları ya da kapalı türler). Hiçbir kontrat silinmedi."/>
     </texts>
 </l10n>

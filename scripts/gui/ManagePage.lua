@@ -23,7 +23,9 @@ ContractManagerManagePage.FILTER_NEW = 2
 ContractManagerManagePage.FILTER_HISTORY = 3
 ContractManagerManagePage.SLICE_PREFIX = "contractManager"
 ContractManagerManagePage.TAB_SLICE = "contractManager.pageTab"
-ContractManagerManagePage.MAX_ROWS = 12
+-- Kaydirma cubugu zaten var; 12 satir panonun yarisini bile gostermiyordu
+-- (sunucu ayari generation.maxTotal 50'ye kadar cikabiliyor).
+ContractManagerManagePage.MAX_ROWS = 20
 ContractManagerManagePage.MAX_DETAIL = 6
 ContractManagerManagePage.MAX_PARTNER = 6
 
@@ -352,8 +354,81 @@ function Page.splitDetailLine(line)
     return label, value
 end
 
----filtreye gore satirlar (saf). Donus: { {kind="mission"|"history", mission=, entry=, label=}, ... }
-function Page.buildRows(filter, farmId, isAdmin)
+-- ---------------------------------------------------------------------------
+-- Siralama (1.24.0.0)
+--
+-- Eskiden liste MOTOR SIRASINDAN ilk 12 kontrati alip kesiyordu: sunucuda pano 50
+-- kontrata kadar cikabildigi icin oyuncu geri kalanini HIC goremiyordu ve en acil ya
+-- da en yuksek odullu kontrat listede olmayabiliyordu. Artik once tumu siralanir,
+-- sonra ilk MAX_ROWS gosterilir; baslikta "gosterilen/toplam" yazar.
+-- ---------------------------------------------------------------------------
+
+Page.SORT_SMART = 1     -- aktif: en acil once, yeni: en yuksek odul once, gecmis: en yeni once
+Page.SORT_REWARD = 2
+Page.SORT_TIME = 3
+Page.SORT_FARM = 4
+Page.SORT_KEYS = { "cm_sortSmart", "cm_sortReward", "cm_sortTime", "cm_sortFarm" }
+
+function Page.sortModeTexts()
+    local texts = {}
+    for index, key in ipairs(Page.SORT_KEYS) do
+        texts[index] = text(key, key)
+    end
+    return texts
+end
+
+---Siralama anahtarlari (saf). Donus: odul, kalan dakika, ciftlik adi, ad
+local function sortKeys(row)
+    local mission, entry = row.mission, row.entry
+    if entry ~= nil then
+        return entry.payout or entry.reward or 0, -(entry.finishedDay or 0),
+            Page.farmName(entry.farmId), tostring(entry.typeName or "")
+    end
+    local minutes = math.huge
+    if mission ~= nil and mission.getMinutesLeft ~= nil then
+        local ok, value = pcall(mission.getMinutesLeft, mission)
+        if ok and type(value) == "number" then
+            minutes = value
+        end
+    end
+    return Page.missionReward(mission), minutes,
+        mission ~= nil and Page.farmName(mission.farmId) or "",
+        mission ~= nil and tostring(mission.title or "") or ""
+end
+
+---Satirlari yerinde sirala (saf). `mode` nil ise akilli siralama.
+---Esitlikte ad kullanilir: sira tazelemeler arasinda oynamasin.
+function Page.sortRows(rows, mode, filter)
+    mode = mode or Page.SORT_SMART
+    local cache = {}
+    for _, row in ipairs(rows) do
+        local reward, minutes, farm, name = sortKeys(row)
+        cache[row] = { reward = reward, minutes = minutes, farm = farm, name = name }
+    end
+    local function before(a, b)
+        local ka, kb = cache[a], cache[b]
+        if mode == Page.SORT_REWARD then
+            if ka.reward ~= kb.reward then return ka.reward > kb.reward end
+        elseif mode == Page.SORT_TIME then
+            if ka.minutes ~= kb.minutes then return ka.minutes < kb.minutes end
+        elseif mode == Page.SORT_FARM then
+            if ka.farm ~= kb.farm then return ka.farm < kb.farm end
+        else
+            -- akilli: aktif kontratta sure baskin (en acil once), digerlerinde odul
+            if filter == Page.FILTER_ACTIVE then
+                if ka.minutes ~= kb.minutes then return ka.minutes < kb.minutes end
+            end
+            if ka.reward ~= kb.reward then return ka.reward > kb.reward end
+        end
+        return ka.name < kb.name
+    end
+    table.sort(rows, before)
+    return rows
+end
+
+---filtreye gore satirlar (saf). Donus: gosterilecek satirlar, TOPLAM eslesen sayi.
+---Kesme siralamadan SONRA yapilir; yoksa "en acil" kontrat listeye hic girmeyebilir.
+function Page.buildRows(filter, farmId, isAdmin, sortMode)
     local rows = {}
     local missions = g_missionManager ~= nil and g_missionManager.missions or {}
     if filter == Page.FILTER_HISTORY then
@@ -365,23 +440,41 @@ function Page.buildRows(filter, farmId, isAdmin)
                 historyFarm = nil
             end
             for _, entry in ipairs(registry:getHistory(historyFarm)) do
-                if #rows >= Page.MAX_ROWS then break end
                 rows[#rows + 1] = { kind = "history", entry = entry, label = Page.formatHistory(entry) }
             end
         end
-        return rows
-    end
-    for _, mission in ipairs(missions) do
-        local isNew = mission.status == MissionStatus.CREATED
-        local isActive = mission.status == MissionStatus.RUNNING or mission.status == MissionStatus.PREPARING
-        local wanted = (filter == Page.FILTER_NEW and isNew) or (filter == Page.FILTER_ACTIVE and isActive)
-        if wanted and (isAdmin or filter == Page.FILTER_NEW or mission.farmId == farmId
-            or (ContractManagerPartnership ~= nil and ContractManagerPartnership.isMember(mission, farmId))) then
-            if #rows >= Page.MAX_ROWS then break end
-            rows[#rows + 1] = { kind = "mission", mission = mission, label = Page.formatMission(mission) }
+    else
+        for _, mission in ipairs(missions) do
+            local isNew = mission.status == MissionStatus.CREATED
+            local isActive = mission.status == MissionStatus.RUNNING or mission.status == MissionStatus.PREPARING
+            local wanted = (filter == Page.FILTER_NEW and isNew) or (filter == Page.FILTER_ACTIVE and isActive)
+            if wanted and (isAdmin or filter == Page.FILTER_NEW or mission.farmId == farmId
+                or (ContractManagerPartnership ~= nil and ContractManagerPartnership.isMember(mission, farmId))) then
+                rows[#rows + 1] = { kind = "mission", mission = mission, label = Page.formatMission(mission) }
+            end
         end
     end
-    return rows
+    local total = #rows
+    -- Gecmis zaten en yeniden eskiye geliyor; akilli sirada o sira korunur.
+    if not (filter == Page.FILTER_HISTORY and (sortMode == nil or sortMode == Page.SORT_SMART)) then
+        Page.sortRows(rows, sortMode, filter)
+    end
+    while #rows > Page.MAX_ROWS do
+        table.remove(rows)
+    end
+    return rows, total
+end
+
+---Bolum basligi: kesilmisse "gosterilen/toplam" (saf)
+function Page.listTitle(shown, total)
+    local title = text("cm_pageContracts")
+    if total == nil or total == 0 then
+        return title
+    end
+    if total > shown then
+        return string.format("%s (%d/%d)", title, shown, total)
+    end
+    return string.format("%s (%d)", title, total)
 end
 
 ---secili kontrat icin acik eylemler (saf). Donus: sirali id listesi
@@ -476,6 +569,7 @@ end
 function Page.new(target, customMt)
     local self = TabbedMenuFrameElement.new(target, customMt or ContractManagerManagePage_mt)
     self.filter = Page.FILTER_ACTIVE
+    self.sortMode = Page.SORT_SMART
     self.selectedIndex = 0
     self.targetFarmId = nil
     self.pendingAction = nil   -- onay bekleyen eylem (bkz. CONFIRM_ACTIONS)
@@ -558,6 +652,20 @@ end
 
 ---Secicide baska ciftlige gecildi. (Eski "tiklayinca sirayla degistir" davranisi
 ---kaldirildi; kullanici oyunun kendi ok tuslu secicisini istedi.)
+function Page:onSortChanged()
+    local option = self.sortRow ~= nil and self.sortRow.cmOption or nil
+    if option == nil or option.getState == nil then
+        return
+    end
+    local mode = option:getState()
+    if mode == self.sortMode then
+        return
+    end
+    self.sortMode = mode
+    self.selectedIndex = 0   -- sira degisti, eski indeks baska kontrati gosterirdi
+    self:refresh()
+end
+
 function Page:onFarmOptionChanged()
     local option = self.farmOption ~= nil and self.farmOption.cmOption or nil
     if option == nil or option.getState == nil then
@@ -759,8 +867,23 @@ function Page:buildContent()
         return header
     end
 
-    -- kontrat listesi: sutun basligi + satirlar
+    -- kontrat listesi: siralama secicisi + sutun basligi + satirlar
     self.listHeader = cloneText("cm_pageContracts")
+    do
+        local box = optionPrefab:clone(layout)
+        updateFocusIds(box)
+        box.cmOption, box.cmLabel = box.elements[1], box.elements[2]
+        box.cmPaintable = true
+        box.cmLabel:setText(text("cm_sortLabel", "Sort"))
+        if box.cmOption.setTexts ~= nil then
+            box.cmOption:setTexts(Page.sortModeTexts())
+            box.cmOption:setState(self.sortMode or Page.SORT_SMART)
+        end
+        -- Durum geri cagri argumanindan DEGIL secicinin kendisinden okunur
+        -- (hedef ciftlik secicisinde dogrulanmis kalip).
+        box.cmOption.onClickCallback = function() self:onSortChanged() end
+        self.sortRow = box
+    end
     if self.columnHeaderPrefab ~= nil then
         local header = self.columnHeaderPrefab:clone(layout)
         updateFocusIds(header)
@@ -881,7 +1004,8 @@ end
 function Page:refresh()
     local farmId = self:getLocalFarmId()
     local isAdmin = self:getIsAdmin()
-    self.rows = Page.buildRows(self.filter, farmId, isAdmin)
+    local total
+    self.rows, total = Page.buildRows(self.filter, farmId, isAdmin, self.sortMode)
 
     for index, box in ipairs(self.rowElements) do
         local row = self.rows[index]
@@ -912,7 +1036,10 @@ function Page:refresh()
         end
     end
     if self.listHeader ~= nil then
-        self:setRowText(self.listHeader, Page.sectionTitle("cm_pageContracts", #self.rows))
+        self:setRowText(self.listHeader, Page.listTitle(#self.rows, total))
+    end
+    if self.sortRow ~= nil then
+        self.sortRow:setVisible(total > 1)
     end
 
     local row = self:getSelected()

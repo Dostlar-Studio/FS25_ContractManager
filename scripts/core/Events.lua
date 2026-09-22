@@ -441,7 +441,9 @@ local ContractManagerStatsEvent_mt = Class(ContractManagerStatsEvent, Event)
 
 InitEventClass(ContractManagerStatsEvent, "ContractManagerStatsEvent")
 
-ContractManagerStatsEvent.STAT_FIELDS = { "completed", "failed", "canceled", "timedOut", "earned", "penalties", "reputation" }
+-- failStreak 1.24.0.0'te eklendi: uste uste basarisizlik odul carpanini dusuruyor ama
+-- oyuncu bunu HIC gormuyordu. Alan eklemek akis bicimini degistirir -> PROTOCOL artti.
+ContractManagerStatsEvent.STAT_FIELDS = { "completed", "failed", "canceled", "timedOut", "earned", "penalties", "reputation", "failStreak" }
 ContractManagerStatsEvent.MAX_BOARD = 32   -- haritada 8'den fazla ciftlik olabilir
 ContractManagerStatsEvent.MAX_HISTORY = 20   -- Yonetim sayfasi Gecmis filtresi icin; Ayarlar sekmesi ilk 5'i gosterir
 

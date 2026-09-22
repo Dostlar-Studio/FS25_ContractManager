@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.23.0.0</version>
+    <version>1.24.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -36,6 +36,11 @@ CONTACT & SOURCE
 
 Must be enabled on the server and all clients. PC/Mac only.
 
+Changelog 1.24.0.0:
+- The contract list is now sorted before it is cut off, so the most urgent or the best paying contract is always on the page. Previously the list took the first twelve contracts in engine order and dropped the rest, which on a full board hid most of them. You can sort by reward, time left or farm, the list shows twenty rows, and the heading tells you how many of the total you are seeing.
+- The statistics now show your run of failed contracts, which is what lowers your reward multiplier.
+- When a board refresh produces nothing, the message now says whether the game found no suitable field or whether your own type weights blocked every attempt.
+
 Changelog 1.23.0.0:
 - The contract page is now a proper table: contract, farm, progress, reward and time each have their own column with a heading, instead of one long line of dot-separated values. Numbers are right aligned so they line up, and in the history the outcome is colour coded.
 - The selected contract and the partner lines are now label on the left, value on the right.
@@ -53,6 +58,11 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.24.0.0:
+- Die Vertragsliste wird jetzt sortiert, bevor sie gekuerzt wird; der dringendste oder bestbezahlte Vertrag steht damit immer auf der Seite. Zuvor wurden die ersten zwoelf Vertraege in Engine-Reihenfolge genommen und der Rest verworfen, bei voller Tafel also die Mehrzahl. Sortierbar nach Lohn, Restzeit oder Hof; die Liste zeigt zwanzig Zeilen und die Ueberschrift nennt Angezeigte und Gesamtzahl.
+- Die Statistik zeigt jetzt die Serie fehlgeschlagener Vertraege, die den Lohnmultiplikator senkt.
+- Bringt eine Aktualisierung der Tafel nichts, sagt die Meldung jetzt, ob das Spiel kein passendes Feld fand oder ob die eigenen Typgewichte jeden Versuch blockiert haben.
 
 Changelog 1.23.0.0:
 - Die Vertragsseite ist jetzt eine echte Tabelle: Vertrag, Hof, Fortschritt, Lohn und Zeit haben eigene Spalten mit Ueberschrift statt einer langen Zeile mit Trennpunkten. Zahlen sind rechtsbuendig und im Verlauf ist das Ergebnis farblich markiert.
@@ -436,6 +446,11 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.24.0.0 :
+- La liste des contrats est desormais triee avant d'etre tronquee : le contrat le plus urgent ou le mieux paye figure toujours sur la page. Auparavant les douze premiers contrats dans l'ordre du moteur etaient pris et le reste ignore, soit la majorite sur un tableau plein. Tri par paie, temps restant ou ferme ; vingt lignes affichees et l'en-tete indique le nombre affiche sur le total.
+- Les statistiques affichent maintenant la serie de contrats echoues, celle qui fait baisser le multiplicateur de paie.
+- Quand une actualisation du tableau ne donne rien, le message precise si le jeu n'a trouve aucun champ adapte ou si vos propres poids de types ont bloque chaque tentative.
+
 Changelog 1.23.0.0 :
 - La page des contrats est desormais un vrai tableau : contrat, ferme, progression, paie et temps ont chacun leur colonne avec un en-tete, au lieu d'une longue ligne separee par des points. Les nombres sont alignes a droite et, dans l'historique, le resultat est colore.
 - Pour le contrat selectionne et les lignes de partenaires, le libelle est a gauche et la valeur a droite.
@@ -635,6 +650,11 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.24.0.0:
+- Kontrat listesi artık kesilmeden önce sıralanıyor; en acil ya da en çok ödeyen kontrat her zaman sayfada oluyor. Eskiden motor sırasından ilk on iki kontrat alınıp geri kalanı atılıyordu, yani pano doluyken çoğu görünmüyordu. Ödüle, kalan süreye veya çiftliğe göre sıralayabilirsiniz; liste yirmi satır gösteriyor ve başlıkta kaçta kaçını gördüğünüz yazıyor.
+- İstatistiklerde üst üste başarısız kontrat sayısı görünüyor; ödül çarpanınızı düşüren şey budur.
+- Pano yenilemesi hiçbir şey üretmediğinde mesaj artık sebebi söylüyor: oyun uygun tarla mı bulamadı, yoksa kendi tür ağırlıklarınız mı her denemeyi engelledi.
 
 Değişiklikler 1.23.0.0:
 - Kontrat sayfası artık gerçek bir tablo: kontrat, çiftlik, ilerleme, ödül ve süre kendi sütununda, başlıklarıyla birlikte duruyor; eskiden hepsi nokta ile ayrılmış tek uzun satırdı. Sayılar sağa dayalı olduğu için alt alta hizalanıyor, geçmişte sonuç renkle ayırt ediliyor.
