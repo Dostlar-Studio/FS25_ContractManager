@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.24.4.0",
+    VERSION = "1.24.5.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     PROTOCOL = 2,
@@ -306,8 +306,30 @@ end
 ---`onlyIfFree` isaretli ekleyiciler (yonetici araclari) yalnizca bu geciste oyuncu eylemi
 ---(davet/kabul/ayril/rezerve) eklenmediyse calisir. Yonetici araclari Kontrat Yonetimi
 ---sayfasinda her zaman var.
+---Menuye "buton listesi degisti" de. BU SATIR OLMADAN eklediklerimiz LISTEDE OLUR ama
+---EKRANA CIZILMEZ: menu listeyi kendi zamanlamasiyla okuyor, bizim eklememizi gormuyor.
+---1.24.0.0'da butonun gorunmesinin sebebi birikmeydi (onceki gecisten kalan kopya ciziliyordu);
+---birikme 1.24.1.0'da kapatilinca hicbir butonumuz gorunmez oldu (test sunucusu 2026-09-22,
+---olcum: "ours=1" listede ama ekranda yok). Ayni satir FS25_FarmMarket MenuButton.lua'da var.
+local markingDirty = false
+function ContractManager.markButtonsDirty(frame)
+    if frame == nil or markingDirty then
+        return false
+    end
+    markingDirty = true   -- dirty menuyu yeniden kurdurabilir; kendimizi tekrar cagirmayalim
+    local marked = false
+    if frame.setMenuButtonInfoDirty ~= nil then
+        marked = pcall(frame.setMenuButtonInfoDirty, frame)
+    end
+    if not marked and g_inGameMenu ~= nil and g_inGameMenu.updateButtonsPanel ~= nil then
+        marked = pcall(g_inGameMenu.updateButtonsPanel, g_inGameMenu, frame)
+    end
+    markingDirty = false
+    return marked
+end
+
 function ContractManager.runButtonAppenders(frame, state)
-    if frame == nil or type(frame.menuButtonInfo) ~= "table" then
+    if frame == nil or type(frame.menuButtonInfo) ~= "table" or markingDirty then
         return
     end
     ContractManager.restoreStockButtons(frame.menuButtonInfo)
@@ -319,6 +341,9 @@ function ContractManager.runButtonAppenders(frame, state)
                 ContractManager.warning("Contracts page button '%s' failed: %s", entry.name, tostring(err))
             end
         end
+    end
+    if ContractManager.countAddedButtons(frame.menuButtonInfo) > 0 then
+        ContractManager.markButtonsDirty(frame)
     end
     ContractManager.probeButtonState(frame, state)
 end

@@ -422,11 +422,10 @@ function Admin.installButtons()
         return false
     end
     -- Tek kanca + birikme korumasi Main.lua'da (ContractManager.installButtonBar)
-    -- onlyIfFree: alt cubuk 6 buton gosteriyor, oyunun kendisi 5'ini kullaniyor. Kontrata ozel
-    -- oyuncu eylemi (davet/kabul/ayril/rezerve) varsa yonetici butonlari eklenmez; aksi halde
-    -- "Ortak davet et" sessizce dusuyordu (test sunucusu 2026-09-22). Yonetici araclari
-    -- Kontrat Yonetimi sayfasinda her zaman var.
-    ContractManager.registerButtonAppender("admin", 30, Admin.appendMenuButtons, true)
+    -- 1.24.3.0'da "alt cubuk 6 butonla sinirli" varsayilip yonetici butonu kisilmisti; olcum
+    -- bunu CURUTTU (buton listedeydi, cizilmiyordu - asil sebep eksik setMenuButtonInfoDirty).
+    -- Kisitlama kaldirildi: "Panoyu yenile" davetle birlikte de eklenir.
+    ContractManager.registerButtonAppender("admin", 30, Admin.appendMenuButtons)
     if not ContractManager.installButtonBar() then
         return false
     end

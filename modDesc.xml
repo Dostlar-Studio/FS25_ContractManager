@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.24.4.0</version>
+    <version>1.24.5.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,9 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.24.5.0:
+- Fixed: buttons on the game's Contracts page (Refresh board, Invite partner, Reserve) were added to the list but never drawn, so the bar looked empty. The menu is now told the list changed. In 1.24.0.0 the same buttons only appeared because leftovers from the previous redraw were still there, which is why they showed up twice.
 
 Changelog 1.24.4.0:
 - Force cancel is no longer on the game's Contracts page; it is on the Contract Management page only, with its confirmation. The game's page keeps Refresh board for admins when there is room.
@@ -72,6 +75,9 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.24.5.0:
+- Behoben: Schaltflaechen auf der Vertragsseite des Spiels (Tafel aktualisieren, Partner einladen, Reservieren) wurden der Liste hinzugefuegt, aber nie gezeichnet; die Leiste wirkte leer. Dem Menue wird jetzt mitgeteilt, dass sich die Liste geaendert hat. In 1.24.0.0 erschienen dieselben Schaltflaechen nur, weil Reste der vorherigen Anzeige noch vorhanden waren - daher die Doppelung.
 
 Changelog 1.24.4.0:
 - Zwangsabbruch steht nicht mehr auf der Vertragsseite des Spiels, sondern nur noch mit Bestaetigung in der Vertragsverwaltung. Die Seite des Spiels behaelt Tafel aktualisieren fuer Admins, wenn Platz ist.
@@ -474,6 +480,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.24.5.0 :
+- Corrige : les boutons de la page Contrats du jeu (Actualiser le tableau, Inviter un partenaire, Reserver) etaient ajoutes a la liste mais jamais dessines, la barre semblait vide. Le menu est desormais averti que la liste a change. Dans la 1.24.0.0, ces boutons n'apparaissaient que grace aux restes de l'affichage precedent, d'ou le doublon.
+
 Changelog 1.24.4.0 :
 - L'annulation forcee n'est plus sur la page Contrats du jeu ; elle se trouve uniquement dans la Gestion des contrats, avec sa confirmation. La page du jeu garde Actualiser le tableau pour les administrateurs quand il y a de la place.
 
@@ -692,6 +701,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.24.5.0:
+- Düzeltme: oyunun Kontratlar sayfasındaki butonlar (Panoyu yenile, Ortak davet et, Rezerve et) listeye ekleniyor ama hiç çizilmiyordu; çubuk boş görünüyordu. Menüye artık listenin değiştiği bildiriliyor. 1.24.0.0'da aynı butonların görünmesinin sebebi bir önceki çizimden kalan kopyalardı, çift görünmelerinin sebebi de buydu.
 
 Değişiklikler 1.24.4.0:
 - Zorla iptal artık oyunun Kontratlar sayfasında değil, yalnızca Kontrat Yönetimi sayfasında ve onayıyla birlikte duruyor. Oyunun sayfasında yöneticiler için yer varsa Panoyu yenile kalıyor.
