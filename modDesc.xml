@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.24.2.0</version>
+    <version>1.24.3.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -36,6 +36,9 @@ CONTACT & SOURCE
 
 Must be enabled on the server and all clients. PC/Mac only.
 
+Changelog 1.24.3.0:
+- Fixed: the Invite partner button was missing on the game's Contracts page for admins. The bottom bar shows at most six buttons and the game already uses five, so Refresh board took the last slot and the invite was silently dropped. Contract actions (invite, accept, leave, reserve) now take priority; Refresh board and Force cancel show there only when no contract action is present and are always available on the Contract Management page.
+
 Changelog 1.24.2.0:
 - Diagnostics: when the game's Contracts page builds its buttons, the log records which contract is selected and whether you are an admin (only when this changes, at most twelve lines per session). Used to find why the partner and force-cancel buttons can be missing.
 
@@ -66,6 +69,9 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.24.3.0:
+- Behoben: Auf der Vertragsseite des Spiels fehlte fuer Admins die Schaltflaeche Partner einladen. Die untere Leiste zeigt hoechstens sechs Schaltflaechen und das Spiel belegt bereits fuenf; Tafel aktualisieren nahm den letzten Platz und die Einladung fiel still weg. Vertragsaktionen (einladen, annehmen, verlassen, reservieren) haben jetzt Vorrang; Tafel aktualisieren und Zwangsabbruch erscheinen dort nur ohne Vertragsaktion und sind auf der Vertragsverwaltung immer verfuegbar.
 
 Changelog 1.24.2.0:
 - Diagnose: Wenn die Vertragsseite des Spiels ihre Schaltflaechen aufbaut, haelt das Log fest, welcher Vertrag ausgewaehlt ist und ob du Admin bist (nur bei Aenderung, hoechstens zwoelf Zeilen pro Sitzung). Dient dazu, fehlende Partner- und Zwangsabbruch-Schaltflaechen zu klaeren.
@@ -462,6 +468,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.24.3.0 :
+- Corrige : le bouton Inviter un partenaire manquait pour les administrateurs sur la page Contrats du jeu. La barre du bas affiche six boutons au plus et le jeu en utilise deja cinq ; Actualiser le tableau prenait la derniere place et l'invitation disparaissait sans bruit. Les actions de contrat (inviter, accepter, quitter, reserver) sont desormais prioritaires ; Actualiser le tableau et Annulation forcee n'y apparaissent qu'en l'absence d'action de contrat et restent toujours disponibles dans la Gestion des contrats.
+
 Changelog 1.24.2.0 :
 - Diagnostic : quand la page Contrats du jeu construit ses boutons, le journal note le contrat selectionne et si vous etes administrateur (uniquement en cas de changement, douze lignes au plus par session). Sert a comprendre pourquoi les boutons partenaire et annulation forcee peuvent manquer.
 
@@ -674,6 +683,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.24.3.0:
+- Düzeltme: oyunun Kontratlar sayfasında yöneticilere Ortak davet et butonu görünmüyordu. Alt çubuk en fazla altı buton gösteriyor ve oyun zaten beşini kullanıyor; son yeri Panoyu yenile alıyor, davet sessizce düşüyordu. Kontrat eylemleri (davet, kabul, ayrıl, rezerve) artık öncelikli; Panoyu yenile ve Zorla iptal orada yalnız kontrat eylemi yokken çıkıyor, Kontrat Yönetimi sayfasında ise her zaman var.
 
 Değişiklikler 1.24.2.0:
 - Teşhis: oyunun Kontratlar sayfası butonlarını kurarken hangi kontratın seçili olduğu ve yönetici olup olmadığınız loga yazılıyor (yalnız değişince, oturum başına en fazla on iki satır). Ortak davet ve zorla iptal butonlarının neden eksik kalabildiğini bulmak için.

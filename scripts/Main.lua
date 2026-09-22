@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.24.2.0",
+    VERSION = "1.24.3.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     PROTOCOL = 2,
@@ -201,16 +201,36 @@ local buttonSnapshots = setmetatable({}, { __mode = "k" })
 local buttonErrorsReported = {}
 
 ---Ekleyici kaydet (ad benzersiz; ayni adla tekrar kayit onu gunceller). Kucuk sira once calisir.
-function ContractManager.registerButtonAppender(name, order, fn)
+---`onlyIfFree`: bu gecisteki onceki ekleyiciler HICBIR buton eklemediyse calisir (bkz. asagi).
+function ContractManager.registerButtonAppender(name, order, fn, onlyIfFree)
     for _, entry in ipairs(ContractManager.buttonAppenders) do
         if entry.name == name then
-            entry.fn, entry.order = fn, order
+            entry.fn, entry.order, entry.onlyIfFree = fn, order, onlyIfFree == true
             table.sort(ContractManager.buttonAppenders, function(a, b) return a.order < b.order end)
             return
         end
     end
-    table.insert(ContractManager.buttonAppenders, { name = name, order = order, fn = fn })
+    table.insert(ContractManager.buttonAppenders, { name = name, order = order, fn = fn, onlyIfFree = onlyIfFree == true })
     table.sort(ContractManager.buttonAppenders, function(a, b) return a.order < b.order end)
+end
+
+---Bu gecisde bizim eklediklerimiz (stok kopyasinda olmayan girdiler)
+function ContractManager.countAddedButtons(list)
+    local snapshot = type(list) == "table" and buttonSnapshots[list] or nil
+    if snapshot == nil then
+        return 0
+    end
+    local stock = {}
+    for _, info in ipairs(snapshot) do
+        stock[info] = true
+    end
+    local added = 0
+    for _, info in ipairs(list) do
+        if not stock[info] then
+            added = added + 1
+        end
+    end
+    return added
 end
 
 ---Tabloyu saf stok haline dondur (ilk goruldugunde kopyasini al). Donus: geri donduruldu mu.
@@ -252,12 +272,15 @@ function ContractManager.describeButtonState(frame, state)
     local mission = (okCall and type(contract) == "table") and contract.mission or nil
     local menu = g_inGameMenu
     local myFarm = g_currentMission ~= nil and g_currentMission.getFarmId ~= nil and g_currentMission:getFarmId() or nil
-    return string.format("state=%s getter=%s call=%s contract=%s mission=%s status=%s owner=%s myFarm=%s admin(mission=%s menu=%s menuServer=%s)",
+    -- cubuga giden girdiler: toplam ve bizim eklediklerimiz (6'yi gecerse fazlasi dusuyor)
+    local list = frame ~= nil and frame.menuButtonInfo or nil
+    return string.format("state=%s getter=%s call=%s contract=%s mission=%s status=%s owner=%s myFarm=%s admin(mission=%s menu=%s menuServer=%s) entries=%s ours=%d",
         tostring(state), tostring(getter ~= nil), tostring(okCall), type(contract),
         tostring(mission ~= nil), tostring(mission ~= nil and mission.status or nil),
         tostring(mission ~= nil and mission.farmId or nil), tostring(myFarm),
         tostring(g_currentMission ~= nil and g_currentMission.isMasterUser or nil),
-        tostring(menu ~= nil and menu.isMasterUser or nil), tostring(menu ~= nil and menu.isServer or nil))
+        tostring(menu ~= nil and menu.isMasterUser or nil), tostring(menu ~= nil and menu.isServer or nil),
+        tostring(type(list) == "table" and #list or nil), ContractManager.countAddedButtons(list))
 end
 
 function ContractManager.probeButtonState(frame, state)
@@ -275,19 +298,29 @@ function ContractManager.probeButtonState(frame, state)
 end
 
 ---Dagitici: stok hale don, sonra ekleyicileri sirayla calistir.
+---
+---BUTON CUBUGU SINIRI (canli olcum 2026-09-22): alt cubuk EN FAZLA 6 buton gosteriyor ve
+---fazlasini SESSIZCE atiyor. Kontratlar sayfasinda oyunun kendisi 5 yer kullaniyor (Bosluk,
+---Iptal, Q, E, ESC); bize tek yer kaliyor. Yonetici iken "Panoyu yenile" + "Ortak davet et"
+---birlikte eklenince davet dusuyordu (istemci logu: davet eklenmis, ekranda yok). Bu yuzden
+---`onlyIfFree` isaretli ekleyiciler (yonetici araclari) yalnizca bu geciste oyuncu eylemi
+---(davet/kabul/ayril/rezerve) eklenmediyse calisir. Yonetici araclari Kontrat Yonetimi
+---sayfasinda her zaman var.
 function ContractManager.runButtonAppenders(frame, state)
     if frame == nil or type(frame.menuButtonInfo) ~= "table" then
         return
     end
-    ContractManager.probeButtonState(frame, state)
     ContractManager.restoreStockButtons(frame.menuButtonInfo)
     for _, entry in ipairs(ContractManager.buttonAppenders) do
-        local ok, err = pcall(entry.fn, frame)
-        if not ok and not buttonErrorsReported[entry.name] then
-            buttonErrorsReported[entry.name] = true
-            ContractManager.warning("Contracts page button '%s' failed: %s", entry.name, tostring(err))
+        if not (entry.onlyIfFree and ContractManager.countAddedButtons(frame.menuButtonInfo) > 0) then
+            local ok, err = pcall(entry.fn, frame)
+            if not ok and not buttonErrorsReported[entry.name] then
+                buttonErrorsReported[entry.name] = true
+                ContractManager.warning("Contracts page button '%s' failed: %s", entry.name, tostring(err))
+            end
         end
     end
+    ContractManager.probeButtonState(frame, state)
 end
 
 ---Kancayi oyunun sinifina bir kez tak. Donus: kanca yerinde mi.
