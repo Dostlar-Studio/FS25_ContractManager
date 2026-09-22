@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.24.1.0",
+    VERSION = "1.24.2.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     PROTOCOL = 2,
@@ -236,11 +236,50 @@ function ContractManager.restoreStockButtons(list)
     return true
 end
 
+---Teshis (1.24.2.0): buton kurulurken sayfa ne goruyor? Test sunucusunda secili aktif
+---kontrat varken "Zorla iptal" ve "Ortak davet et" CIKMADI (ikisi de secime bagli) ve
+---"Panoyu yenile" yonetici olmayan oyuncuda goruldu; logda iz yoktu. Satir yalnizca
+---icerik DEGISTIGINDE ve oturum basina en fazla BUTTON_PROBE_MAX kez yazilir.
+ContractManager.BUTTON_PROBE_MAX = 12
+local probeCount, probeLast = 0, nil
+
+function ContractManager.describeButtonState(frame, state)
+    local getter = frame ~= nil and frame.getSelectedContract or nil
+    local okCall, contract = false, nil
+    if getter ~= nil then
+        okCall, contract = pcall(getter, frame)
+    end
+    local mission = (okCall and type(contract) == "table") and contract.mission or nil
+    local menu = g_inGameMenu
+    local myFarm = g_currentMission ~= nil and g_currentMission.getFarmId ~= nil and g_currentMission:getFarmId() or nil
+    return string.format("state=%s getter=%s call=%s contract=%s mission=%s status=%s owner=%s myFarm=%s admin(mission=%s menu=%s menuServer=%s)",
+        tostring(state), tostring(getter ~= nil), tostring(okCall), type(contract),
+        tostring(mission ~= nil), tostring(mission ~= nil and mission.status or nil),
+        tostring(mission ~= nil and mission.farmId or nil), tostring(myFarm),
+        tostring(g_currentMission ~= nil and g_currentMission.isMasterUser or nil),
+        tostring(menu ~= nil and menu.isMasterUser or nil), tostring(menu ~= nil and menu.isServer or nil))
+end
+
+function ContractManager.probeButtonState(frame, state)
+    if probeCount >= ContractManager.BUTTON_PROBE_MAX then
+        return false
+    end
+    local ok, line = pcall(ContractManager.describeButtonState, frame, state)
+    if not ok or line == probeLast then
+        return false
+    end
+    probeLast = line
+    probeCount = probeCount + 1
+    ContractManager.info("Contracts page buttons: %s", line)
+    return true
+end
+
 ---Dagitici: stok hale don, sonra ekleyicileri sirayla calistir.
-function ContractManager.runButtonAppenders(frame)
+function ContractManager.runButtonAppenders(frame, state)
     if frame == nil or type(frame.menuButtonInfo) ~= "table" then
         return
     end
+    ContractManager.probeButtonState(frame, state)
     ContractManager.restoreStockButtons(frame.menuButtonInfo)
     for _, entry in ipairs(ContractManager.buttonAppenders) do
         local ok, err = pcall(entry.fn, frame)
@@ -264,7 +303,7 @@ function ContractManager.installButtonBar()
     cls.setButtonsForState = Utils.appendedFunction(cls.setButtonsForState, function(frame, state)
         local dispatch = InGameMenuContractsFrame ~= nil and InGameMenuContractsFrame.cmButtonDispatch or nil
         if dispatch ~= nil then
-            dispatch(frame)
+            dispatch(frame, state)
         end
     end)
     cls.cmButtonHookInstalled = true

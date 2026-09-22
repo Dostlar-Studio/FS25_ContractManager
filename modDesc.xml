@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.24.1.0</version>
+    <version>1.24.2.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -36,6 +36,9 @@ CONTACT & SOURCE
 
 Must be enabled on the server and all clients. PC/Mac only.
 
+Changelog 1.24.2.0:
+- Diagnostics: when the game's Contracts page builds its buttons, the log records which contract is selected and whether you are an admin (only when this changes, at most twelve lines per session). Used to find why the partner and force-cancel buttons can be missing.
+
 Changelog 1.24.1.0:
 - Fixed: buttons on the game's Contracts page (Refresh board, Reserve, Invite partner) could appear more than once. The game reuses the same button list between redraws and our buttons piled up on it. The list is now reset to the game's own buttons before ours are added.
 - Fixed: the Reserved label could stay on the Accept button after looking at a reserved contract.
@@ -63,6 +66,9 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.24.2.0:
+- Diagnose: Wenn die Vertragsseite des Spiels ihre Schaltflaechen aufbaut, haelt das Log fest, welcher Vertrag ausgewaehlt ist und ob du Admin bist (nur bei Aenderung, hoechstens zwoelf Zeilen pro Sitzung). Dient dazu, fehlende Partner- und Zwangsabbruch-Schaltflaechen zu klaeren.
 
 Changelog 1.24.1.0:
 - Behoben: Schaltflaechen auf der Vertragsseite des Spiels (Tafel aktualisieren, Reservieren, Partner einladen) konnten mehrfach erscheinen. Das Spiel verwendet dieselbe Schaltflaechenliste zwischen Aktualisierungen weiter, und unsere Schaltflaechen haeuften sich darauf an. Die Liste wird jetzt vor dem Hinzufuegen auf die Schaltflaechen des Spiels zurueckgesetzt.
@@ -456,6 +462,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.24.2.0 :
+- Diagnostic : quand la page Contrats du jeu construit ses boutons, le journal note le contrat selectionne et si vous etes administrateur (uniquement en cas de changement, douze lignes au plus par session). Sert a comprendre pourquoi les boutons partenaire et annulation forcee peuvent manquer.
+
 Changelog 1.24.1.0 :
 - Corrige : les boutons de la page Contrats du jeu (Actualiser le tableau, Reserver, Inviter un partenaire) pouvaient apparaitre plusieurs fois. Le jeu reutilise la meme liste de boutons entre deux affichages et nos boutons s'y accumulaient. La liste est desormais remise aux boutons du jeu avant d'ajouter les notres.
 - Corrige : l'etiquette Reserve pouvait rester sur le bouton Accepter apres avoir consulte un contrat reserve.
@@ -665,6 +674,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.24.2.0:
+- Teşhis: oyunun Kontratlar sayfası butonlarını kurarken hangi kontratın seçili olduğu ve yönetici olup olmadığınız loga yazılıyor (yalnız değişince, oturum başına en fazla on iki satır). Ortak davet ve zorla iptal butonlarının neden eksik kalabildiğini bulmak için.
 
 Değişiklikler 1.24.1.0:
 - Düzeltme: oyunun Kontratlar sayfasındaki butonlar (Panoyu yenile, Rezerve et, Ortak davet et) birden fazla kez görünebiliyordu. Oyun aynı buton listesini çizimler arasında tekrar kullanıyor ve bizim butonlarımız üst üste birikiyordu. Liste artık bizimkiler eklenmeden önce oyunun kendi butonlarına sıfırlanıyor.
