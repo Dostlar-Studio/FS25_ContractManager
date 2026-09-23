@@ -11,7 +11,7 @@
 -- senkronu isterken rezervasyonlari da alir. Savegame'e yazilmaz (kisa omurlu).
 --
 -- Arayuz: stok Kontratlar sayfasi alt cubugunda "Rezerve et / Rezervasyonu birak"
--- (MENU_EXTRA_3; BetterContracts yukluyse eklenmez) ve detay satiri.
+-- (oyunun tanimladigi bos bir tus; BetterContracts yukluyse eklenmez) ve detay satiri.
 --
 
 ContractManagerReservation = {
@@ -258,7 +258,7 @@ function Res.appendMenuButton(frame)
         Res.replaceAcceptButton(frame, r, secondsLeft)
         return
     end
-    table.insert(frame.menuButtonInfo, { inputAction = InputAction.MENU_EXTRA_3, text = text(key), callback = Res.onClickReserve })
+    ContractManager.addMenuButton(frame.menuButtonInfo, ContractManager.MENU_KEYS_PLAYER, text(key), Res.onClickReserve)
 end
 
 ---Rezervasyon sebebini oyuncuya yazar (istemci tarafi).
@@ -275,10 +275,9 @@ function Res.replaceAcceptButton(frame, r, secondsLeft)
     end
     for index, info in ipairs(frame.menuButtonInfo) do
         if type(info) == "table" and info.inputAction == InputAction.MENU_ACCEPT then
-            -- Stok girdiyi YERINDE degistirmek yok: oyun ayni tabloyu (ve ayni girdiyi) sonraki
-            -- cizimlerde yeniden kullaniyor; "Rezerve" etiketi rezervasyonsuz kontratlarda da
-            -- kalirdi. Yuvaya yeni bir girdi konur; stok hali ContractManager saklar.
-            frame.menuButtonInfo[index] = {
+            -- Stok girdi YERINDE degistirilmez (oyun ayni girdi nesnesini sonraki cizimlerde
+            -- kullanir); yuvaya yeni bir girdi konur, stok hali bir sonraki geciste geri gelir.
+            return ContractManager.replaceMenuButton(frame.menuButtonInfo, index, {
                 inputAction = info.inputAction,
                 text = text("cm_resReservedButton", "Reserved"),
                 callback = function()
@@ -286,8 +285,7 @@ function Res.replaceAcceptButton(frame, r, secondsLeft)
                         ContractManagerAdmin.showLine(Res.reservedMessage(r, secondsLeft), false)
                     end
                 end,
-            }
-            return true
+            })
         end
     end
     return false

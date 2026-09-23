@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.24.5.0</version>
+    <version>1.24.6.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,10 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.24.6.0:
+- Fixed for real: the Invite partner and Reserve buttons on the game's Contracts page used a key (MENU_EXTRA_3) that only exists when BetterContracts is installed. Without it the game kept whatever text was in that slot before, so you saw "Login as admin", "Edit farm" or Refresh board a second time. The buttons now use the game's own keys: Invite partner, Reserve, Accept and Leave on C, Next farm and Decline on Space, Refresh board on X. The 1.24.1.0-1.24.5.0 fixes aimed at the wrong cause.
+- A button that does not fit the six-slot bar is left out (player actions come first, the admin button last) and the reason is written to the log.
 
 Changelog 1.24.5.0:
 - Fixed: buttons on the game's Contracts page (Refresh board, Invite partner, Reserve) were added to the list but never drawn, so the bar looked empty. The menu is now told the list changed. In 1.24.0.0 the same buttons only appeared because leftovers from the previous redraw were still there, which is why they showed up twice.
@@ -75,6 +79,10 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.24.6.0:
+- Wirklich behoben: Die Schaltflaechen Partner einladen und Reservieren auf der Vertragsseite des Spiels nutzten eine Taste (MENU_EXTRA_3), die es nur mit BetterContracts gibt. Ohne den Mod behielt das Spiel den vorherigen Text in diesem Platz, daher erschienen Schaltflaechen anderer Seiten (Admin-Anmeldung, Hof bearbeiten) oder ein zweites Tafel aktualisieren. Die Schaltflaechen nutzen jetzt die Tasten des Spiels: Partner einladen, Reservieren, Annehmen und Verlassen auf C, Naechster Hof und Ablehnen auf Leertaste, Tafel aktualisieren auf X. Die Korrekturen aus 1.24.1.0-1.24.5.0 zielten auf die falsche Ursache.
+- Eine Schaltflaeche, die nicht mehr in die sechs Plaetze der Leiste passt, entfaellt (Spieleraktionen zuerst, Admin-Schaltflaeche zuletzt); der Grund steht im Log.
 
 Changelog 1.24.5.0:
 - Behoben: Schaltflaechen auf der Vertragsseite des Spiels (Tafel aktualisieren, Partner einladen, Reservieren) wurden der Liste hinzugefuegt, aber nie gezeichnet; die Leiste wirkte leer. Dem Menue wird jetzt mitgeteilt, dass sich die Liste geaendert hat. In 1.24.0.0 erschienen dieselben Schaltflaechen nur, weil Reste der vorherigen Anzeige noch vorhanden waren - daher die Doppelung.
@@ -480,6 +488,10 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.24.6.0 :
+- Vraiment corrige : les boutons Inviter un partenaire et Reserver de la page Contrats du jeu utilisaient une touche (MENU_EXTRA_3) qui n'existe qu'avec BetterContracts. Sans ce mod, le jeu gardait le texte precedent de cet emplacement : on voyait des boutons d'autres pages (connexion administrateur, modification de la ferme) ou un second Actualiser le tableau. Les boutons utilisent maintenant les touches du jeu : Inviter, Reserver, Accepter et Quitter sur C, Ferme suivante et Refuser sur Espace, Actualiser le tableau sur X. Les corrections 1.24.1.0-1.24.5.0 visaient la mauvaise cause.
+- Un bouton qui ne tient plus dans les six emplacements de la barre est omis (actions du joueur d'abord, bouton admin en dernier) et la raison est ecrite dans le journal.
+
 Changelog 1.24.5.0 :
 - Corrige : les boutons de la page Contrats du jeu (Actualiser le tableau, Inviter un partenaire, Reserver) etaient ajoutes a la liste mais jamais dessines, la barre semblait vide. Le menu est desormais averti que la liste a change. Dans la 1.24.0.0, ces boutons n'apparaissaient que grace aux restes de l'affichage precedent, d'ou le doublon.
 
@@ -701,6 +713,10 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.24.6.0:
+- Asıl düzeltme: oyunun Kontratlar sayfasındaki Ortak davet et ve Rezerve et butonları, yalnızca BetterContracts kuruluyken var olan bir tuşu (MENU_EXTRA_3) kullanıyordu. O mod yokken oyun bu yuvada önceki yazıyı bırakıyordu; bu yüzden "Yönetici olarak giriş yap", "Çiftliği düzenle" ya da ikinci bir "Panoyu yenile" görünüyordu. Butonlar artık oyunun kendi tuşlarını kullanıyor: Ortak davet et, Rezerve et, Kabul et ve Ayrıl C'de; Sonraki çiftlik ve Reddet Boşluk'ta; Panoyu yenile X'te. 1.24.1.0-1.24.5.0 arasındaki düzeltmeler yanlış sebebe yönelikti.
+- Altı yuvalı çubuğa sığmayan buton eklenmiyor (önce oyuncunun eylemi, en son yönetici butonu) ve sebebi loga yazılıyor.
 
 Değişiklikler 1.24.5.0:
 - Düzeltme: oyunun Kontratlar sayfasındaki butonlar (Panoyu yenile, Ortak davet et, Rezerve et) listeye ekleniyor ama hiç çizilmiyordu; çubuk boş görünüyordu. Menüye artık listenin değiştiği bildiriliyor. 1.24.0.0'da aynı butonların görünmesinin sebebi bir önceki çizimden kalan kopyalardı, çift görünmelerinin sebebi de buydu.

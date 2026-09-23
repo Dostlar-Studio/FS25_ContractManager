@@ -396,17 +396,15 @@ function Admin.onClickRefresh()
 end
 
 ---Oyunun Kontratlar sayfasina yalniz "Panoyu yenile" eklenir. "Zorla iptal" 1.24.4.0'da
----kullanici istegiyle Kontrat Yonetimi sayfasina tasindi (orada onayli olarak zaten vardi);
----alt cubuk 6 buton gosterdigi icin oyuncunun kontrat eylemine yer birakmak da gerekiyordu.
+---kullanici istegiyle Kontrat Yonetimi sayfasina tasindi (orada onayli olarak zaten vardi).
+---Alt cubuk 6 yuvali; yonetici araci en son eklenir, yer kalmazsa duser (Kontrat Yonetimi
+---sayfasinda her zaman var).
 function Admin.appendMenuButtons(frame)
     if not ContractManagerSettingsTab.getIsLocalAdmin() or frame.menuButtonInfo == nil then
         return
     end
-    table.insert(frame.menuButtonInfo, {
-        inputAction = InputAction.MENU_EXTRA_1,
-        text = text("cm_adminRefreshButton"),
-        callback = Admin.onClickRefresh,
-    })
+    ContractManager.addMenuButton(frame.menuButtonInfo, ContractManager.MENU_KEYS_ADMIN,
+        text("cm_adminRefreshButton"), Admin.onClickRefresh)
 end
 
 function Admin.installButtons()
@@ -421,10 +419,8 @@ function Admin.installButtons()
         ContractManager.info("BetterContracts present; admin buttons skipped (console commands available)")
         return false
     end
-    -- Tek kanca + birikme korumasi Main.lua'da (ContractManager.installButtonBar)
-    -- 1.24.3.0'da "alt cubuk 6 butonla sinirli" varsayilip yonetici butonu kisilmisti; olcum
-    -- bunu CURUTTU (buton listedeydi, cizilmiyordu - asil sebep eksik setMenuButtonInfoDirty).
-    -- Kisitlama kaldirildi: "Panoyu yenile" davetle birlikte de eklenir.
+    -- Tek kanca + tus secimi + cubuk dogrulamasi Main.lua'da (ContractManager.installButtonBar).
+    -- Yonetici araci sirada en sonda (30): cubuk dolarsa oyuncunun kontrat eylemi kalir.
     ContractManager.registerButtonAppender("admin", 30, Admin.appendMenuButtons)
     if not ContractManager.installButtonBar() then
         return false

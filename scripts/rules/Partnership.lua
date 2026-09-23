@@ -760,7 +760,8 @@ local function farmLabel(farmId)
 end
 
 ---Sahip degilsek oyunun "Iptal" butonu kalmamali: ortak/davetli ciftlik baskasinin
----kontratini iptal edememeli (sunucu zaten reddeder ama buton yaniltici).
+---kontratini iptal edememeli (sunucu zaten reddeder ama buton yaniltici). Girdi yalnizca bu
+---gecis icin gizlenir; oyun tabloyu yeniden kullansa bile sahibin cubugunda geri gelir.
 function Part.stripCancelButton(frame)
     if frame == nil or type(frame.menuButtonInfo) ~= "table" or InputAction == nil or InputAction.MENU_CANCEL == nil then
         return 0
@@ -769,7 +770,7 @@ function Part.stripCancelButton(frame)
     for index = #frame.menuButtonInfo, 1, -1 do
         local info = frame.menuButtonInfo[index]
         if type(info) == "table" and info.inputAction == InputAction.MENU_CANCEL then
-            table.remove(frame.menuButtonInfo, index)
+            ContractManager.hideMenuButton(frame.menuButtonInfo, index)
             removed = removed + 1
         end
     end
@@ -805,18 +806,20 @@ function Part.appendOwnerButtons(frame, mission, farmId)
     end
     -- Pencere varsa tek buton: "Ortak davet et" -> ciftlik secme penceresi acilir.
     -- Pencere yuklenemediyse eski yol: "Davet et: X" + "Sonraki ciftlik".
+    -- Tuslar oyunun tanimladiklarindan secilir (MENU_EXTRA_3/4 FS25'te YOK; bkz. Main.lua).
+    local keys = ContractManager.MENU_KEYS_PLAYER
     if Part.canUseDialog() then
-        table.insert(frame.menuButtonInfo, { inputAction = InputAction.MENU_EXTRA_3,
-            text = text("cm_pageInvite", "Invite partner"), callback = Part.onClickOpenDialog })
+        if ContractManager.addMenuButton(frame.menuButtonInfo, keys, text("cm_pageInvite", "Invite partner"), Part.onClickOpenDialog) == nil then
+            return 0
+        end
         return 1
     end
+    if ContractManager.addMenuButton(frame.menuButtonInfo, keys,
+        string.format(text("cm_partInviteTo", "Invite: %s"), farmLabel(Part.stockTarget)), Part.onClickInvite) == nil then
+        return 0
+    end
     local added = 1
-    table.insert(frame.menuButtonInfo, { inputAction = InputAction.MENU_EXTRA_3,
-        text = string.format(text("cm_partInviteTo", "Invite: %s"), farmLabel(Part.stockTarget)),
-        callback = Part.onClickInvite })
-    if #ids > 1 and InputAction.MENU_EXTRA_4 ~= nil then
-        table.insert(frame.menuButtonInfo, { inputAction = InputAction.MENU_EXTRA_4,
-            text = text("cm_partNextFarm", "Next farm"), callback = Part.onClickNextFarm })
+    if #ids > 1 and ContractManager.addMenuButton(frame.menuButtonInfo, keys, text("cm_partNextFarm", "Next farm"), Part.onClickNextFarm) ~= nil then
         added = 2
     end
     return added
@@ -876,12 +879,13 @@ function Part.appendMenuButton(frame)
     else
         return
     end
-    table.insert(frame.menuButtonInfo, { inputAction = InputAction.MENU_EXTRA_3, text = text(key), callback = Part.onClickButton })
+    if ContractManager.addMenuButton(frame.menuButtonInfo, ContractManager.MENU_KEYS_PLAYER, text(key), Part.onClickButton) == nil then
+        return
+    end
     -- Davet varsa reddetmek de buradan yapilabilmeli, yoksa oyuncu daveti yalnizca
     -- suresi dolarak birakabiliyor.
-    if key == "cm_partAcceptButton" and InputAction.MENU_EXTRA_4 ~= nil then
-        table.insert(frame.menuButtonInfo, { inputAction = InputAction.MENU_EXTRA_4,
-            text = text("cm_pageDecline"), callback = Part.onClickDecline })
+    if key == "cm_partAcceptButton" then
+        ContractManager.addMenuButton(frame.menuButtonInfo, ContractManager.MENU_KEYS_PLAYER, text("cm_pageDecline"), Part.onClickDecline)
     end
 end
 
@@ -988,8 +992,9 @@ if addConsoleCommand ~= nil and ContractManager.consoleCommands then
     addConsoleCommand("cmAcceptPartner", "ContractManager: accept a partnership invite", "consoleAccept", Part)
     addConsoleCommand("cmLeavePartner", "ContractManager: leave a shared contract", "consoleLeave", Part)
 end
--- Tek kanca + birikme korumasi Main.lua'da (ContractManager.installButtonBar).
--- Ortaklik once calisir: stok "Iptal"i ayiklamasi yonetici butonlarindan etkilenmesin.
+-- Tek kanca + tus secimi + cubuk dogrulamasi Main.lua'da (ContractManager.installButtonBar).
+-- Ortaklik once calisir: oyuncu eylemi cubukta yonetici aracindan once yer alir ve stok
+-- "Iptal"i ayiklamasi yonetici butonlarindan etkilenmez.
 if not ContractManager:isBetterContractsLoaded() then
     ContractManager.registerButtonAppender("partnership", 10, Part.appendMenuButton)
     ContractManager.installButtonBar()

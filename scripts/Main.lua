@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.24.5.0",
+    VERSION = "1.24.6.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     PROTOCOL = 2,
@@ -179,144 +179,326 @@ function ContractManager.dialogAnswer(a, b)
 end
 
 -- ---------------------------------------------------------------------------
--- Stok Kontratlar sayfasinin alt buton cubugu (1.24.1.0)
+-- Stok Kontratlar sayfasinin alt buton cubugu
 --
--- Uc modul (ortaklik, rezervasyon, yonetici) ayni InGameMenuContractsFrame.setButtonsForState
--- fonksiyonuna AYRI AYRI ekleme yapiyordu ve hatalari pcall ile SESSIZCE yutuyordu.
--- Test sunucusunda (2026-09-22) "Panoyu yenile" iki kez goruldu: kanca tek, kurulum tek;
--- demek ki oyun ayni buton tablosunu cagrilar arasinda yeniden kullaniyor ve eklediklerimiz
--- BIRIKIYOR. Oyunun kaynagi yayinlanmadigi icin tablonun ne zaman yeniden kuruldugunu
--- bilemiyoruz; bu yuzden her iki durumda da dogru calisan bir yol:
---   * Her tablonun ILK gorulen (saf stok) hali saklanir; ayni tablo tekrar gelirse once
---     o hale geri dondurulur, sonra eklemeler yapilir. Yeni tablo gelirse yeni kopya alinir.
+-- KOK SEBEP (1.24.6.0; 1.24.1.0-1.24.5.0 yanlis teshis uzerine kuruldu): FS25'in tanimladigi
+-- menu eylemleri arasinda MENU_EXTRA_1 (X), MENU_EXTRA_2 (C) ve MENU_ACTIVATE (Bosluk) var,
+-- MENU_EXTRA_3/4 YOK (sdk/xmlDoku/inputActions.xml). MENU_EXTRA_3'u FS25_BetterContracts kendi
+-- modDesc'inde tanimliyor; o mod yokken oyunun InputAction tablosunda MENU_EXTRA_3 YOK. Oyunun
+-- TabbedMenu:assignMenuButtonInfo'su eylemi gecersiz girdinin yuvasini GORUNUR yapar ama
+-- metnini, eylemini ve geri cagrisini GUNCELLEMEZ: yuvada onceki cizimin yazisi kalir. Test
+-- sunucusunda (2026-09-22/23) gorulen "Panoyu yenile" x2 ve kontrat sayfasinda "Yonetici olarak
+-- giris yap" / "Ciftligi duzenle" hep davet butonunun (MENU_EXTRA_3 = nil) yuvasiydi.
+-- "Oyun tabloyu yeniden kullaniyor, butonlar birikiyor" (1.24.1.0) ve "menuye liste degisti
+-- denmiyor" (1.24.5.0) teshisleri YANLISTI; testler MENU_EXTRA_3'u kendileri tanimladigi icin
+-- hatayi hic goremedi.
+-- Kurallar:
+--   * Butonlar ContractManager.addMenuButton ile eklenir: aday listesinden oyunda TANIMLI ve
+--     listede KULLANILMAYAN ilk eylem secilir. Oyuncu eylemi C/Bosluk'u, yonetici araci X'i ister.
+--   * Ekleyicilerden sonra dogrulama: gecersiz eylemli, ayni eylemi ikinci kez kullanan ya da
+--     yuva sayisini (FS25 oyun menusu: 6) asan girdimiz cubuga GIRMEZ ve bir kez loglanir.
+--     Ekleyiciler oncelik sirasiyla calisir; yer yetmezse sondaki (yonetici araci) duser.
+--   * Her geciste once bir onceki geciste EKLEDIKLERIMIZ ayiklanir; yerine gectigimiz ya da
+--     gizledigimiz stok girdi (listede yoksa) yerine geri konur. Stok girdi nesneleri yerinde
+--     degistirilmez. Oyun tabloyu her cagrida yeni kursa da, ayni tabloyu yeniden doldursa da, hic
+--     dokunmasa da sonuc ayni. Canli kanit taze tablodan yana (BetterContracts ayni noktaya her
+--     cagrida ayni nesneyi ekliyor ve birikmiyor); teshis satirindaki reused= bunu olcer.
 --   * Kanca oyunun SINIFINA bir kez takilir (sinif surec boyunca yasar, mod her harita
 --     yuklemesinde yeniden calisir); cagrilan dagitici her yuklemede guncellenir.
 --   * Bir ekleyicinin hatasi digerlerini durdurmaz ve LOGA yazilir (ekleyici basina bir kez).
--- Ekleyiciler stok girdilerini YERINDE degistirmemeli (saklanan kopya ayni nesneyi tutar);
--- degistirmek gerekirse tablodaki yuvaya yeni bir girdi konur.
 -- ---------------------------------------------------------------------------
 
 ContractManager.buttonAppenders = {}
-local buttonSnapshots = setmetatable({}, { __mode = "k" })
+-- Tus adaylari (oyunun eylem adlari); sira tercih sirasidir.
+ContractManager.MENU_KEYS_PLAYER = { "MENU_EXTRA_2", "MENU_ACTIVATE", "MENU_EXTRA_1" }
+ContractManager.MENU_KEYS_ADMIN = { "MENU_EXTRA_1", "MENU_EXTRA_2", "MENU_ACTIVATE" }
+-- Oyun menusundeki buton yuvasi (InGameMenu menuButton[1..6]); calisirken menuden okunur.
+ContractManager.MENU_BAR_SLOTS = 6
+
+local ownButtons = setmetatable({}, { __mode = "k" })      -- bizim cubuga koydugumuz girdiler
+local replacedStock = setmetatable({}, { __mode = "k" })   -- bizim girdi -> yerine gectigi stok girdi
+local hiddenStock = setmetatable({}, { __mode = "k" })     -- liste -> { {index, info} } gizledigimiz stok girdiler
+local lastListByFrame = setmetatable({}, { __mode = "k" }) -- sayfa -> onceki gecisin tablosu (reused= olcumu)
 local buttonErrorsReported = {}
+local buttonSkipsReported = {}
 
 ---Ekleyici kaydet (ad benzersiz; ayni adla tekrar kayit onu gunceller). Kucuk sira once calisir.
----`onlyIfFree`: bu gecisteki onceki ekleyiciler HICBIR buton eklemediyse calisir (bkz. asagi).
-function ContractManager.registerButtonAppender(name, order, fn, onlyIfFree)
+function ContractManager.registerButtonAppender(name, order, fn)
     for _, entry in ipairs(ContractManager.buttonAppenders) do
         if entry.name == name then
-            entry.fn, entry.order, entry.onlyIfFree = fn, order, onlyIfFree == true
+            entry.fn, entry.order = fn, order
             table.sort(ContractManager.buttonAppenders, function(a, b) return a.order < b.order end)
             return
         end
     end
-    table.insert(ContractManager.buttonAppenders, { name = name, order = order, fn = fn, onlyIfFree = onlyIfFree == true })
+    table.insert(ContractManager.buttonAppenders, { name = name, order = order, fn = fn })
     table.sort(ContractManager.buttonAppenders, function(a, b) return a.order < b.order end)
 end
 
----Bu gecisde bizim eklediklerimiz (stok kopyasinda olmayan girdiler)
-function ContractManager.countAddedButtons(list)
-    local snapshot = type(list) == "table" and buttonSnapshots[list] or nil
-    if snapshot == nil then
-        return 0
-    end
-    local stock = {}
-    for _, info in ipairs(snapshot) do
-        stock[info] = true
-    end
-    local added = 0
-    for _, info in ipairs(list) do
-        if not stock[info] then
-            added = added + 1
-        end
-    end
-    return added
+---Oyun bu eylemi kabul eder mi? (TabbedMenu:assignMenuButtonInfo ile ayni olcut)
+function ContractManager.isMenuActionValid(action)
+    return action ~= nil and InputAction ~= nil and InputAction[action] ~= nil
 end
 
----Tabloyu saf stok haline dondur (ilk goruldugunde kopyasini al). Donus: geri donduruldu mu.
-function ContractManager.restoreStockButtons(list)
-    if type(list) ~= "table" then
-        return false
+---Alt cubuktaki yuva sayisi. Ikinci donus: menuden mi olculdu (false = varsayilan 6).
+---Baska modlar yuva ekleyebilir (ana sunucuda FS25_additionalGameSettings iki yuva daha ekliyor).
+function ContractManager.getMenuBarSlots()
+    local menu = g_inGameMenu
+    if menu ~= nil and type(menu.menuButton) == "table" and #menu.menuButton > 0 then
+        return #menu.menuButton, true
     end
-    local snapshot = buttonSnapshots[list]
-    if snapshot == nil then
-        snapshot = {}
-        for index, info in ipairs(list) do
-            snapshot[index] = info
+    return ContractManager.MENU_BAR_SLOTS, false
+end
+
+---Listede kullanilmayan, oyunda tanimli ilk aday eylem; yoksa nil.
+function ContractManager.pickMenuAction(list, candidates)
+    local used = {}
+    for _, info in ipairs(type(list) == "table" and list or {}) do
+        if type(info) == "table" and info.inputAction ~= nil then
+            used[info.inputAction] = true
         end
-        buttonSnapshots[list] = snapshot
+    end
+    for _, name in ipairs(candidates or {}) do
+        local action = InputAction ~= nil and InputAction[name] or nil
+        if action ~= nil and not used[action] then
+            return action
+        end
+    end
+    return nil
+end
+
+---Bir butonun neden cubukta olmadigi, (buton, sebep) basina bir kez. Kod hatasi uyari olarak yazilir.
+local function reportButtonSkip(label, reason, isError)
+    local key = tostring(label) .. "|" .. tostring(reason)
+    if buttonSkipsReported[key] then
+        return
+    end
+    buttonSkipsReported[key] = true
+    local log = isError and ContractManager.warning or ContractManager.info
+    log("Contracts page button '%s' not shown: %s", tostring(label), tostring(reason))
+end
+
+---Cubuga buton ekle. Donus: kullanilan eylem; yer ya da bos tus yoksa nil (sebep loglanir).
+function ContractManager.addMenuButton(list, candidates, text, callback)
+    if type(list) ~= "table" then
+        return nil
+    end
+    local slots = ContractManager.getMenuBarSlots()
+    if #list >= slots then
+        reportButtonSkip(text, string.format("button bar full (%d slots)", slots), false)
+        return nil
+    end
+    local action = ContractManager.pickMenuAction(list, candidates)
+    if action == nil then
+        reportButtonSkip(text, "no free menu key", false)
+        return nil
+    end
+    local info = { inputAction = action, text = text, callback = callback }
+    table.insert(list, info)
+    ownButtons[info] = true
+    return action
+end
+
+---Stok girdiyi yuvasinda yenisiyle degistir. Stok nesne YERINDE degistirilmez; sonraki geciste
+---stripOwnButtons onu geri koyar.
+function ContractManager.replaceMenuButton(list, index, info)
+    if type(list) ~= "table" or list[index] == nil or type(info) ~= "table" then
         return false
     end
-    for index = #list, 1, -1 do
-        list[index] = nil
-    end
-    for index, info in ipairs(snapshot) do
-        list[index] = info
-    end
+    replacedStock[info] = replacedStock[list[index]] or list[index]
+    list[index] = info
+    ownButtons[info] = true
     return true
 end
 
----Teshis (1.24.2.0): buton kurulurken sayfa ne goruyor? Test sunucusunda secili aktif
----kontrat varken "Zorla iptal" ve "Ortak davet et" CIKMADI (ikisi de secime bagli) ve
----"Panoyu yenile" yonetici olmayan oyuncuda goruldu; logda iz yoktu. Satir yalnizca
----icerik DEGISTIGINDE ve oturum basina en fazla BUTTON_PROBE_MAX kez yazilir.
-ContractManager.BUTTON_PROBE_MAX = 12
-local probeCount, probeLast = 0, nil
+---Stok girdiyi bu gecis icin cubuktan kaldir (ornek: sahip olmayanda oyunun Iptal'i). Nesne
+---saklanir; sonraki geciste stripOwnButtons, listede yoksa ayni yerine geri koyar. Donus: girdi.
+function ContractManager.hideMenuButton(list, index)
+    if type(list) ~= "table" or list[index] == nil then
+        return nil
+    end
+    local info = table.remove(list, index)
+    if not ownButtons[info] then
+        local hidden = hiddenStock[list] or {}
+        hidden[#hidden + 1] = { index = index, info = info }
+        hiddenStock[list] = hidden
+    end
+    return info
+end
 
-function ContractManager.describeButtonState(frame, state)
+---Onceki geciste eklediklerimizi ayikla; yerine gectigimiz ve gizledigimiz stok girdileri (oyun
+---onlari yeniden koymadiysa) geri koy. Donus: degisen girdi sayisi.
+function ContractManager.stripOwnButtons(list)
+    if type(list) ~= "table" then
+        return 0
+    end
+    local count = 0
+    for index = #list, 1, -1 do
+        local info = list[index]
+        if info ~= nil and ownButtons[info] then
+            local original = replacedStock[info]
+            if original ~= nil then
+                list[index] = original
+            else
+                table.remove(list, index)
+            end
+            count = count + 1
+        end
+    end
+    local hidden = hiddenStock[list]
+    if hidden ~= nil then
+        hiddenStock[list] = nil
+        local present = {}
+        for _, info in ipairs(list) do
+            present[info] = true
+        end
+        -- gizlenme sirasinin tersiyle: her kayit kendi anindaki yerine doner
+        for i = #hidden, 1, -1 do
+            local entry = hidden[i]
+            if not present[entry.info] then
+                table.insert(list, math.min(entry.index, #list + 1), entry.info)
+                present[entry.info] = true
+                count = count + 1
+            end
+        end
+    end
+    return count
+end
+
+---Listede bizim girdimiz kac tane
+function ContractManager.countAddedButtons(list)
+    local count = 0
+    for _, info in ipairs(type(list) == "table" and list or {}) do
+        if ownButtons[info] then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+---Ekleyicilerden sonra: bu geciste gelen girdileri (stock kumesinde olmayanlar) dogrula.
+---Gecersiz eylem, ayni eylemin ikinci kullanimi ya da yuva sayisini asan girdi cikarilir ve bir
+---kez loglanir; cikarilan bir degisiklik girdisinin yerine stok girdi geri konur. Stok girdilere
+---dokunulmaz. Donus: cikarilan sayi.
+function ContractManager.sanitizeButtons(list, stock)
+    if type(list) ~= "table" then
+        return 0
+    end
+    stock = stock or {}
+    local slots = ContractManager.getMenuBarSlots()
+    local used, kept, removed = {}, {}, 0
+    for _, info in ipairs(list) do
+        if stock[info] then
+            kept[#kept + 1] = info
+            if type(info) == "table" and info.inputAction ~= nil then
+                used[info.inputAction] = true
+            end
+        else
+            local action = type(info) == "table" and info.inputAction or nil
+            local reason, isError = nil, false
+            if not ContractManager.isMenuActionValid(action) then
+                reason, isError = string.format("input action %s does not exist in this game", tostring(action)), true
+            elseif used[action] then
+                reason, isError = string.format("key %s already used on this page", tostring(action)), true
+            elseif #kept >= slots then
+                reason = string.format("button bar full (%d slots)", slots)
+            end
+            if reason == nil then
+                kept[#kept + 1] = info
+                used[action] = true
+                ownButtons[info] = true
+            else
+                removed = removed + 1
+                reportButtonSkip(type(info) == "table" and info.text or "?", reason, isError)
+                local original = replacedStock[info]
+                if original ~= nil then
+                    kept[#kept + 1] = original
+                end
+            end
+        end
+    end
+    if removed > 0 then
+        for index = #list, 1, -1 do
+            list[index] = nil
+        end
+        for index, info in ipairs(kept) do
+            list[index] = info
+        end
+    end
+    return removed
+end
+
+---Teshis: buton kurulurken sayfa ne goruyor ve cubuga ne gidiyor. Her FARKLI durum oturum
+---basina bir kez yazilir (en fazla BUTTON_PROBE_MAX); secimi iki kontrat arasinda gidip gelmek
+---tavani tuketmez (1.24.5.0'da 12 satir bir dakikada doldu).
+ContractManager.BUTTON_PROBE_MAX = 40
+local probeCount, probeSeen = 0, {}
+local menuKeysReported = false
+
+---Teshis sayaclarini sifirla (testler; her durum/sebep yeniden bir kez loglanir)
+function ContractManager.resetButtonDiagnostics()
+    probeCount, probeSeen, menuKeysReported = 0, {}, false
+    buttonSkipsReported = {}
+end
+
+local function describeBar(list)
+    local parts = {}
+    for _, info in ipairs(type(list) == "table" and list or {}) do
+        local action = type(info) == "table" and info.inputAction or nil
+        parts[#parts + 1] = tostring(action) .. (ownButtons[info] and "*" or "")
+    end
+    return table.concat(parts, ",")
+end
+
+---reused: bu sayfa bir onceki geciste AYNI tabloyu mu verdi (oyunun tablo modeli; nil = bilinmiyor)
+function ContractManager.describeButtonState(frame, state, reused)
     local getter = frame ~= nil and frame.getSelectedContract or nil
     local okCall, contract = false, nil
     if getter ~= nil then
         okCall, contract = pcall(getter, frame)
     end
     local mission = (okCall and type(contract) == "table") and contract.mission or nil
-    local menu = g_inGameMenu
     local myFarm = g_currentMission ~= nil and g_currentMission.getFarmId ~= nil and g_currentMission:getFarmId() or nil
-    -- cubuga giden girdiler: toplam ve bizim eklediklerimiz (6'yi gecerse fazlasi dusuyor)
+    -- getIsLocalAdmin firlatmaz; bu fonksiyon zaten probeButtonState'in kalkani altinda calisir
+    local localAdmin = nil
+    if ContractManagerSettingsTab ~= nil and ContractManagerSettingsTab.getIsLocalAdmin ~= nil then
+        localAdmin = ContractManagerSettingsTab.getIsLocalAdmin()
+    end
+    -- cubuga giden girdiler, sirayla; * = bizim
     local list = frame ~= nil and frame.menuButtonInfo or nil
-    return string.format("state=%s getter=%s call=%s contract=%s mission=%s status=%s owner=%s myFarm=%s admin(mission=%s menu=%s menuServer=%s) entries=%s ours=%d",
+    local slots = ContractManager.getMenuBarSlots()
+    return string.format("state=%s getter=%s call=%s contract=%s mission=%s status=%s owner=%s myFarm=%s admin=%s slots=%d entries=%s ours=%d reused=%s bar=[%s]",
         tostring(state), tostring(getter ~= nil), tostring(okCall), type(contract),
         tostring(mission ~= nil), tostring(mission ~= nil and mission.status or nil),
-        tostring(mission ~= nil and mission.farmId or nil), tostring(myFarm),
-        tostring(g_currentMission ~= nil and g_currentMission.isMasterUser or nil),
-        tostring(menu ~= nil and menu.isMasterUser or nil), tostring(menu ~= nil and menu.isServer or nil),
-        tostring(type(list) == "table" and #list or nil), ContractManager.countAddedButtons(list))
+        tostring(mission ~= nil and mission.farmId or nil), tostring(myFarm), tostring(localAdmin),
+        slots, tostring(type(list) == "table" and #list or nil),
+        ContractManager.countAddedButtons(list), tostring(reused), describeBar(list))
 end
 
-function ContractManager.probeButtonState(frame, state)
+function ContractManager.probeButtonState(frame, state, reused)
     if probeCount >= ContractManager.BUTTON_PROBE_MAX then
         return false
     end
-    local ok, line = pcall(ContractManager.describeButtonState, frame, state)
-    if not ok or line == probeLast then
+    local ok, line = pcall(ContractManager.describeButtonState, frame, state, reused)
+    if not ok or probeSeen[line] then
         return false
     end
-    probeLast = line
+    probeSeen[line] = true
     probeCount = probeCount + 1
     ContractManager.info("Contracts page buttons: %s", line)
     return true
 end
 
----Dagitici: stok hale don, sonra ekleyicileri sirayla calistir.
----
----BUTON CUBUGU SINIRI (canli olcum 2026-09-22): alt cubuk EN FAZLA 6 buton gosteriyor ve
----fazlasini SESSIZCE atiyor. Kontratlar sayfasinda oyunun kendisi 5 yer kullaniyor (Bosluk,
----Iptal, Q, E, ESC); bize tek yer kaliyor. Yonetici iken "Panoyu yenile" + "Ortak davet et"
----birlikte eklenince davet dusuyordu (istemci logu: davet eklenmis, ekranda yok). Bu yuzden
----`onlyIfFree` isaretli ekleyiciler (yonetici araclari) yalnizca bu geciste oyuncu eylemi
----(davet/kabul/ayril/rezerve) eklenmediyse calisir. Yonetici araclari Kontrat Yonetimi
----sayfasinda her zaman var.
----Menuye "buton listesi degisti" de. BU SATIR OLMADAN eklediklerimiz LISTEDE OLUR ama
----EKRANA CIZILMEZ: menu listeyi kendi zamanlamasiyla okuyor, bizim eklememizi gormuyor.
----1.24.0.0'da butonun gorunmesinin sebebi birikmeydi (onceki gecisten kalan kopya ciziliyordu);
----birikme 1.24.1.0'da kapatilinca hicbir butonumuz gorunmez oldu (test sunucusu 2026-09-22,
----olcum: "ours=1" listede ama ekranda yok). Ayni satir FS25_FarmMarket MenuButton.lua'da var.
+---Menuye "buton listesi degisti" de. Oyunun kendi setButtonsForState'i bunu zaten yapiyor
+---olmali (BetterContracts ayni noktaya yalnizca ekleme yapiyor ve butonu gorunuyor); bayrak
+---koymak zararsiz oldugu icin guvence olarak birakildi. Bayrak menuyu yeniden kurdurabilirse
+---diye kendimizi tekrar cagirmamak icin koruma var.
 local markingDirty = false
 function ContractManager.markButtonsDirty(frame)
     if frame == nil or markingDirty then
         return false
     end
-    markingDirty = true   -- dirty menuyu yeniden kurdurabilir; kendimizi tekrar cagirmayalim
+    markingDirty = true
     local marked = false
     if frame.setMenuButtonInfoDirty ~= nil then
         marked = pcall(frame.setMenuButtonInfoDirty, frame)
@@ -328,24 +510,47 @@ function ContractManager.markButtonsDirty(frame)
     return marked
 end
 
+---Dagitici: onceki eklemelerimizi ayikla, ekleyicileri sirayla calistir, sonucu dogrula.
 function ContractManager.runButtonAppenders(frame, state)
     if frame == nil or type(frame.menuButtonInfo) ~= "table" or markingDirty then
         return
     end
-    ContractManager.restoreStockButtons(frame.menuButtonInfo)
+    local reused = lastListByFrame[frame] == frame.menuButtonInfo
+    lastListByFrame[frame] = frame.menuButtonInfo
+    local stripped = ContractManager.stripOwnButtons(frame.menuButtonInfo)
+    local stock = {}
+    for _, info in ipairs(frame.menuButtonInfo) do
+        stock[info] = true
+    end
     for _, entry in ipairs(ContractManager.buttonAppenders) do
-        if not (entry.onlyIfFree and ContractManager.countAddedButtons(frame.menuButtonInfo) > 0) then
-            local ok, err = pcall(entry.fn, frame)
-            if not ok and not buttonErrorsReported[entry.name] then
-                buttonErrorsReported[entry.name] = true
-                ContractManager.warning("Contracts page button '%s' failed: %s", entry.name, tostring(err))
-            end
+        local ok, err = pcall(entry.fn, frame)
+        if not ok and not buttonErrorsReported[entry.name] then
+            buttonErrorsReported[entry.name] = true
+            ContractManager.warning("Contracts page button '%s' failed: %s", entry.name, tostring(err))
         end
     end
-    if ContractManager.countAddedButtons(frame.menuButtonInfo) > 0 then
+    ContractManager.sanitizeButtons(frame.menuButtonInfo, stock)
+    if stripped > 0 or ContractManager.countAddedButtons(frame.menuButtonInfo) > 0 then
         ContractManager.markButtonsDirty(frame)
     end
-    ContractManager.probeButtonState(frame, state)
+    ContractManager.probeButtonState(frame, state, reused)
+end
+
+---Oyundaki menu tuslari: kurulumda bir kez loglanir (hangi tus var, cubukta kac yuva). Kurulum
+---aninda menu henuz yoksa yuva sayisi varsayilandir ve oyle yazilir; gercek sayi teshis
+---satirindaki slots= alanindadir.
+function ContractManager.reportMenuKeys()
+    if menuKeysReported then
+        return false
+    end
+    menuKeysReported = true
+    local parts = {}
+    for _, name in ipairs({ "MENU_EXTRA_1", "MENU_EXTRA_2", "MENU_ACTIVATE", "MENU_EXTRA_3" }) do
+        parts[#parts + 1] = name .. "=" .. (ContractManager.isMenuActionValid(name) and "ok" or "absent")
+    end
+    local slots, measured = ContractManager.getMenuBarSlots()
+    ContractManager.info("Contracts page keys: %s; bar slots %d%s", table.concat(parts, " "), slots, measured and "" or " (default)")
+    return true
 end
 
 ---Kancayi oyunun sinifina bir kez tak. Donus: kanca yerinde mi.
@@ -355,6 +560,7 @@ function ContractManager.installButtonBar()
         return false
     end
     cls.cmButtonDispatch = ContractManager.runButtonAppenders
+    ContractManager.reportMenuKeys()
     if cls.cmButtonHookInstalled then
         return true
     end
