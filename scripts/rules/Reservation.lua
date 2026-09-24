@@ -268,27 +268,50 @@ function Res.reservedMessage(r, secondsLeft)
         r ~= nil and tostring(r.farmName or "?") or "?", minutes)
 end
 
-function Res.replaceAcceptButton(frame, r, secondsLeft)
-    if frame == nil or type(frame.menuButtonInfo) ~= "table"
-        or InputAction == nil or InputAction.MENU_ACCEPT == nil then
-        return false
+---Oyunun "Kontrati kabul et" butonu BOSLUK'ta (MENU_ACTIVATE). Canli ekran 2026-09-24: oyuncu
+---profilinde MENU_ACCEPT=Enter, MENU_ACTIVATE=Bosluk ve buton "BOSLUK KONTRATI KABUL ET" yaziyordu.
+---1.10.0.0-1.24.6.0 butonu yalniz MENU_ACCEPT'te aradi, hic bulamadi; baskasinin rezervasyonunda
+---oyuncu stok butona basip yalniz "Basarisiz" goruyordu. Once Bosluk, sonra Enter denenir; bizim
+---girdilerimiz (ornek: Bosluk'taki "Sonraki ciftlik") atlanir.
+Res.ACCEPT_ACTIONS = { "MENU_ACTIVATE", "MENU_ACCEPT" }
+
+---Listede oyunun Kabul girdisi: yuva, girdi (yoksa nil)
+function Res.findAcceptButton(list)
+    if type(list) ~= "table" or InputAction == nil then
+        return nil
     end
-    for index, info in ipairs(frame.menuButtonInfo) do
-        if type(info) == "table" and info.inputAction == InputAction.MENU_ACCEPT then
-            -- Stok girdi YERINDE degistirilmez (oyun ayni girdi nesnesini sonraki cizimlerde
-            -- kullanir); yuvaya yeni bir girdi konur, stok hali bir sonraki geciste geri gelir.
-            return ContractManager.replaceMenuButton(frame.menuButtonInfo, index, {
-                inputAction = info.inputAction,
-                text = text("cm_resReservedButton", "Reserved"),
-                callback = function()
-                    if ContractManagerAdmin ~= nil and ContractManagerAdmin.showLine ~= nil then
-                        ContractManagerAdmin.showLine(Res.reservedMessage(r, secondsLeft), false)
-                    end
-                end,
-            })
+    for _, name in ipairs(Res.ACCEPT_ACTIONS) do
+        local action = InputAction[name]
+        if action ~= nil then
+            for index, info in ipairs(list) do
+                if type(info) == "table" and info.inputAction == action and not ContractManager.isOwnMenuButton(info) then
+                    return index, info
+                end
+            end
         end
     end
-    return false
+    return nil
+end
+
+function Res.replaceAcceptButton(frame, r, secondsLeft)
+    if frame == nil or type(frame.menuButtonInfo) ~= "table" then
+        return false
+    end
+    local index, info = Res.findAcceptButton(frame.menuButtonInfo)
+    if index == nil then
+        return false
+    end
+    -- Stok girdi YERINDE degistirilmez (oyun ayni girdi nesnesini sonraki cizimlerde
+    -- kullanir); yuvaya yeni bir girdi konur, stok hali bir sonraki geciste geri gelir.
+    return ContractManager.replaceMenuButton(frame.menuButtonInfo, index, {
+        inputAction = info.inputAction,
+        text = text("cm_resReservedButton", "Reserved"),
+        callback = function()
+            if ContractManagerAdmin ~= nil and ContractManagerAdmin.showLine ~= nil then
+                ContractManagerAdmin.showLine(Res.reservedMessage(r, secondsLeft), false)
+            end
+        end,
+    })
 end
 
 function Res.installButton()

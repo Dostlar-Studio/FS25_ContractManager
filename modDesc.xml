@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.24.6.0</version>
+    <version>1.24.7.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,9 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.24.7.0:
+- Fixed: on a contract reserved by another farm, the game's Accept contract button is replaced by a Reserved button that tells who reserved it and when it frees up. This never worked, because the mod looked for the button on Enter while the game puts it on Space.
 
 Changelog 1.24.6.0:
 - Fixed for real: the Invite partner and Reserve buttons on the game's Contracts page used a key (MENU_EXTRA_3) that only exists when BetterContracts is installed. Without it the game kept whatever text was in that slot before, so you saw "Login as admin", "Edit farm" or Refresh board a second time. The buttons now use the game's own keys: Invite partner, Reserve, Accept and Leave on C, Next farm and Decline on Space, Refresh board on X. The 1.24.1.0-1.24.5.0 fixes aimed at the wrong cause.
@@ -79,6 +82,9 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.24.7.0:
+- Behoben: Bei einem von einem anderen Hof reservierten Vertrag wird die Schaltflaeche Vertrag annehmen durch Reserviert ersetzt, die zeigt, wer reserviert hat und wann er frei wird. Das griff nie, weil der Mod die Schaltflaeche auf Enter suchte, das Spiel sie aber auf die Leertaste legt.
 
 Changelog 1.24.6.0:
 - Wirklich behoben: Die Schaltflaechen Partner einladen und Reservieren auf der Vertragsseite des Spiels nutzten eine Taste (MENU_EXTRA_3), die es nur mit BetterContracts gibt. Ohne den Mod behielt das Spiel den vorherigen Text in diesem Platz, daher erschienen Schaltflaechen anderer Seiten (Admin-Anmeldung, Hof bearbeiten) oder ein zweites Tafel aktualisieren. Die Schaltflaechen nutzen jetzt die Tasten des Spiels: Partner einladen, Reservieren, Annehmen und Verlassen auf C, Naechster Hof und Ablehnen auf Leertaste, Tafel aktualisieren auf X. Die Korrekturen aus 1.24.1.0-1.24.5.0 zielten auf die falsche Ursache.
@@ -488,6 +494,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.24.7.0 :
+- Corrige : sur un contrat reserve par une autre ferme, le bouton Accepter le contrat est remplace par Reserve, qui indique qui l'a reserve et quand il se libere. Cela ne fonctionnait jamais, car le mod cherchait le bouton sur Entree alors que le jeu le place sur Espace.
+
 Changelog 1.24.6.0 :
 - Vraiment corrige : les boutons Inviter un partenaire et Reserver de la page Contrats du jeu utilisaient une touche (MENU_EXTRA_3) qui n'existe qu'avec BetterContracts. Sans ce mod, le jeu gardait le texte precedent de cet emplacement : on voyait des boutons d'autres pages (connexion administrateur, modification de la ferme) ou un second Actualiser le tableau. Les boutons utilisent maintenant les touches du jeu : Inviter, Reserver, Accepter et Quitter sur C, Ferme suivante et Refuser sur Espace, Actualiser le tableau sur X. Les corrections 1.24.1.0-1.24.5.0 visaient la mauvaise cause.
 - Un bouton qui ne tient plus dans les six emplacements de la barre est omis (actions du joueur d'abord, bouton admin en dernier) et la raison est ecrite dans le journal.
@@ -713,6 +722,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.24.7.0:
+- Düzeltme: başka çiftliğin rezerve ettiği kontratta oyunun Kontratı kabul et butonu, kimin rezerve ettiğini ve ne zaman boşalacağını söyleyen Rezerve butonuyla değişiyor. Mod butonu Enter'da arıyordu, oyun ise onu Boşluk'a koyuyor; bu yüzden hiç çalışmamıştı.
 
 Değişiklikler 1.24.6.0:
 - Asıl düzeltme: oyunun Kontratlar sayfasındaki Ortak davet et ve Rezerve et butonları, yalnızca BetterContracts kuruluyken var olan bir tuşu (MENU_EXTRA_3) kullanıyordu. O mod yokken oyun bu yuvada önceki yazıyı bırakıyordu; bu yüzden "Yönetici olarak giriş yap", "Çiftliği düzenle" ya da ikinci bir "Panoyu yenile" görünüyordu. Butonlar artık oyunun kendi tuşlarını kullanıyor: Ortak davet et, Rezerve et, Kabul et ve Ayrıl C'de; Sonraki çiftlik ve Reddet Boşluk'ta; Panoyu yenile X'te. 1.24.1.0-1.24.5.0 arasındaki düzeltmeler yanlış sebebe yönelikti.
