@@ -101,31 +101,44 @@ function Admin.refreshBoard()
             "Board refresh found nothing to remove: %d contracts seen [%s]; MissionStatus.CREATED=%s",
             seen, table.concat(parts, " "), tostring(MissionStatus ~= nil and MissionStatus.CREATED or nil))
     end
-    -- YOKLAMA: once bir kontrat uretmeyi dene. Oyun uretemiyorsa (uygun tarla yok) silme
-    -- yapilmaz; yoksa yenileme panoyu bosaltip bir daha dolduramaz. Canli olcum 2026-09-13:
-    -- 13 kontrat silindi, 12 turun hepsi oyuna gitti, hicbiri uretmedi, pano bos kaldi.
+    -- TEK TEK DEGISTIR (1.24.8.0). Oyunda her kontrat turunun bir ADET SINIRI var
+    -- (data.maxNumInstances, varsayilan 2) ve panodaki KABUL EDILMEMIS kontratlar da sayilir
+    -- (AbstractMission.new numInstances+1, delete -1; PlowMission.canRun). 1.21.0.0'in "once uret,
+    -- sonra sil" yoklamasi, uretilebilen turler sinirdayken YAPISI GEREGI bos donuyordu: canli
+    -- 2026-09-24 savegame4, 110 tarlanin 109'u sahipsiz, pano 16 kontrat, yenileme 4 kez
+    -- "game found no field" dedi ve hicbir sey yenilemedi.
+    -- Simdi: once sessiz bir yoklama (tur siniri bos ise kayipsiz calisir), sonra her kontrat
+    -- silinir ve yerine hemen uretilir; silme tur yerini ve tarlayi bosaltir. Oyun bir boslugu
+    -- dolduramazsa yenileme orada DURUR ve kalan kontratlar korunur: pano en fazla bir kontrat
+    -- eksilir, bosalmaz (2026-09-13: 13 kontrat silinip hicbiri gelmemisti).
     g_missionManager.generationTimer = -1
-    local probe = 0
-    if #doomed > 0 then
-        probe = Admin.fillBoard(1)
-        if probe == 0 then
-            -- fillBoard izlemeyi kapatir; son izleme orada saklanir
-            local reason = Admin.diagnoseFailure(Admin.lastTrace)
-            ContractManager.warning(
-                "Board refresh aborted (%s): %d contracts kept; %s",
-                reason == "cm_adminBlockedByRules" and "blocked by CM rules" or "game found no field",
-                #doomed, Admin.describeTrace(Admin.lastTrace))
-            return false, reason
+    local credit = #doomed > 0 and Admin.fillBoard(1, true) or 0
+    local created, removed = credit, 0
+    for index = #doomed, 1, -1 do
+        local mission = doomed[index]
+        if pcall(function() mission:delete() end) then
+            removed = removed + 1
+        end
+        if credit > 0 then
+            credit = credit - 1   -- yoklamanin urettigi bu silinenin yerini tutar
+        else
+            g_missionManager.generationTimer = -1
+            local made = Admin.fillBoard(1)
+            created = created + made
+            if made == 0 then
+                local reason = Admin.diagnoseFailure(Admin.lastTrace)
+                ContractManager.warning(
+                    "Board refresh stopped (%s): %d removed, %d generated, %d kept; %s",
+                    reason == "cm_adminBlockedByRules" and "blocked by CM rules" or "game found no field",
+                    removed, created, index - 1, Admin.describeTrace(Admin.lastTrace))
+                if created == 0 then
+                    return false, reason
+                end
+                return true, "cm_adminRefreshed"
+            end
         end
     end
-
-    for index = #doomed, 1, -1 do
-        pcall(function() doomed[index]:delete() end)
-    end
-    local removed = #doomed
     g_missionManager.generationTimer = -1
-    -- yoklama zaten bir kontrat uretti; kalani kadar doldur ki toplam silinen sayisini gecmesin
-    local created = probe + Admin.fillBoard(math.max(0, removed - probe))
     ContractManager.info("Admin refreshed contract board: %d removed, %d generated immediately", removed, created)
     return true, "cm_adminRefreshed"
 end
@@ -140,7 +153,8 @@ Admin.FILL_ROUNDS = 25
 ---Oyunun uretim dongusunu ELDE cevirir. Normalde update basina en fazla BIR kontrat
 ---uretilir (generateMission -> finishMissionGeneration -> generationTimer sifirlanir),
 ---bu yuzden pano yenilendikten sonra kontratlar damla damla gelirdi. Donus: uretilen sayi.
-function Admin.fillBoard(target)
+---`quiet`: bos donerse uyari yazma (yenilemenin yoklamasi; ardindan tek tek degistirme gelir).
+function Admin.fillBoard(target, quiet)
     local manager = g_missionManager
     if manager == nil or manager.startMissionGeneration == nil or manager.generateMission == nil then
         ContractManager.warning("Board fill skipped: generation API missing (start=%s generate=%s)",
@@ -183,6 +197,9 @@ function Admin.fillBoard(target)
             end
         end
         if not made then
+            if quiet then
+                break
+            end
             -- Butun turlar bosa ciktiysa oyun gercekten uretemiyor demektir.
             ContractManager.warning(
                 "Board fill produced nothing after %d rounds: missions=%d max=%d types=%d",
