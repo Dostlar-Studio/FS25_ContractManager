@@ -153,3 +153,104 @@ if g_messageCenter ~= nil and MessageType ~= nil and MessageType.CURRENT_MISSION
     g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED,
         function(_, key) Harvest.onSettingsChanged(key) end, Harvest)
 end
+
+-- ---------------------------------------------------------------------------
+-- Cim hasadi kontratlari (1.24.8.0)
+--
+-- Oyun sahipsiz tarlalara rastgele urun ekerken (FieldManager, availableFruitTypeIndices) cimi de
+-- secebiliyor. Haritada "missionOnlyGrass" isaretli OLMAYAN boyle bir tarlaya bicme/ot/balya degil
+-- HASAT kontrati uretiyor. Hasat kontrati bicme makinesine izin vermez (AbstractFieldMission
+-- .workAreaTypes; FS25_ContractBoost bunu ancak istege bagli ayarla ekliyor): oyuncu bicmeye baslayinca
+-- oyun "araziye erisim yok" diyor. Cim ancak dogrudan kesim tablali silaj makinesiyle (DIRECTCUTTER)
+-- hasat edilebiliyor. Ana sunucu 2026-09-29: ciftlik 8 uc cim hasadini hic baslamadan iptal etti,
+-- cezasi 36.644.
+-- Kural: harvest.grassContracts kapaliyken (varsayilan) cim tarlasina hasat kontrati URETILMEZ.
+-- Yalnizca uretim aninda (mission == nil) bakilir; panodaki ve alinmis kontratlara dokunulmaz
+-- (oyunun validate'i isAvailableForField'i kontratla cagirir; o yolda karar oyununkidir).
+-- ---------------------------------------------------------------------------
+
+Harvest.skippedGrass = 0
+
+---Cim urununun indeksi (FruitType.GRASS, yoksa adla)
+function Harvest.getGrassFruitIndex()
+    if FruitType ~= nil and type(FruitType.GRASS) == "number" then
+        return FruitType.GRASS
+    end
+    if g_fruitTypeManager ~= nil and g_fruitTypeManager.getFruitTypeIndexByName ~= nil then
+        return g_fruitTypeManager:getFruitTypeIndexByName("GRASS")
+    end
+    return nil
+end
+
+---Tarlada su an cim mi var? (oyunun tarla durumu: getFieldState, yoksa fieldState)
+function Harvest.isGrassField(field)
+    if type(field) ~= "table" then
+        return false
+    end
+    local state = field.getFieldState ~= nil and field:getFieldState() or field.fieldState
+    local grass = Harvest.getGrassFruitIndex()
+    return type(state) == "table" and grass ~= nil and state.fruitTypeIndex == grass
+end
+
+---Uretim kapisi (saf): bu tarlaya hasat kontrati uretilsin mi? Yalniz yeni kontrat icin karar verir.
+function Harvest.allowHarvestOnField(field, mission)
+    if mission ~= nil or not Harvest.isEnabled() then
+        return true
+    end
+    local s = settings()
+    if s == nil or s:get("harvest.grassContracts") == true then
+        return true
+    end
+    if Harvest.isGrassField(field) then
+        Harvest.skippedGrass = Harvest.skippedGrass + 1
+        if Harvest.skippedGrass == 1 then
+            ContractManager.info("Grass harvest contracts are not generated (harvest.grassContracts = false); mowers are not allowed on them")
+        end
+        return false
+    end
+    return true
+end
+
+---Kancayi oyunun sinifina BIR kez tak (sinif surec boyunca yasar, mod her harita yuklemesinde yeniden
+---calisir); cagrilan karar fonksiyonu her yuklemede guncellenir. Donus: kanca yerinde mi.
+function Harvest.installGrassFilter()
+    local cls = HarvestMission
+    if cls == nil or cls.isAvailableForField == nil then
+        return false
+    end
+    cls.cmGrassGate = Harvest.allowHarvestOnField
+    if cls.cmGrassGateInstalled then
+        return true
+    end
+    cls.isAvailableForField = Utils.overwrittenFunction(cls.isAvailableForField, function(field, superFunc, mission)
+        if not superFunc(field, mission) then
+            return false
+        end
+        local gate = HarvestMission ~= nil and HarvestMission.cmGrassGate or nil
+        if gate ~= nil then
+            return gate(field, mission) == true
+        end
+        return true
+    end)
+    cls.cmGrassGateInstalled = true
+    return true
+end
+
+---Kontrat bir cim hasadi mi? (istemcide de calisir: urun turu ya da sunucunun yayinladigi dolum turu)
+function Harvest.isGrassHarvestMission(mission)
+    if mission == nil or mission.type == nil or mission.type.name ~= "harvestMission" then
+        return false
+    end
+    local Info = ContractManagerMissionInfo
+    local grassFruit = Harvest.getGrassFruitIndex()
+    if Info ~= nil and Info.resolveFruitType ~= nil and grassFruit ~= nil and Info.resolveFruitType(mission) == grassFruit then
+        return true
+    end
+    local info = Info ~= nil and Info.get ~= nil and Info.get(mission) or nil
+    local grassFill = g_fillTypeManager ~= nil and g_fillTypeManager.getFillTypeIndexByName ~= nil
+        and g_fillTypeManager:getFillTypeIndexByName("GRASS") or nil
+    return info ~= nil and grassFill ~= nil and info.fillTypeIndex == grassFill
+end
+
+Harvest.installGrassFilter()
+

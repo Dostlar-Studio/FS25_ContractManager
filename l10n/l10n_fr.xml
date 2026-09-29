@@ -155,6 +155,12 @@
         <text name="cm_detailEstimated" text="est."/>
         <text name="cm_detailDelivered" text="Livré"/>
         <text name="cm_detailRemaining" text="Reste à livrer"/>
+        <text name="cm_harvest_grassContracts" text="Contrats de récolte d'herbe"/>
+        <text name="cm_harvest_grassContracts_tooltip" text="Le jeu sème parfois de l'herbe sur des champs ordinaires puis propose un contrat de récolte. Un tel contrat ne se fait qu'avec une ensileuse et une coupe directe : les faucheuses n'y sont pas autorisées et le jeu indique que vous n'avez pas accès au terrain. Désactivé : ces contrats ne sont plus générés. Les contrats déjà au tableau ou acceptés ne sont pas touchés."/>
+        <text name="cm_detailRequiredTool" text="Outil requis"/>
+        <text name="cm_detailDirectCutter" text="Coupe directe"/>
+        <text name="cm_detailMower" text="Faucheuse"/>
+        <text name="cm_detailNotAllowed" text="Non autorisée"/>
         <text name="cm_detailSurplus" text="Vous revient"/>
         <text name="cm_detailProgress" text="Progression"/>
         <text name="cm_secSchedule" text="Bonus programmés (temps réel)"/>

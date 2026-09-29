@@ -92,6 +92,13 @@ function Details.buildDeliveryRows(mission)
     if mission == nil then
         return rows
     end
+    -- Turu bilinen ve teslimat istemeyen kontratta (ornek: bicme) satir yok; eski bir olcum
+    -- onbellekte kalmis olsa bile gosterilmez (1.24.8.0).
+    local typeName = type(mission.type) == "table" and mission.type.name or nil
+    if typeName ~= nil and ContractManagerMissionInfo ~= nil and type(ContractManagerMissionInfo.DELIVERY_TYPES) == "table"
+        and not ContractManagerMissionInfo.DELIVERY_TYPES[typeName] then
+        return rows
+    end
     -- DIKKAT: expectedLiters/depositedLiters istemciye AKTARILMIYOR (hicbir writeStream'de
     -- yok). Sunucu bunlari MissionInfo ile ayrica yayinlar; burada o olcumu okuyoruz.
     local info = ContractManagerMissionInfo ~= nil and ContractManagerMissionInfo.get(mission) or nil
@@ -124,6 +131,21 @@ function Details.buildDeliveryRows(mission)
         rows[#rows + 1] = { title = text("cm_detailRemaining", "Still needed"),
             value = Details.formatLiters(math.max(0, deliver - delivered)) }
     end
+    return rows
+end
+
+---Cim hasadi kontrati: hangi aletle yapilir (saf). Bitmis kontratta gosterilmez.
+function Details.buildGrassHarvestRows(mission)
+    local rows = {}
+    if mission == nil or mission.status == MissionStatus.FINISHED or mission.status == MissionStatus.DISMISSED then
+        return rows
+    end
+    if ContractManagerHarvest == nil or ContractManagerHarvest.isGrassHarvestMission == nil
+        or not ContractManagerHarvest.isGrassHarvestMission(mission) then
+        return rows
+    end
+    rows[#rows + 1] = { title = text("cm_detailRequiredTool", "Required tool"), value = text("cm_detailDirectCutter", "Direct-cut header") }
+    rows[#rows + 1] = { title = text("cm_detailMower", "Mower"), value = text("cm_detailNotAllowed", "Not allowed") }
     return rows
 end
 
@@ -183,6 +205,11 @@ function Details.buildRows(mission)
         rows[#rows + 1] = row
     end
 
+    -- cim hasadi: bicme makinesi giremez, oyun "araziye erisim yok" der (1.24.8.0)
+    for _, row in ipairs(Details.buildGrassHarvestRows(mission)) do
+        rows[#rows + 1] = row
+    end
+
     -- ilerleme: calisan kontratta HER ZAMAN (0 % dahil). Ortak ciftlik icin oyunun
     -- ilerleme cubugu gorunmeyebiliyor (stok sayfa sahibe gore yerlesim seciyor);
     -- bu satir ortagin da nerede oldugunu gormesini saglar. completion akisla gelir.
@@ -195,7 +222,16 @@ function Details.buildRows(mission)
     -- olasi ceza (yalnizca bitmemis kontrat; bitmis olanda oyun zaten toplami gosterir)
     if mission.status ~= MissionStatus.FINISHED and mission.status ~= MissionStatus.DISMISSED
         and ContractManager:getRulesEnabled() then
+        -- Gercekte kesilen yuzde: taban + seri adimi, ust sinirla kirpilmis (Reward.getPenaltyPercent).
+        -- Eskiden ayardaki taban gosteriliyordu; ana sunucuda %100 gorunup %75 kesiliyordu.
+        local farmId = mission.farmId
+        if farmId == nil and g_currentMission ~= nil and g_currentMission.getFarmId ~= nil then
+            farmId = g_currentMission:getFarmId()
+        end
         local percent = ContractManagerSettings:get("reward.failPenaltyPercent")
+        if ContractManagerReward ~= nil and ContractManagerReward.getPenaltyPercent ~= nil then
+            percent = ContractManagerReward.getPenaltyPercent(farmId)
+        end
         if percent > 0 and mission.getReward ~= nil then
             local reward = mission:getReward()
             if type(reward) == "number" and reward > 0 then

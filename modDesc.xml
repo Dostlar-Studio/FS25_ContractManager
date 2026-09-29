@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.24.7.0</version>
+    <version>1.24.8.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,13 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.24.8.0:
+- Fixed: Refresh board works again when contract types are at the game's per-type limit. Contracts waiting on the board count toward that limit, so the old check (generate first, delete afterwards) always failed with "no suitable field". Contracts are now replaced one by one; if the game cannot produce a replacement, the refresh stops and the rest of the board is kept.
+- New: grass harvest contracts are no longer generated (setting Grass harvest contracts, off by default). The game sometimes plants grass on ordinary fields and offers a harvest contract for it; mowers are not allowed on harvest contracts, so players got "no access to this land" and cancelled with a penalty. Such contracts already on the board show the tool they need (direct-cut header).
+- Fixed: mowing contracts no longer show "to deliver" and "stays with you" rows; a mowing contract needs no delivery.
+- Fixed: the penalty shown in the contract details now matches what is deducted (the maximum penalty setting caps it).
+- Fixed: contracts removed before they finished (for example when a farm is deleted) no longer stay in the active list.
 
 Changelog 1.24.7.0:
 - Fixed: on a contract reserved by another farm, the game's Accept contract button is replaced by a Reserved button that tells who reserved it and when it frees up. This never worked, because the mod looked for the button on Enter while the game puts it on Space.
@@ -82,6 +89,13 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.24.8.0:
+- Behoben: Tafel aktualisieren funktioniert wieder, wenn Vertragstypen am Typlimit des Spiels sind. Verträge auf der Tafel zählen mit, daher schlug die alte Prüfung (erst erzeugen, dann löschen) immer mit "kein passendes Feld" fehl. Verträge werden jetzt einzeln ersetzt; kann das Spiel keinen Ersatz erzeugen, stoppt die Aktualisierung und der Rest der Tafel bleibt.
+- Neu: Gras-Ernteverträge werden nicht mehr erzeugt (Einstellung Gras-Ernteverträge, standardmäßig aus). Das Spiel sät manchmal Gras auf normalen Feldern und bietet dafür einen Erntevertrag an; Mähwerke sind bei Ernteverträgen nicht erlaubt, Spieler bekamen "kein Zugang zum Land" und brachen mit Strafe ab. Solche Verträge auf der Tafel zeigen das nötige Gerät (Direktschneidwerk).
+- Behoben: Mähverträge zeigen keine Zeilen "abzuliefern" und "bleibt bei dir" mehr; ein Mähvertrag verlangt keine Lieferung.
+- Behoben: Die Strafe in den Vertragsdetails entspricht jetzt dem Abzug (die Einstellung für die Höchststrafe begrenzt sie).
+- Behoben: Vor dem Ende entfernte Verträge (z. B. wenn ein Hof gelöscht wird) bleiben nicht mehr in der Liste der aktiven Verträge.
 
 Changelog 1.24.7.0:
 - Behoben: Bei einem von einem anderen Hof reservierten Vertrag wird die Schaltflaeche Vertrag annehmen durch Reserviert ersetzt, die zeigt, wer reserviert hat und wann er frei wird. Das griff nie, weil der Mod die Schaltflaeche auf Enter suchte, das Spiel sie aber auf die Leertaste legt.
@@ -494,6 +508,13 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.24.8.0 :
+- Corrigé : Actualiser le tableau fonctionne de nouveau quand des types de contrat sont à la limite par type du jeu. Les contrats en attente au tableau comptent dans cette limite, donc l'ancienne vérification (générer d'abord, supprimer ensuite) échouait toujours avec « aucun champ adapté ». Les contrats sont maintenant remplacés un par un ; si le jeu ne peut pas en produire un, l'actualisation s'arrête et le reste du tableau est conservé.
+- Nouveau : les contrats de récolte d'herbe ne sont plus générés (réglage Contrats de récolte d'herbe, désactivé par défaut). Le jeu sème parfois de l'herbe sur des champs ordinaires et propose un contrat de récolte ; les faucheuses n'y sont pas autorisées, les joueurs obtenaient « pas d'accès à ce terrain » et annulaient avec pénalité. Les contrats de ce type déjà au tableau indiquent l'outil requis (coupe directe).
+- Corrigé : les contrats de fauche n'affichent plus les lignes « à livrer » et « vous revient » ; la fauche ne demande aucune livraison.
+- Corrigé : la pénalité affichée dans les détails correspond maintenant à la retenue réelle (le réglage de pénalité maximale la plafonne).
+- Corrigé : les contrats supprimés avant leur fin (par exemple quand une ferme est supprimée) ne restent plus dans la liste des contrats actifs.
+
 Changelog 1.24.7.0 :
 - Corrige : sur un contrat reserve par une autre ferme, le bouton Accepter le contrat est remplace par Reserve, qui indique qui l'a reserve et quand il se libere. Cela ne fonctionnait jamais, car le mod cherchait le bouton sur Entree alors que le jeu le place sur Espace.
 
@@ -722,6 +743,13 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.24.8.0:
+- Düzeltme: Panoyu yenile, kontrat türleri oyunun tür sınırındayken yeniden çalışıyor. Panoda bekleyen kontratlar da bu sınıra sayıldığı için eski kontrol (önce üret, sonra sil) her seferinde "uygun tarla yok" diyordu. Kontratlar artık tek tek değiştiriliyor; oyun yerine yenisini üretemezse yenileme durur ve panonun kalanı korunur.
+- Yeni: çim hasadı kontratları artık üretilmiyor (Çim hasadı kontratları ayarı, varsayılan kapalı). Oyun bazen normal tarlalara çim ekip hasat kontratı çıkarıyordu; hasat kontratında biçme makinesine izin olmadığı için oyuncular "araziye erişim yok" alıp cezayla iptal ediyordu. Panoda zaten olan bu tür kontratlarda gereken alet (doğrudan kesim tablası) yazıyor.
+- Düzeltme: biçme kontratlarında artık "teslim edilecek" ve "size kalacak" satırları çıkmıyor; biçme kontratı teslimat istemez.
+- Düzeltme: kontrat ayrıntısındaki ceza artık gerçekte kesilenle aynı (en yüksek ceza ayarı onu sınırlar).
+- Düzeltme: bitmeden kaldırılan kontratlar (örneğin çiftlik silinince) artık aktif listede kalmıyor.
 
 Değişiklikler 1.24.7.0:
 - Düzeltme: başka çiftliğin rezerve ettiği kontratta oyunun Kontratı kabul et butonu, kimin rezerve ettiğini ve ne zaman boşalacağını söyleyen Rezerve butonuyla değişiyor. Mod butonu Enter'da arıyordu, oyun ise onu Boşluk'a koyuyor; bu yüzden hiç çalışmamıştı.

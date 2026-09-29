@@ -155,6 +155,12 @@
         <text name="cm_detailEstimated" text="est."/>
         <text name="cm_detailDelivered" text="Delivered"/>
         <text name="cm_detailRemaining" text="Still needed"/>
+        <text name="cm_harvest_grassContracts" text="Grass harvest contracts"/>
+        <text name="cm_harvest_grassContracts_tooltip" text="The game sometimes plants grass on ordinary fields and then offers a harvest contract for it. Such a contract only works with a forage harvester and a direct-cut header: mowers are not allowed there and the game says you have no access to the land. Off: these contracts are no longer generated. Contracts already on the board or accepted are not touched."/>
+        <text name="cm_detailRequiredTool" text="Required tool"/>
+        <text name="cm_detailDirectCutter" text="Direct-cut header"/>
+        <text name="cm_detailMower" text="Mower"/>
+        <text name="cm_detailNotAllowed" text="Not allowed"/>
         <text name="cm_detailSurplus" text="Stays with you"/>
         <text name="cm_detailProgress" text="Progress"/>
         <text name="cm_secSchedule" text="Scheduled bonuses (real time)"/>

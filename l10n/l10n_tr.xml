@@ -155,6 +155,12 @@
         <text name="cm_detailEstimated" text="tahmini"/>
         <text name="cm_detailDelivered" text="Teslim edilen"/>
         <text name="cm_detailRemaining" text="Kalan"/>
+        <text name="cm_harvest_grassContracts" text="Çim hasadı kontratları"/>
+        <text name="cm_harvest_grassContracts_tooltip" text="Oyun bazen normal tarlalara çim ekip onun için hasat kontratı çıkarıyor. Bu kontrat yalnızca doğrudan kesim tablalı silaj makinesiyle yapılabilir: biçme makinesine izin yoktur ve oyun araziye erişiminiz olmadığını söyler. Kapalı: bu kontratlar artık üretilmez. Panodaki ya da kabul edilmiş kontratlara dokunulmaz."/>
+        <text name="cm_detailRequiredTool" text="Gereken alet"/>
+        <text name="cm_detailDirectCutter" text="Doğrudan kesim tablası"/>
+        <text name="cm_detailMower" text="Biçme makinesi"/>
+        <text name="cm_detailNotAllowed" text="Kullanılamaz"/>
         <text name="cm_detailSurplus" text="Size kalacak"/>
         <text name="cm_detailProgress" text="İlerleme"/>
         <text name="cm_secSchedule" text="Zamanlı bonuslar (gerçek saat)"/>

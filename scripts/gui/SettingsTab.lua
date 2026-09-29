@@ -143,6 +143,7 @@ Tab.SPEC = {
     { section = "cm_secHarvest" },
     { id = "harvest.keepPercent", kind = "range", min = 0, max = 60, step = 1, format = "%d %%", zero = "cm_valNone" },
     { id = "harvest.keepPercentBale", kind = "range", min = 0, max = 60, step = 1, format = "%d %%", zero = "cm_valNone" },
+    { id = "harvest.grassContracts", kind = "bool" },
 
     { section = "cm_secLimits" },
     { id = "limits.maxActivePerFarm", kind = "range", min = 0, max = 20, step = 1, format = "%d", zero = "cm_valUnlimited" },

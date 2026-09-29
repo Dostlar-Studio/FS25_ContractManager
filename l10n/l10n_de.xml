@@ -155,6 +155,12 @@
         <text name="cm_detailEstimated" text="gesch."/>
         <text name="cm_detailDelivered" text="Geliefert"/>
         <text name="cm_detailRemaining" text="Noch nötig"/>
+        <text name="cm_harvest_grassContracts" text="Gras-Ernteverträge"/>
+        <text name="cm_harvest_grassContracts_tooltip" text="Das Spiel sät manchmal Gras auf normalen Feldern und bietet dafür einen Erntevertrag an. Ein solcher Vertrag geht nur mit Feldhäcksler und Direktschneidwerk: Mähwerke sind dort nicht erlaubt, das Spiel meldet fehlenden Zugang zum Land. Aus: diese Verträge werden nicht mehr erzeugt. Verträge auf der Tafel oder bereits angenommene bleiben unberührt."/>
+        <text name="cm_detailRequiredTool" text="Benötigtes Gerät"/>
+        <text name="cm_detailDirectCutter" text="Direktschneidwerk"/>
+        <text name="cm_detailMower" text="Mähwerk"/>
+        <text name="cm_detailNotAllowed" text="Nicht erlaubt"/>
         <text name="cm_detailSurplus" text="Bleibt bei dir"/>
         <text name="cm_detailProgress" text="Fortschritt"/>
         <text name="cm_secSchedule" text="Zeitboni (Echtzeit)"/>

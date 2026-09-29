@@ -267,6 +267,47 @@ function Registry:onMissionFinished(mission, finishState)
     ContractManager.publish(ContractManager.MESSAGE_CONTRACT_FINISHED, mission, entry)
 end
 
+---Kontrat BITMEDEN silindi (ornek: sahibi olan ciftlik silindi, oyun onu kaldirdi). Aktif kayit
+---temizlenir; yoksa kayitta sonsuza dek "aktif" kalir (ana sunucu 2026-09-29: 47 ve 55 oyun gunu
+---onceki iki kayit). Normal bitiste finish zaten temizledigi icin burada bir sey kalmaz.
+function Registry:onMissionDeleted(mission)
+    local id = getMissionId(mission)
+    local meta = id ~= nil and self.active[id] or nil
+    if meta == nil then
+        return false
+    end
+    self.active[id] = nil
+    ContractManager.info("Contract %s (%s) removed without finishing; dropped from active list (farm %s)",
+        id, tostring(meta.typeName), tostring(meta.farmId))
+    return true
+end
+
+---Kayittan yuklenen aktif kontratlardan oyunda artik OLMAYANLARI at. Kontratlar yuklendikten sonra
+---bir kez cagrilir. Oyunun listesi bossa hicbir sey atilmaz (henuz yuklenmemis olabilir).
+function Registry:pruneActive(missions)
+    if type(missions) ~= "table" or #missions == 0 then
+        return 0
+    end
+    local present = {}
+    for _, mission in ipairs(missions) do
+        local id = getMissionId(mission)
+        if id ~= nil then
+            present[id] = true
+        end
+    end
+    local dropped = 0
+    for id in pairs(self.active) do
+        if not present[id] then
+            self.active[id] = nil
+            dropped = dropped + 1
+        end
+    end
+    if dropped > 0 then
+        ContractManager.info("Registry: dropped %d stale active contract(s) that no longer exist in the game", dropped)
+    end
+    return dropped
+end
+
 function Registry:onMissionDismissed(mission)
     local id = getMissionId(mission)
     if id == nil then
@@ -560,6 +601,22 @@ if MissionManager ~= nil and MissionManager.startMission ~= nil and AbstractMiss
                 Registry.beforeDismissMission(manager, mission)
                 return superFunc(manager, mission)
             end)
+    end
+    if g_messageCenter ~= nil and MessageType ~= nil then
+        if MessageType.MISSION_DELETED ~= nil then
+            g_messageCenter:subscribe(MessageType.MISSION_DELETED, function(_, mission)
+                if g_currentMission ~= nil and g_currentMission:getIsServer() then
+                    Registry:onMissionDeleted(mission)
+                end
+            end, Registry)
+        end
+        if MessageType.CURRENT_MISSION_START ~= nil then
+            g_messageCenter:subscribe(MessageType.CURRENT_MISSION_START, function()
+                if g_currentMission ~= nil and g_currentMission:getIsServer() and g_missionManager ~= nil then
+                    Registry:pruneActive(g_missionManager.missions)
+                end
+            end, Registry)
+        end
     end
     ContractManager.info("Registry hooks installed")
 else

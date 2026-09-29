@@ -32,7 +32,10 @@ Info.PUSH_DELTA_LITERS = 250     -- bu kadar degismeden tekrar yayinlanmaz
 -- olcum (sunucu; saf yardimcilar test edilir)
 -- ---------------------------------------------------------------------------
 
-Info.DELIVERY_TYPES = { harvestMission = true, mowMission = true }   -- urun teslim eden kontrat turleri
+-- Urun teslim eden kontrat turleri. Bicme (mowMission) YOK: FS25'te bicme kontrati yalnizca tarlayi
+-- bicmektir, teslimat istemez (ot/balya ayri kontratlar). 1.24.7.0'a kadar bicmede tahmini
+-- "teslim edilecek / size kalacak" satirlari gorunuyordu (canli: 'Mowing' ... (est)).
+Info.DELIVERY_TYPES = { harvestMission = true }
 
 function Info.isDeliveryType(mission)
     local typeName = mission ~= nil and mission.type ~= nil and mission.type.name or nil
