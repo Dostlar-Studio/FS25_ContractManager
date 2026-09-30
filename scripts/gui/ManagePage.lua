@@ -18,6 +18,8 @@ ContractManagerManagePage = {}
 local ContractManagerManagePage_mt = Class(ContractManagerManagePage, TabbedMenuFrameElement)
 
 ContractManagerManagePage.PAGE_NAME = "contractManagerPage"
+-- loadGui'nin ikinci parametresi; oyun sayfayi bu adla EKRAN olarak da kaydeder (bkz. unregisterScreen)
+ContractManagerManagePage.SCREEN_NAME = "ContractManagerManagePage"
 ContractManagerManagePage.FILTER_ACTIVE = 1
 ContractManagerManagePage.FILTER_NEW = 2
 ContractManagerManagePage.FILTER_HISTORY = 3
@@ -1387,6 +1389,113 @@ function Page.onSettingsChanged()
     pcall(menu.updatePages, menu)
 end
 
+---Sayfayi oyunun EKRAN kayitlarindan cikar (1.24.9.0). loadGui cerceve bayragi (isFrame) OLMADAN
+---cagrilinca kontroloru bagimsiz bir ekran olarak da kaydeder: guis[ad], nameScreenTypes[ad],
+---screens[sinif], screenControllers[sinif] (Gui.lua loadGui + addScreen). Ana menuye donuste oyunun
+---temizligi ekranlari tek tek siler; sayfamiz hala ESC menusunun cocuguyken silinince kendini
+---pagingElement'ten cikarir (GuiElement:delete -> parent:removeElement) ama menunun pageFrames'inde
+---kalir; ardindan rebuildTabList getIsPageDisabled(nil) ile patlar (PagingElement.lua:249), temizlik
+---yarida kalir ve her karede yeniden denenir: log yuz binlerce "Unknown entity id ... Overlay.lua:89
+---delete" satiriyla dolar (GitHub bildirimi 2026-09-30, 1.21.3.0 ve 1.24.7.0; yerelde 2026-09-28 23:17
+---logunda da var). Stok sayfalar menude FrameReference klonu olarak yasar, ekran degildir.
+---Donus: bir kayit silindi mi.
+function Page.unregisterScreen(page)
+    if g_gui == nil or page == nil then
+        return false
+    end
+    local name = Page.SCREEN_NAME
+    local cls = (type(page.class) == "function" and page:class()) or Page
+    local changed = false
+    if type(g_gui.guis) == "table" and g_gui.guis[name] ~= nil then
+        g_gui.guis[name] = nil
+        changed = true
+    end
+    if type(g_gui.nameScreenTypes) == "table" and g_gui.nameScreenTypes[name] ~= nil then
+        g_gui.nameScreenTypes[name] = nil
+        changed = true
+    end
+    if type(g_gui.screenControllers) == "table" and g_gui.screenControllers[cls] == page then
+        g_gui.screenControllers[cls] = nil
+        if type(g_gui.screens) == "table" then
+            g_gui.screens[cls] = nil
+        end
+        changed = true
+    end
+    return changed
+end
+
+---Harita kapanirken sayfayi ESC menusunden geri al: kurulumun tersi (1.24.9.0). Menu oyun
+---acilisinda bir kez kurulur ve uygulama yeniden baslayana kadar yasar (TabbedMenu:addPage belgesi:
+---"until restarting the game"); sayfa birakilirsa ana menuye donus temizligi onu yarim bir menude
+---bulur. SIRA ONEMLI: once pageFrames ve menunun tablolari (pagingElement'ten cikarma bir yeniden
+---cizimi tetiklerse liste tutarli olmali), sonra pagingElement (sayfa degistirmeden:
+---neuterPageUpdates), sonra sekme listesi; sayfa en son, ust ogesi kalmamissa silinir.
+---Donus: kaldirilacak bir sayfa var miydi.
+function Page.uninstall()
+    local page, menu = Page.page, g_inGameMenu
+    Page.installed, Page.page, Page.isOpen = false, nil, false
+    if page == nil then
+        return false
+    end
+    if menu ~= nil then
+        if menu.currentPage == page then
+            menu.currentPage = nil
+        end
+        if menu.restorePage == page then
+            menu.restorePage = nil
+            menu.restorePageIndex = 1
+            menu.restorePageScrollOffset = 0
+        end
+        for index = #(menu.pageFrames or {}), 1, -1 do
+            if menu.pageFrames[index] == page then
+                table.remove(menu.pageFrames, index)
+            end
+        end
+        for index = #(menu.enabledPages or {}), 1, -1 do
+            if menu.enabledPages[index] == page then
+                table.remove(menu.enabledPages, index)
+            end
+        end
+        if type(menu.pageTypeControllers) == "table" then
+            for key, controller in pairs(menu.pageTypeControllers) do
+                if controller == page then
+                    menu.pageTypeControllers[key] = nil
+                end
+            end
+        end
+        for _, field in ipairs({ "pageRoots", "pageEnablingPredicates", "pageTabs", "disabledPages" }) do
+            if type(menu[field]) == "table" then
+                menu[field][page] = nil
+            end
+        end
+        local paging = menu.pagingElement
+        if paging ~= nil and paging.removeElement ~= nil then
+            local neuter = paging.neuterPageUpdates
+            paging.neuterPageUpdates = true
+            local ok, err = pcall(paging.removeElement, paging, page)
+            paging.neuterPageUpdates = neuter
+            if not ok then
+                ContractManager.warning("Management page: removing it from the menu failed: %s", tostring(err))
+            end
+        end
+        if menu.rebuildTabList ~= nil then
+            local ok, err = pcall(menu.rebuildTabList, menu)
+            if not ok then
+                ContractManager.warning("Management page: tab list rebuild after removal failed: %s", tostring(err))
+            end
+        end
+    end
+    Page.unregisterScreen(page)
+    if page.parent == nil and page.delete ~= nil then
+        local ok, err = pcall(page.delete, page)
+        if not ok then
+            ContractManager.warning("Management page: delete failed: %s", tostring(err))
+        end
+    end
+    ContractManager.info("Management page removed from the in-game menu")
+    return true
+end
+
 function Page.install()
     if Page.installed then
         return true
@@ -1414,11 +1523,13 @@ function Page.install()
     local ok, err = pcall(function()
         page = Page.new()
         page.name = Page.PAGE_NAME
-        if g_gui:loadGui(xmlPath, "ContractManagerManagePage", page) == nil and page.manageLayout == nil then
+        if g_gui:loadGui(xmlPath, Page.SCREEN_NAME, page) == nil and page.manageLayout == nil then
             error("loadGui returned nil")
         end
         page:buildContent()
         menu.pagingElement:addElement(page)
+        -- Artik menunun parcasi: bagimsiz ekran kaydini kaldir (ana menuye donus temizligi, 1.24.9.0)
+        Page.unregisterScreen(page)
         -- Sayfa ayarla acilip kapanabilir: TabbedMenu bu yuklemi updatePages() ile
         -- yeniden degerlendirir, sekme kaybolur/geri gelir. Ayrica kaldirma gerekmez.
         menu:registerPage(page, nil, Page.isEnabledBySetting)
@@ -1485,3 +1596,15 @@ if g_messageCenter ~= nil and MessageType ~= nil then
         g_messageCenter:subscribe(MessageType.MISSION_DELETED, function() Page.onRemoteChange() end, Page)
     end
 end
+
+---Harita kapanisi: sayfayi menuden geri al (1.24.9.0). Guard gibi olay dinleyicisi; oyun bunu ana
+---menuye donus temizliginden ONCE cagiriyor (yerel log 2026-09-28: "[CM/Guard] Unloaded" 15.163,
+---temizlik hatasi 15.825).
+ContractManagerManagePageListener = {}
+function ContractManagerManagePageListener:deleteMap()
+    Page.uninstall()
+end
+if addModEventListener ~= nil then
+    addModEventListener(ContractManagerManagePageListener)
+end
+

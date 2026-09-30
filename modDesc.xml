@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.24.8.0</version>
+    <version>1.24.9.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,9 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.24.9.0:
+- Fixed: returning to the main menu filled log.txt with hundreds of thousands of "Unknown entity id ... Overlay.lua:89 delete" errors (right after "PagingElement.lua:249: attempt to index nil with 'disabled'") until the game was force-closed. The Contract Management page stayed in the ESC menu after the save was unloaded and was also registered as a separate screen, so the game's cleanup removed it halfway and then retried on every frame. The page now belongs to the menu only and is removed cleanly when the save is unloaded.
 
 Changelog 1.24.8.0:
 - Fixed: Refresh board works again when contract types are at the game's per-type limit. Contracts waiting on the board count toward that limit, so the old check (generate first, delete afterwards) always failed with "no suitable field". Contracts are now replaced one by one; if the game cannot produce a replacement, the refresh stops and the rest of the board is kept.
@@ -89,6 +92,9 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.24.9.0:
+- Behoben: Beim Zurückkehren ins Hauptmenü füllte sich log.txt mit Hunderttausenden Fehlern "Unknown entity id ... Overlay.lua:89 delete" (direkt nach "PagingElement.lua:249: attempt to index nil with 'disabled'"), bis das Spiel zwangsweise beendet wurde. Die Seite Vertragsverwaltung blieb nach dem Entladen des Spielstands im ESC-Menü und war zusätzlich als eigener Bildschirm registriert; das Aufräumen des Spiels entfernte sie nur halb und versuchte es dann in jedem Frame erneut. Die Seite gehört jetzt nur noch zum Menü und wird beim Entladen des Spielstands sauber entfernt.
 
 Changelog 1.24.8.0:
 - Behoben: Tafel aktualisieren funktioniert wieder, wenn Vertragstypen am Typlimit des Spiels sind. Verträge auf der Tafel zählen mit, daher schlug die alte Prüfung (erst erzeugen, dann löschen) immer mit "kein passendes Feld" fehl. Verträge werden jetzt einzeln ersetzt; kann das Spiel keinen Ersatz erzeugen, stoppt die Aktualisierung und der Rest der Tafel bleibt.
@@ -508,6 +514,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.24.9.0 :
+- Corrigé : le retour au menu principal remplissait log.txt de centaines de milliers d'erreurs « Unknown entity id ... Overlay.lua:89 delete » (juste après « PagingElement.lua:249: attempt to index nil with 'disabled' ») jusqu'à la fermeture forcée du jeu. La page Gestion des contrats restait dans le menu Échap après le déchargement de la partie et était aussi enregistrée comme écran séparé ; le nettoyage du jeu la retirait à moitié puis réessayait à chaque image. La page appartient désormais uniquement au menu et est retirée proprement au déchargement de la partie.
+
 Changelog 1.24.8.0 :
 - Corrigé : Actualiser le tableau fonctionne de nouveau quand des types de contrat sont à la limite par type du jeu. Les contrats en attente au tableau comptent dans cette limite, donc l'ancienne vérification (générer d'abord, supprimer ensuite) échouait toujours avec « aucun champ adapté ». Les contrats sont maintenant remplacés un par un ; si le jeu ne peut pas en produire un, l'actualisation s'arrête et le reste du tableau est conservé.
 - Nouveau : les contrats de récolte d'herbe ne sont plus générés (réglage Contrats de récolte d'herbe, désactivé par défaut). Le jeu sème parfois de l'herbe sur des champs ordinaires et propose un contrat de récolte ; les faucheuses n'y sont pas autorisées, les joueurs obtenaient « pas d'accès à ce terrain » et annulaient avec pénalité. Les contrats de ce type déjà au tableau indiquent l'outil requis (coupe directe).
@@ -743,6 +752,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.24.9.0:
+- Düzeltme: ana menüye dönünce log.txt, oyun zorla kapatılana kadar yüz binlerce "Unknown entity id ... Overlay.lua:89 delete" hatasıyla doluyordu (hemen öncesinde "PagingElement.lua:249: attempt to index nil with 'disabled'"). Kontrat Yönetimi sayfası kayıt kapandıktan sonra da ESC menüsünde kalıyordu ve ayrıca bağımsız bir ekran olarak da kayıtlıydı; oyunun temizliği onu yarıda bırakıp her karede yeniden deniyordu. Sayfa artık yalnızca menünün parçası ve kayıt kapanırken menüden düzgünce çıkarılıyor.
 
 Değişiklikler 1.24.8.0:
 - Düzeltme: Panoyu yenile, kontrat türleri oyunun tür sınırındayken yeniden çalışıyor. Panoda bekleyen kontratlar da bu sınıra sayıldığı için eski kontrol (önce üret, sonra sil) her seferinde "uygun tarla yok" diyordu. Kontratlar artık tek tek değiştiriliyor; oyun yerine yenisini üretemezse yenileme durur ve panonun kalanı korunur.
