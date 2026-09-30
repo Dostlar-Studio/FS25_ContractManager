@@ -4,3 +4,4 @@ __pycache__/
 *.zip
 Thumbs.db
 .DS_Store
+README.txt
