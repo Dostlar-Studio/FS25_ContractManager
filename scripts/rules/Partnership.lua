@@ -37,8 +37,10 @@ local function nowMs()
     return 0
 end
 
+---Tek oyunculuda her zaman kapali (1.25.0.0): davet edilecek baska ciftlik yok.
 function Part.isEnabled()
     return ContractManager:getRulesEnabled() and settings():get("partnership.enabled") == true
+        and settings():isAvailable("partnership.enabled")
 end
 
 function Part.getMissionId(mission)
@@ -857,8 +859,8 @@ function Part.appendMenuButton(frame)
     if not Part.isEnabled() then
         -- Istemcide deger sunucudan senkronla gelir; gelmediyse varsayilan (kapali) kalir.
         Part.reportInviteSkip("partnership disabled on this machine",
-            string.format("partnership.enabled=%s, rules=%s", tostring(settings():get("partnership.enabled")),
-                tostring(ContractManager:getRulesEnabled())))
+            string.format("partnership.enabled=%s, rules=%s, multiplayer=%s", tostring(settings():get("partnership.enabled")),
+                tostring(ContractManager:getRulesEnabled()), tostring(ContractManager.isMultiplayer())))
         return
     end
     local mission = ContractManagerAdmin ~= nil and ContractManagerAdmin.getSelectedMission(frame) or nil

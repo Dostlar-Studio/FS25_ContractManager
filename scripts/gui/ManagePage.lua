@@ -522,8 +522,11 @@ function Page.getActions(mission, farmId, isAdmin, targetFarmId)
             actions[#actions + 1] = "cancel"
             -- "devret" 2026-09-10'da arayuzden askiya alinmisti, gerekce "konsol komutu duruyor"du.
             -- 1.14.2.0 konsolu kapatti ve devret yalnizca web panelinden yapilabilir hale geldi;
-            -- buton geri acildi (2026-09-13).
-            actions[#actions + 1] = "transfer"
+            -- buton geri acildi (2026-09-13). Tek oyunculuda ya da hedef ciftlik yokken gosterilmez:
+            -- devredecek baska ciftlik yok, buton yalnizca "ciftlik yok" hatasi veriyordu (1.25.0.0).
+            if ContractManager.isMultiplayer() and targetFarmId ~= nil then
+                actions[#actions + 1] = "transfer"
+            end
         end
     end
     if isAdmin then

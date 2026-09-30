@@ -172,14 +172,14 @@ Tab.SPEC = {
     { id = "reputation.rewardBonusMaxPercent", kind = "range", min = 0, max = 100, step = 5, format = "%d %%", zero = "cm_valNone" },
     { id = "reputation.extraSlotAt", kind = "range", min = 0, max = 200, step = 10, format = "%d", zero = "cm_valNone" },
 
-    { section = "cm_secReservation" },
-    { id = "reservation.enabled", kind = "bool" },
-    { id = "reservation.minutes", kind = "range", min = 1, max = 60, step = 1, format = "%d min" },
+    { section = "cm_secReservation", mpOnly = true },
+    { id = "reservation.enabled", kind = "bool", mpOnly = true },
+    { id = "reservation.minutes", kind = "range", min = 1, max = 60, step = 1, format = "%d min", mpOnly = true },
 
-    { section = "cm_secPartnership" },
-    { id = "partnership.enabled", kind = "bool" },
-    { id = "partnership.maxPartners", kind = "range", min = 1, max = 4, step = 1, format = "%d" },
-    { id = "partnership.inviteMinutes", kind = "range", min = 1, max = 30, step = 1, format = "%d min" },
+    { section = "cm_secPartnership", mpOnly = true },
+    { id = "partnership.enabled", kind = "bool", mpOnly = true },
+    { id = "partnership.maxPartners", kind = "range", min = 1, max = 4, step = 1, format = "%d", mpOnly = true },
+    { id = "partnership.inviteMinutes", kind = "range", min = 1, max = 30, step = 1, format = "%d min", mpOnly = true },
 
     { section = "cm_secChain" },
     { id = "chain.enabled", kind = "bool" },
@@ -210,7 +210,7 @@ Tab.SPEC = {
     { id = "schedule.happyHourBonusPercent", kind = "range", min = 0, max = 100, step = 5, format = "+%d %%", zero = "cm_valNone" },
 
     { section = "cm_secMap" },
-    { id = "map.showReserved", kind = "bool" },
+    { id = "map.showReserved", kind = "bool", mpOnly = true },
     { id = "map.showAvailable", kind = "bool" },
 
     { section = "cm_secInterface" },
@@ -395,8 +395,8 @@ function Tab:onControlChanged(state, element)
     if spec == nil then
         return
     end
-    if not Tab.getIsLocalAdmin() then
-        self:populate() -- yetkisiz: gorunumu geri al
+    if not Tab.getIsLocalAdmin() or Tab.isMpOnlyLocked(spec) then
+        self:populate() -- yetkisiz ya da tek oyunculuda kilitli: gorunumu geri al
         return
     end
     local value = Tab.stateToValue(spec, state)
@@ -421,10 +421,35 @@ local function updateFocusIds(element)
     end
 end
 
-function Tab:createSection(i18nKey)
+---Tek oyunculuda kullanilamayan satir/bolum mu? (1.25.0.0)
+function Tab.isMpOnlyLocked(spec)
+    return spec ~= nil and spec.mpOnly == true and not ContractManager.isMultiplayer()
+end
+
+---Sonuk gosterim (saf; test edilir): kilitliyken secenek devre disi ve acik/kapali satiri "kapali"
+---gosterir; cok oyunculuda secenek normal calisir. Donus: kilitli mi.
+function Tab.applyMpOnlyState(option, spec)
+    if option == nil or spec == nil then
+        return false
+    end
+    local locked = Tab.isMpOnlyLocked(spec)
+    if option.setDisabled ~= nil then
+        option:setDisabled(locked)
+    end
+    if locked and spec.kind == "bool" and option.setState ~= nil then
+        option:setState(Tab.valueToState(spec, false))
+    end
+    return locked
+end
+
+function Tab:createSection(i18nKey, spec)
     local page = self.page
     local header = page.subTitlePrefab:clone(page.settingsLayout)
-    header:setText(text(i18nKey))
+    if Tab.isMpOnlyLocked(spec) then
+        header:setText(string.format("%s (%s)", text(i18nKey), text("cm_mpOnlyShort", "multiplayer only")))
+    else
+        header:setText(text(i18nKey))
+    end
     header.focusId = FocusManager:serveAutoFocusId()
     header.cmAdminOnly = true
     table.insert(self.controls, header)
@@ -445,7 +470,7 @@ function Tab:createControl(spec, key)
     option.id = self.PREFIX .. key
     option:setDisabled(false)
     option.cmSpec = { key = key, kind = spec.kind, min = spec.min, max = spec.max, step = spec.step,
-        format = spec.format, zero = spec.zero, values = spec.values, labels = spec.labels }
+        format = spec.format, zero = spec.zero, values = spec.values, labels = spec.labels, mpOnly = spec.mpOnly }
     if spec.kind ~= "bool" then
         option:setTexts(Tab.buildTexts(spec))
     end
@@ -460,7 +485,9 @@ function Tab:createControl(spec, key)
     end
 
     local tooltip = option.elements[1]
-    if tooltip ~= nil and tooltip.setText ~= nil then
+    if tooltip ~= nil and tooltip.setText ~= nil and Tab.isMpOnlyLocked(spec) then
+        tooltip:setText(text("cm_mpOnly_tooltip", "Multiplayer only. In single player this feature is off."))
+    elseif tooltip ~= nil and tooltip.setText ~= nil then
         if name ~= nil then
             tooltip:setText(text(field == "enabled" and "cm_typeEnabled_tooltip" or "cm_typeWeight_tooltip", ""))
         else
@@ -490,7 +517,7 @@ function Tab:buildControls()
     for _, spec in ipairs(self.SPEC) do
         if Tab.isSpecVisible(spec) then
             if spec.section ~= nil then
-                self:createSection(spec.section)
+                self:createSection(spec.section, spec)
             else
                 self:createControl(spec, spec.id)
             end
@@ -532,6 +559,7 @@ function Tab:populate()
             local spec = control.cmOption.cmSpec
             local state = Tab.valueToState(spec, Tab.getValue(spec.key))
             control.cmOption:setState(state)
+            Tab.applyMpOnlyState(control.cmOption, spec)
         end
     end
     self:populateStats()

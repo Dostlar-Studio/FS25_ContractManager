@@ -161,6 +161,8 @@
         <text name="cm_detailDirectCutter" text="Coupe directe"/>
         <text name="cm_detailMower" text="Faucheuse"/>
         <text name="cm_detailNotAllowed" text="Non autorisée"/>
+        <text name="cm_mpOnlyShort" text="multijoueur uniquement"/>
+        <text name="cm_mpOnly_tooltip" text="Disponible uniquement en multijoueur. En solo, il n'y a qu'une ferme : cette fonction est désactivée."/>
         <text name="cm_detailSurplus" text="Vous revient"/>
         <text name="cm_detailProgress" text="Progression"/>
         <text name="cm_secSchedule" text="Bonus programmés (temps réel)"/>

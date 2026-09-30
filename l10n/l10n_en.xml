@@ -161,6 +161,8 @@
         <text name="cm_detailDirectCutter" text="Direct-cut header"/>
         <text name="cm_detailMower" text="Mower"/>
         <text name="cm_detailNotAllowed" text="Not allowed"/>
+        <text name="cm_mpOnlyShort" text="multiplayer only"/>
+        <text name="cm_mpOnly_tooltip" text="Only available in multiplayer. In single player there is only one farm, so this feature is switched off."/>
         <text name="cm_detailSurplus" text="Stays with you"/>
         <text name="cm_detailProgress" text="Progress"/>
         <text name="cm_secSchedule" text="Scheduled bonuses (real time)"/>

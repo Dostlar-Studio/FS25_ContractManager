@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.24.9.0</version>
+    <version>1.25.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -35,6 +35,9 @@ CONTACT & SOURCE
 - Source code and issue tracker: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Must be enabled on the server and all clients. PC/Mac only.
+
+Changelog 1.25.0.0:
+- New: in single player the multiplayer-only features switch off automatically: partnership, reservation, the reserved-contract map marker and transferring a contract to another farm. Single player has only one farm, so their settings are shown greyed out and cannot be switched on. Saved values are kept and apply again in multiplayer.
 
 Changelog 1.24.9.0:
 - Fixed: returning to the main menu filled log.txt with hundreds of thousands of "Unknown entity id ... Overlay.lua:89 delete" errors (right after "PagingElement.lua:249: attempt to index nil with 'disabled'") until the game was force-closed. The Contract Management page stayed in the ESC menu after the save was unloaded and was also registered as a separate screen, so the game's cleanup removed it halfway and then retried on every frame. The page now belongs to the menu only and is removed cleanly when the save is unloaded.
@@ -92,6 +95,9 @@ Changelog 1.21.3.0:
 
 Changelog 1.21.2.0:
 - Fixed: changing the harvest share left the contract panel showing the old percentage. The amount the game actually required was already correct; only the displayed figure was stale. Measurements are now refreshed for every contract on the board when the setting changes.
+
+Changelog 1.25.0.0:
+- Neu: Im Einzelspieler schalten sich die reinen Mehrspieler-Funktionen automatisch ab: Partnerschaft, Reservierung, die Kartenmarkierung reservierter Verträge und das Übertragen eines Vertrags an einen anderen Hof. Im Einzelspieler gibt es nur einen Hof, daher sind ihre Einstellungen ausgegraut und lassen sich nicht einschalten. Gespeicherte Werte bleiben erhalten und gelten im Mehrspieler wieder.
 
 Changelog 1.24.9.0:
 - Behoben: Beim Zurückkehren ins Hauptmenü füllte sich log.txt mit Hunderttausenden Fehlern "Unknown entity id ... Overlay.lua:89 delete" (direkt nach "PagingElement.lua:249: attempt to index nil with 'disabled'"), bis das Spiel zwangsweise beendet wurde. Die Seite Vertragsverwaltung blieb nach dem Entladen des Spielstands im ESC-Menü und war zusätzlich als eigener Bildschirm registriert; das Aufräumen des Spiels entfernte sie nur halb und versuchte es dann in jedem Frame erneut. Die Seite gehört jetzt nur noch zum Menü und wird beim Entladen des Spielstands sauber entfernt.
@@ -514,6 +520,9 @@ CONTACT & SOURCES
 
 Doit être activé sur le serveur et sur tous les clients. PC/Mac uniquement.
 
+Changelog 1.25.0.0 :
+- Nouveau : en solo, les fonctions réservées au multijoueur se désactivent automatiquement : partenariat, réservation, le marqueur de carte des contrats réservés et le transfert d'un contrat à une autre ferme. En solo il n'y a qu'une ferme : leurs réglages sont grisés et ne peuvent pas être activés. Les valeurs enregistrées sont conservées et s'appliquent de nouveau en multijoueur.
+
 Changelog 1.24.9.0 :
 - Corrigé : le retour au menu principal remplissait log.txt de centaines de milliers d'erreurs « Unknown entity id ... Overlay.lua:89 delete » (juste après « PagingElement.lua:249: attempt to index nil with 'disabled' ») jusqu'à la fermeture forcée du jeu. La page Gestion des contrats restait dans le menu Échap après le déchargement de la partie et était aussi enregistrée comme écran séparé ; le nettoyage du jeu la retirait à moitié puis réessayait à chaque image. La page appartient désormais uniquement au menu et est retirée proprement au déchargement de la partie.
 
@@ -752,6 +761,9 @@ DİĞER
 - Kaynak kod ve sorun takibi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
 Sunucuda ve tüm istemcilerde etkin olmalıdır. Yalnızca PC/Mac.
+
+Değişiklikler 1.25.0.0:
+- Yeni: tek oyunculuda yalnızca çok oyunculu oyunda anlamlı olan özellikler kendiliğinden kapanıyor: ortaklık, rezervasyon, rezerve kontratın harita işareti ve kontratı başka çiftliğe devretme. Tek oyunculuda tek çiftlik olduğu için bu ayarlar sönük görünüyor ve açılamıyor. Kayıtlı değerler korunuyor, çok oyunculu oyunda yeniden geçerli oluyor.
 
 Değişiklikler 1.24.9.0:
 - Düzeltme: ana menüye dönünce log.txt, oyun zorla kapatılana kadar yüz binlerce "Unknown entity id ... Overlay.lua:89 delete" hatasıyla doluyordu (hemen öncesinde "PagingElement.lua:249: attempt to index nil with 'disabled'"). Kontrat Yönetimi sayfası kayıt kapandıktan sonra da ESC menüsünde kalıyordu ve ayrıca bağımsız bir ekran olarak da kayıtlıydı; oyunun temizliği onu yarıda bırakıp her karede yeniden deniyordu. Sayfa artık yalnızca menünün parçası ve kayıt kapanırken menüden düzgünce çıkarılıyor.

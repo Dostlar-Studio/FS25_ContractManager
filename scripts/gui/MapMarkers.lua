@@ -34,7 +34,8 @@ function Markers.shouldMark(mission)
     if settings():get("map.showAvailable") then
         return true
     end
-    if settings():get("map.showReserved") and ContractManagerReservation ~= nil then
+    if settings():get("map.showReserved") and settings():isAvailable("map.showReserved")
+        and ContractManagerReservation ~= nil and ContractManagerReservation.isEnabled() then
         local r = ContractManagerReservation.get(missionKey)
         if r ~= nil and r.farmId == localFarmId() then
             return true

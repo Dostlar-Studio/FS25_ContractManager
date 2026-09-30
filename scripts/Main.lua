@@ -11,7 +11,7 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.24.9.0",
+    VERSION = "1.25.0.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     PROTOCOL = 2,
@@ -670,6 +670,18 @@ function ContractManager:isBetterContractsLoaded()
 end
 
 ---Kural katmani (odul/limit/uretim/sure) etkin mi? Guard ve Registry bundan bagimsizdir.
+---Cok oyunculu oturum mu? (1.25.0.0) Tek oyunculuda yalnizca bir ciftlik vardir: ortaklik,
+---rezervasyon ve ciftlikler arasi devir anlamsizdir, otomatik kapanir. Oyun bilgisi henuz yoksa
+---(erken yukleme, test) kisitlama yapilmaz. Dedicated sunucu ve istemciler cok oyunculudur.
+function ContractManager.isMultiplayer()
+    local mission = g_currentMission
+    local info = mission ~= nil and mission.missionDynamicInfo or nil
+    if type(info) ~= "table" or info.isMultiplayer == nil then
+        return true
+    end
+    return info.isMultiplayer == true
+end
+
 function ContractManager:getRulesEnabled()
     if not self:isBetterContractsLoaded() then
         return true

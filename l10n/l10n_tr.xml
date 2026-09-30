@@ -161,6 +161,8 @@
         <text name="cm_detailDirectCutter" text="Doğrudan kesim tablası"/>
         <text name="cm_detailMower" text="Biçme makinesi"/>
         <text name="cm_detailNotAllowed" text="Kullanılamaz"/>
+        <text name="cm_mpOnlyShort" text="yalnızca çok oyunculu"/>
+        <text name="cm_mpOnly_tooltip" text="Yalnızca çok oyunculu oyunda kullanılabilir. Tek oyunculuda tek çiftlik olduğu için bu özellik kapalıdır."/>
         <text name="cm_detailSurplus" text="Size kalacak"/>
         <text name="cm_detailProgress" text="İlerleme"/>
         <text name="cm_secSchedule" text="Zamanlı bonuslar (gerçek saat)"/>

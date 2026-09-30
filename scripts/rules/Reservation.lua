@@ -30,8 +30,10 @@ local function text(key, fallback)
     return ContractManager.text(key, fallback)
 end
 
+---Tek oyunculuda her zaman kapali (1.25.0.0): kontrati kapacak baska ciftlik yok.
 function Res.isEnabled()
     return ContractManager:getRulesEnabled() and settings():get("reservation.enabled") == true
+        and settings():isAvailable("reservation.enabled")
 end
 
 ---gercek zaman ms (oyunun mission.time'i; timescale'den bagimsiz)

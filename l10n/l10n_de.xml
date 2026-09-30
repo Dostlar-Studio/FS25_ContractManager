@@ -161,6 +161,8 @@
         <text name="cm_detailDirectCutter" text="Direktschneidwerk"/>
         <text name="cm_detailMower" text="Mähwerk"/>
         <text name="cm_detailNotAllowed" text="Nicht erlaubt"/>
+        <text name="cm_mpOnlyShort" text="nur im Mehrspieler"/>
+        <text name="cm_mpOnly_tooltip" text="Nur im Mehrspieler verfügbar. Im Einzelspieler gibt es nur einen Hof, daher ist diese Funktion ausgeschaltet."/>
         <text name="cm_detailSurplus" text="Bleibt bei dir"/>
         <text name="cm_detailProgress" text="Fortschritt"/>
         <text name="cm_secSchedule" text="Zeitboni (Echtzeit)"/>

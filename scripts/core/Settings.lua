@@ -184,6 +184,22 @@ function Settings:resetToDefaults()
     self.types = {}
 end
 
+---Yalnizca cok oyunculu oyunda anlamli ayarlar (1.25.0.0). Tek oyunculuda ETKILERI kapalidir ve ayar
+---ekraninda sonuk gorunurler; KAYITLI DEGER DEGISMEZ (ayni ayar dosyasi cok oyunculuda kullanilirsa
+---yoneticinin secimi yerinde kalir).
+Settings.MP_ONLY = {
+    ["partnership.enabled"] = true, ["partnership.maxPartners"] = true, ["partnership.inviteMinutes"] = true,
+    ["reservation.enabled"] = true, ["reservation.minutes"] = true, ["map.showReserved"] = true,
+}
+
+---Bu ayar bu oturumda kullanilabilir mi? (tek oyunculuda MP_ONLY ayarlar hayir)
+function Settings:isAvailable(id)
+    if Settings.MP_ONLY[id] and ContractManager ~= nil and ContractManager.isMultiplayer ~= nil then
+        return ContractManager.isMultiplayer()
+    end
+    return true
+end
+
 function Settings:get(id)
     local value = self.values[id]
     if value == nil then
