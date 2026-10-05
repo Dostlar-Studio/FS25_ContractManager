@@ -1,8 +1,10 @@
-FS25 KONTRAT YÖNETİCİSİ - v1.21.2.0
+FS25 KONTRAT YÖNETİCİSİ
 ===============================================================================
 
-Bu sürüm, FS25_ContractGuard modunun tamamını yeni Kontrat Yöneticisi çatısı
-altında taşır ve üstüne kural motoru ile oyun içi ayar sekmesini ekler.
+Kontrat Yöneticisi, tarla kontratlarının denetimini sunucu yöneticisine verir
+ve kontratların her çiftlik için adil kalmasını sağlar. Dedicated sunucuda,
+kurulan çok oyunculu oyunlarda ve tek oyunculuda çalışır; yalnızca oyunun
+kendi ekranlarını kullanır.
 
 OYUN İÇİ ARAYÜZ (oyunun kendi ekranları)
 - ESC > Ayarlar > "Kontrat Yöneticisi" alt sekmesi: tüm kurallar oyunun stok
@@ -10,24 +12,17 @@ OYUN İÇİ ARAYÜZ (oyunun kendi ekranları)
   yöneticisi değiştirebilir; diğer oyuncular yalnızca "Çiftliğinizin
   istatistiği" bölümünü görür (tamamlanan/başarısız/iptal/süre aşımı,
   toplam kazanç ve ceza, son 5 kontrat).
-- ESC > Kontratlar: seçili kontratın detay listesine üç satır eklenir:
-  kalan süre, olası başarısızlık cezası, çiftliğin aktif kontratı / limit.
-- Ayar değişiklikleri anında tüm oyunculara yayılır ve bir sonraki oyun
-  kaydında diske yazılır.
+- ESC > Kontratlar: seçili kontratın detay listesine ek satırlar gelir:
+  kalan süre, olası ceza, teslim edilecek ve size kalacak miktar, teslim
+  edilen ve kalan miktar, bonuslar, çiftliğin aktif kontratı / limit.
+- Ayar değişiklikleri anında tüm oyunculara yayılır ve birkaç saniye içinde
+  diske yazılır.
 
 KURULUM
 1. FS25_ContractManager.zip dosyasını sunucunun mods klasörüne yükleyin.
-2. FS25_ContractGuard.zip dosyasını mods klasöründen KALDIRIN. İkisi birlikte
-   yüklenirse Kontrat Yöneticisi kendi koruma katmanını kapatır ve log.txt'ye
-   hata yazar.
-3. Modu kayıt için etkinleştirin ve sunucuyu yeniden başlatın.
-4. Bağlanan bütün PC/Mac oyuncularında aynı mod sürümü bulunmalıdır. Sürümler
+2. Modu kayıt için etkinleştirin ve sunucuyu yeniden başlatın.
+3. Bağlanan bütün PC/Mac oyuncularında aynı mod sürümü bulunmalıdır. Sürümler
    farklıysa mod bunu fark eder ve oyuncuya uyarı penceresi açar.
-
-KAYIT VERİSİ DEVRALMA
-Kayıt klasöründe eski FS25_ContractGuard.xml varsa ilk yüklemede otomatik
-okunur; ilk kayıtta FS25_ContractManager.xml olarak yeniden yazılır. Aktif
-kontratların korunan ürün miktarı (baseline) kaybolmaz.
 
 KORUMA KURALLARI
 - Kontrat ürünü aynı çiftliğe ait biçerdöver, römork, kamyon ve aktarma
@@ -66,10 +61,15 @@ Documents\My Games\FarmingSimulator2025\modSettings\FS25_ContractManager.xml
 BETTERCONTRACTS İLE BİRLİKTE
 FS25_BetterContracts da yüklüyse ödül, ceza, limit, üretim ve süre kuralları
 otomatik olarak geri çekilir (iki mod aynı noktalara yazar, çarpanlar
-katlanırdı). Koruma (Guard) ve kontrat geçmişi çalışmaya devam eder.
-Ayarlar > Kontrat Yöneticisi > Uyumluluk > "BetterContracts'ın üstüne uygula"
+katlanırdı). Ürün koruması ve kontrat geçmişi çalışmaya devam eder.
+Ayarlar > Kontrat Yöneticisi > Uyumluluk > "BetterContracts üstüne uygula"
 açarsanız bu modun kuralları BetterContracts'ın üstüne uygulanır; bunu yalnızca
 bilinçli yapın (ayar dosyasındaki karşılığı compat#overrideBetterContracts).
+
+TEK OYUNCULU
+Tek oyunculuda tek çiftlik olduğu için ortaklık, rezervasyon, rezerv harita
+işareti ve devretme kapalıdır; ayarlarda sönük görünür ve açılamaz. Kayıtlı
+değerler korunur, aynı ayarlar çok oyunculu oyunda yine geçerli olur.
 
 KONTRAT GEÇMİŞİ
 Sunucu, kabul edilen / biten kontratları ve çiftlik başına istatistiği
@@ -103,9 +103,9 @@ KONTRAT YÖNETİMİ SAYFASI (1.8)
   işlemleri görür.
 
 ORTAKLIK KONTRATLAR SAYFASINDA + ARAYÜZ ANAHTARI (1.11)
-- Kontratlar sayfasında kendi çalışan kontratınızı seçince "Davet et: <çiftlik>"
-  ve "Sonraki çiftlik" butonları çıkar. Sonraki çiftlik ile hedefi değiştirin,
-  Davet et ile gönderin. Kontrat Yönetimi sayfası bunun için şart değil.
+- Kontratlar sayfasında kendi çalışan kontratınızı seçince alt çubukta
+  "Ortağa davet et" çıkar; açılan pencerede çiftliği seçip daveti gönderin.
+  Kontrat Yönetimi sayfası bunun için şart değil.
 - Davet edilen ya da ortak olan çiftlik, kontratı kendi Aktif listesinde görür;
   kabul/reddet/ayrıl butonları oradadır. Sahip olmadığı kontratta oyunun İptal
   butonu gösterilmez.
@@ -170,10 +170,11 @@ ZAMANLI BONUSLAR (1.3, gerçek saat)
 
 YÖNETİCİ ARAÇLARI (sunucu yöneticisi)
 - ESC > Kontratlar sayfasının alt çubuğunda "Panoyu yenile": kabul edilmemiş
-  tüm kontratlar silinir ve yenileri üretilir. Oyun o anda yeni kontrat
-  üretemiyorsa (uygun tarla yoksa) hiçbir kontrat silinmez ve uyarı çıkar.
-- Seçili aktif kontratta "Zorla iptal": koruma engeli aşılır, para cezası
-  uygulanmaz, biriken kontrat ürünü yine geri alınır.
+  kontratlar tek tek yenileriyle değiştirilir. Oyun bir kontratın yerine
+  yenisini üretemezse (uygun tarla yoksa) yenileme durur, panonun kalanı
+  korunur ve uyarı çıkar.
+- "Zorla iptal" Kontrat Yönetimi sayfasındadır ve onay ister: koruma engeli
+  aşılır, para cezası uygulanmaz, biriken kontrat ürünü yine geri alınır.
 - Konsol komutları (cm*) kapalıdır; tüm işlemler oyun içi butonlarla ve web
   panelinden yapılır. Hepsi sunucuda yetki doğrulamasından geçer.
 

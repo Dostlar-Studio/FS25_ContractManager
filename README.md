@@ -14,7 +14,7 @@ A script mod by **Dostlar STUDIO**. Uses only the game's own screens, no custom 
 - Reputation: completed contracts earn points, failures lose them; points give a reward bonus and an extra contract slot.
 - Field cooldown after a finished contract; all toggles for partnership and the management page.
 
-**Product guard** (server authoritative)
+**Product protection** (server authoritative)
 - Contract crops move only between vehicles of the same farm; ground dumping, cross-farm transfers and wrong unloading points are blocked.
 - Only the delivery point of the contract accepts the protected product; a started contract cannot be cancelled.
 - On timeout or forced failure the net contract product accumulated since acceptance is confiscated.
@@ -23,16 +23,16 @@ A script mod by **Dostlar STUDIO**. Uses only the game's own screens, no custom 
 - Contract details: time left, possible penalty, active contracts / limit, expected yield and delivery amounts, progress.
 - Reserve a contract for your farm for a set number of minutes.
 - Partner contracts: invite another farm, accept or decline, share the reward by contribution. The HUD bar shows role and expected payout for owner and partner.
-- Admin tools: refresh the board, force-cancel, transfer, assign to a farm. Bottom-bar buttons, confirmation dialogs and console commands.
+- Admin tools: refresh the board, force-cancel, transfer, assign to a farm, with confirmation dialogs.
 - Farm statistics and leaderboard in the settings tab.
 - FS25_DiscordBridge integration: contract events go to Discord when that mod is loaded.
-- Replaces FS25_ContractGuard and migrates its save data. Yields its rules automatically when FS25_BetterContracts is loaded.
+- When FS25_BetterContracts is loaded, Contract Manager switches its own contract rules off so the two mods do not stack; Settings > Compatibility > Apply on top of BetterContracts switches them back on.
+- Single player: partnership, reservation, the reserved marker on the map and transfer are switched off and greyed out in the settings.
 
 ## Installation
 
 1. Put `FS25_ContractManager.zip` into the `mods` folder of the server and of every player.
-2. Remove `FS25_ContractGuard.zip` if you still have it.
-3. Enable the mod for the savegame and restart the server. All players need the same version.
+2. Enable the mod for the savegame and restart the server. All players need the same version.
 
 PC/Mac only (script mod).
 

@@ -37,6 +37,7 @@ NOTES
 
 Changelog 1.25.1.0:
 - New, shorter mod description; English settings texts made consistent.
+- Fixed: the Contract Manager page wrote percentages as %45 in every language; it now shows 45 % like the rest of the mod.
 
 Changelog 1.25.0.0:
 - Single player: partnership, reservation, the reserved marker on the map and contract transfer are switched off and greyed out in the settings.
@@ -69,6 +70,7 @@ HINWEISE
 
 Changelog 1.25.1.0:
 - Neue, kürzere Modbeschreibung; englische Einstellungstexte vereinheitlicht.
+- Behoben: Die Seite Vertragsmanager schrieb Prozentwerte in jeder Sprache als %45; jetzt 45 % wie im restlichen Mod.
 
 Changelog 1.25.0.0:
 - Einzelspieler: Partnerschaft, Reservierung, die Kartenmarkierung reservierter Verträge und das Übertragen sind ausgeschaltet und in den Einstellungen ausgegraut.
@@ -101,6 +103,7 @@ REMARQUES
 
 Changelog 1.25.1.0 :
 - Nouvelle description du mod, plus courte ; textes anglais des réglages harmonisés.
+- Corrigé : la page Gestionnaire de contrats écrivait les pourcentages sous la forme %45 dans toutes les langues ; elle affiche maintenant 45 % comme le reste du mod.
 
 Changelog 1.25.0.0 :
 - Solo : partenariat, réservation, marqueur de carte des contrats réservés et transfert sont désactivés et grisés dans les réglages.
@@ -133,6 +136,7 @@ NOTLAR
 
 Değişiklikler 1.25.1.0:
 - Yeni, daha kısa mod açıklaması; İngilizce ayar metinleri düzeltildi.
+- Düzeltildi: Kontrat Yöneticisi sayfası yüzdeyi diğer dillerde de "%45" diye yazıyordu; artık modun diğer ekranları gibi "45 %" yazıyor.
 
 Değişiklikler 1.25.0.0:
 - Tek oyunculu: ortaklık, rezervasyon, haritadaki rezerv işareti ve devretme kapalı; ayarlarda sönük görünür.

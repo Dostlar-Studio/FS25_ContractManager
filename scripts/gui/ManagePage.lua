@@ -235,7 +235,7 @@ function Page.formatMission(mission)
         parts[#parts + 1] = Page.farmName(mission.farmId)
     end
     if type(mission.completion) == "number" and mission.status == MissionStatus.RUNNING then
-        parts[#parts + 1] = string.format("%%%d", math.floor(mission.completion * 100 + 0.5))
+        parts[#parts + 1] = string.format("%d %%", math.floor(mission.completion * 100 + 0.5))
     end
     local reward = 0
     if mission.getReward ~= nil then
@@ -305,7 +305,7 @@ function Page.missionCells(mission)
         cells.cellFarm = Page.farmName(mission.farmId)
     end
     if type(mission.completion) == "number" and mission.status == MissionStatus.RUNNING then
-        cells.cellProgress = string.format("%%%d", math.floor(mission.completion * 100 + 0.5))
+        cells.cellProgress = string.format("%d %%", math.floor(mission.completion * 100 + 0.5))
     end
     cells.cellReward = money(Page.missionReward(mission))
     local left = minutesText(mission)
