@@ -12,7 +12,7 @@
         <text name="cm_tabTitle" text="Contract Manager"/>
         <text name="cm_versionMismatch" text="The server runs a different version of Contract Manager. Install the same version on both sides."/>
         <text name="cm_noPermission" text="Only the server admin can change contract rules."/>
-        <text name="cm_secGuard" text="Product guard"/>
+        <text name="cm_secGuard" text="Product protection"/>
         <text name="cm_secReward" text="Reward and penalty"/>
         <text name="cm_secLimits" text="Limits"/>
         <text name="cm_secGeneration" text="Contract generation"/>
@@ -20,7 +20,7 @@
         <text name="cm_secCompat" text="Compatibility"/>
         <text name="cm_secTypes" text="Contract types"/>
         <text name="cm_secStats" text="Your farm statistics"/>
-        <text name="cm_guard_enabled" text="Guard enabled"/>
+        <text name="cm_guard_enabled" text="Protection enabled"/>
         <text name="cm_guard_enabled_tooltip" text="Blocks dumping contract product on the ground, transferring it to other farms and unloading it at wrong places."/>
         <text name="cm_guard_blockCancelAfterProgress" text="Block cancel after work started"/>
         <text name="cm_guard_blockCancelAfterProgress_tooltip" text="A contract cannot be cancelled once harvesting or delivery has started."/>
@@ -88,7 +88,7 @@
         <text name="cm_partNextFarm" text="Next farm"/>
         <text name="cm_partTargetSet" text="Invite target: %s"/>
         <text name="cm_integrations_discord" text="Discord Bridge events"/>
-        <text name="cm_integrations_discord_tooltip" text="When FS25_DiscordBridge is loaded, contract accept/finish/payout, expiry warnings and guard blocks are sent to Discord."/>
+        <text name="cm_integrations_discord_tooltip" text="When FS25_DiscordBridge is loaded, contract accept/finish/payout, expiry warnings and blocked product moves are sent to Discord."/>
         <text name="cm_adminRefreshButton" text="Refresh board"/>
         <text name="cm_adminCancelButton" text="Force cancel"/>
         <text name="cm_adminConfirmRefresh" text="All unaccepted contracts will be removed and regenerated. Continue?"/>
