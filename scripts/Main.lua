@@ -1,8 +1,7 @@
 --
 -- FS25_ContractManager - Kontrat Yoneticisi
 --
--- Cati: tum katmanlarin paylastigi sabitler, log yardimcisi, cift yukleme kilidi.
--- Yukleme sirasi (modDesc): Main -> guard/* -> Debug. Faz 2'de core/* buraya eklenir.
+-- Cati: tum katmanlarin paylastigi sabitler, log ve ortak yardimcilar. modDesc'te ilk yuklenir.
 --
 -- @author  Dostlar STUDIO
 -- @version 1.0.0.0
@@ -19,16 +18,11 @@ ContractManager = {
     PROTOCOL = 3,
     LOG_PREFIX = "[CM]",
 
-    -- savegame icindeki birlesik durum dosyasi ve devralinacak eski Guard dosyasi
+    -- savegame icindeki birlesik durum dosyasi
     SAVEGAME_FILENAME = "FS25_ContractManager.xml",
-    LEGACY_GUARD_SAVEGAME_FILENAME = "FS25_ContractGuard.xml",
-    LEGACY_GUARD_MOD_NAME = "FS25_ContractGuard",
     BETTER_CONTRACTS_MOD_NAME = "FS25_BetterContracts",
 
-    -- Faz 2'de Settings.lua'ya tasinir
-    debugEnabled = false,    -- gelistirmede true: Debug.lua [CM/Debug] dokumu yazar
-    consoleCommands = false, -- konsol komutlari (cm*) kapali: her islem oyun ici butonlarda var (kullanici karari 2026-09-13)
-    guardEnabled = true,
+    debugEnabled = false,    -- gelistirmede true: ContractManager.debug satirlari loga yazilir
 }
 
 -- ---------------------------------------------------------------------------
@@ -54,6 +48,18 @@ function ContractManager.text(key, fallback)
         end
     end
     return fallback or key
+end
+
+---Para metni oyunun biriminde ve dilinde. Tek yer: bes dosyada ayni satirlar tekrar ediyordu (1.26.0.0).
+function ContractManager.formatMoney(value)
+    value = tonumber(value) or 0
+    if g_i18n ~= nil and g_i18n.formatMoney ~= nil then
+        local s = g_i18n:formatMoney(value, 0, true, true)
+        if s ~= nil then
+            return s
+        end
+    end
+    return tostring(math.floor(value + 0.5))
 end
 
 ---Acik Kontrat Yonetimi sayfasini tazele (kapaliysa bir sey yapmaz). Sunucudan gelen ya da baska oyuncunun
@@ -253,7 +259,7 @@ end
 --     gizledigimiz stok girdi (listede yoksa) yerine geri konur. Stok girdi nesneleri yerinde
 --     degistirilmez. Oyun tabloyu her cagrida yeni kursa da, ayni tabloyu yeniden doldursa da, hic
 --     dokunmasa da sonuc ayni. Canli kanit taze tablodan yana (BetterContracts ayni noktaya her
---     cagrida ayni nesneyi ekliyor ve birikmiyor); teshis satirindaki reused= bunu olcer.
+--     cagrida ayni nesneyi ekliyor ve birikmiyor).
 --   * Kanca oyunun SINIFINA bir kez takilir (sinif surec boyunca yasar, mod her harita
 --     yuklemesinde yeniden calisir); cagrilan dagitici her yuklemede guncellenir.
 --   * Bir ekleyicinin hatasi digerlerini durdurmaz ve LOGA yazilir (ekleyici basina bir kez).
@@ -269,7 +275,6 @@ ContractManager.MENU_BAR_SLOTS = 6
 local ownButtons = setmetatable({}, { __mode = "k" })      -- bizim cubuga koydugumuz girdiler
 local replacedStock = setmetatable({}, { __mode = "k" })   -- bizim girdi -> yerine gectigi stok girdi
 local hiddenStock = setmetatable({}, { __mode = "k" })     -- liste -> { {index, info} } gizledigimiz stok girdiler
-local lastListByFrame = setmetatable({}, { __mode = "k" }) -- sayfa -> onceki gecisin tablosu (reused= olcumu)
 local buttonErrorsReported = {}
 local buttonSkipsReported = {}
 
@@ -484,84 +489,17 @@ function ContractManager.sanitizeButtons(list, stock)
     return removed
 end
 
----Teshis: buton kurulurken sayfa ne goruyor ve cubuga ne gidiyor. Her FARKLI durum oturum
----basina bir kez yazilir (en fazla BUTTON_PROBE_MAX); secimi iki kontrat arasinda gidip gelmek
----tavani tuketmez (1.24.5.0'da 12 satir bir dakikada doldu).
-ContractManager.BUTTON_PROBE_MAX = 40
-local probeCount, probeSeen = 0, {}
-local menuKeysReported = false
-
----Teshis sayaclarini sifirla (testler; her durum/sebep yeniden bir kez loglanir)
-function ContractManager.resetButtonDiagnostics()
-    probeCount, probeSeen, menuKeysReported = 0, {}, false
-    buttonSkipsReported = {}
-end
-
-local function describeBar(list)
-    local parts = {}
-    for _, info in ipairs(type(list) == "table" and list or {}) do
-        local action = type(info) == "table" and info.inputAction or nil
-        parts[#parts + 1] = tostring(action) .. (ownButtons[info] and "*" or "")
-    end
-    return table.concat(parts, ",")
-end
-
----reused: bu sayfa bir onceki geciste AYNI tabloyu mu verdi (oyunun tablo modeli; nil = bilinmiyor)
-function ContractManager.describeButtonState(frame, state, reused)
-    local getter = frame ~= nil and frame.getSelectedContract or nil
-    local okCall, contract = false, nil
-    if getter ~= nil then
-        okCall, contract = pcall(getter, frame)
-    end
-    local mission = (okCall and type(contract) == "table") and contract.mission or nil
-    local myFarm = g_currentMission ~= nil and g_currentMission.getFarmId ~= nil and g_currentMission:getFarmId() or nil
-    -- getIsLocalAdmin firlatmaz; bu fonksiyon zaten probeButtonState'in kalkani altinda calisir
-    local localAdmin = nil
-    if ContractManagerSettingsTab ~= nil and ContractManagerSettingsTab.getIsLocalAdmin ~= nil then
-        localAdmin = ContractManagerSettingsTab.getIsLocalAdmin()
-    end
-    -- cubuga giden girdiler, sirayla; * = bizim
-    local list = frame ~= nil and frame.menuButtonInfo or nil
-    local slots = ContractManager.getMenuBarSlots()
-    return string.format("state=%s getter=%s call=%s contract=%s mission=%s status=%s owner=%s myFarm=%s admin=%s slots=%d entries=%s ours=%d reused=%s bar=[%s]",
-        tostring(state), tostring(getter ~= nil), tostring(okCall), type(contract),
-        tostring(mission ~= nil), tostring(mission ~= nil and mission.status or nil),
-        tostring(mission ~= nil and mission.farmId or nil), tostring(myFarm), tostring(localAdmin),
-        slots, tostring(type(list) == "table" and #list or nil),
-        ContractManager.countAddedButtons(list), tostring(reused), describeBar(list))
-end
-
-function ContractManager.probeButtonState(frame, state, reused)
-    if probeCount >= ContractManager.BUTTON_PROBE_MAX then
-        return false
-    end
-    local ok, line = pcall(ContractManager.describeButtonState, frame, state, reused)
-    if not ok or probeSeen[line] then
-        return false
-    end
-    probeSeen[line] = true
-    probeCount = probeCount + 1
-    ContractManager.info("Contracts page buttons: %s", line)
-    return true
-end
-
 ---Menuye "buton listesi degisti" de. Oyunun kendi setButtonsForState'i bunu zaten yapiyor
 ---olmali (BetterContracts ayni noktaya yalnizca ekleme yapiyor ve butonu gorunuyor); bayrak
 ---koymak zararsiz oldugu icin guvence olarak birakildi. Bayrak menuyu yeniden kurdurabilirse
 ---diye kendimizi tekrar cagirmamak icin koruma var.
 local markingDirty = false
 function ContractManager.markButtonsDirty(frame)
-    if frame == nil or markingDirty then
+    if frame == nil or markingDirty or frame.setMenuButtonInfoDirty == nil then
         return false
     end
     markingDirty = true
-    local marked = false
-    if frame.setMenuButtonInfoDirty ~= nil then
-        marked = pcall(frame.setMenuButtonInfoDirty, frame)
-    end
-    if not marked and g_inGameMenu ~= nil and g_inGameMenu.updateButtonsPanel ~= nil then
-        marked = pcall(g_inGameMenu.updateButtonsPanel, g_inGameMenu, frame)
-    end
+    local marked = ContractManager.guard("Contracts page buttons", frame.setMenuButtonInfoDirty, frame)
     markingDirty = false
     return marked
 end
@@ -571,8 +509,6 @@ function ContractManager.runButtonAppenders(frame, state)
     if frame == nil or type(frame.menuButtonInfo) ~= "table" or markingDirty then
         return
     end
-    local reused = lastListByFrame[frame] == frame.menuButtonInfo
-    lastListByFrame[frame] = frame.menuButtonInfo
     local stripped = ContractManager.stripOwnButtons(frame.menuButtonInfo)
     local stock = {}
     for _, info in ipairs(frame.menuButtonInfo) do
@@ -589,24 +525,6 @@ function ContractManager.runButtonAppenders(frame, state)
     if stripped > 0 or ContractManager.countAddedButtons(frame.menuButtonInfo) > 0 then
         ContractManager.markButtonsDirty(frame)
     end
-    ContractManager.probeButtonState(frame, state, reused)
-end
-
----Oyundaki menu tuslari: kurulumda bir kez loglanir (hangi tus var, cubukta kac yuva). Kurulum
----aninda menu henuz yoksa yuva sayisi varsayilandir ve oyle yazilir; gercek sayi teshis
----satirindaki slots= alanindadir.
-function ContractManager.reportMenuKeys()
-    if menuKeysReported then
-        return false
-    end
-    menuKeysReported = true
-    local parts = {}
-    for _, name in ipairs({ "MENU_EXTRA_1", "MENU_EXTRA_2", "MENU_ACTIVATE", "MENU_EXTRA_3" }) do
-        parts[#parts + 1] = name .. "=" .. (ContractManager.isMenuActionValid(name) and "ok" or "absent")
-    end
-    local slots, measured = ContractManager.getMenuBarSlots()
-    ContractManager.info("Contracts page keys: %s; bar slots %d%s", table.concat(parts, " "), slots, measured and "" or " (default)")
-    return true
 end
 
 ---Kancayi oyunun sinifina bir kez tak. Donus: kanca yerinde mi.
@@ -616,7 +534,6 @@ function ContractManager.installButtonBar()
         return false
     end
     cls.cmButtonDispatch = ContractManager.runButtonAppenders
-    ContractManager.reportMenuKeys()
     if cls.cmButtonHookInstalled then
         return true
     end
@@ -684,24 +601,6 @@ function ContractManager.error(fmt, ...)
 end
 
 -- ---------------------------------------------------------------------------
--- cift yukleme kilidi
--- ---------------------------------------------------------------------------
-
----Eski bagimsiz Guard modu da yukluyse Guard katmanini kapat; ayni hook'lar iki kez
----kurulursa urun iki kez geri alinir.
-function ContractManager:isLegacyGuardLoaded()
-    return g_modIsLoaded ~= nil and g_modIsLoaded[self.LEGACY_GUARD_MOD_NAME] == true
-end
-
-if ContractManager:isLegacyGuardLoaded() then
-    ContractManager.guardEnabled = false
-    ContractManager.error(
-        "%s is also active. The Guard layer of Contract Manager is DISABLED to avoid double protection; remove %s.",
-        ContractManager.LEGACY_GUARD_MOD_NAME, ContractManager.LEGACY_GUARD_MOD_NAME
-    )
-end
-
--- ---------------------------------------------------------------------------
 -- yardimcilar (katmanlarin ortak kullandigi)
 -- ---------------------------------------------------------------------------
 
@@ -743,15 +642,6 @@ function ContractManager:getRulesEnabled()
     return false
 end
 
----Sunucu admin mi (dedicated admin veya sunucunun kendisi)?
-function ContractManager:getIsAdmin()
-    local mission = g_currentMission
-    if mission == nil then
-        return false
-    end
-    return mission:getIsServer() or mission.isMasterUser == true
-end
-
 if ContractManager:isBetterContractsLoaded() then
     ContractManager.warning("%s detected: reward/limit/generation/duration rules yield to it unless compat#overrideBetterContracts=true",
         ContractManager.BETTER_CONTRACTS_MOD_NAME)
@@ -775,5 +665,4 @@ function ContractManager.publish(message, ...)
     end
 end
 
-ContractManager.info("v%s loading (guard=%s, debug=%s)",
-    ContractManager.VERSION, tostring(ContractManager.guardEnabled), tostring(ContractManager.debugEnabled))
+ContractManager.info("v%s loading", ContractManager.VERSION)

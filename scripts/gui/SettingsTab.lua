@@ -244,13 +244,7 @@ function Tab.formatValue(spec, value)
         return text(spec.zero, "-")
     end
     if spec.format == "money" then
-        if g_i18n ~= nil and g_i18n.formatMoney ~= nil then
-            local s = g_i18n:formatMoney(value, 0, true, true)
-            if s ~= nil then
-                return s
-            end
-        end
-        return tostring(value)
+        return ContractManager.formatMoney(value)
     end
     -- Birimler oyuncunun dilinden: eskiden her dilde "6 h", "10 min", "2.5 ha" yaziliyordu (1.26.0.0).
     if spec.format == "hours" then
@@ -607,15 +601,7 @@ function Tab.finishStateKey(state)
     return finishKeyCache[state] or "cm_stateNone"
 end
 
-function Tab.formatMoney(value)
-    if g_i18n ~= nil and g_i18n.formatMoney ~= nil then
-        local s = g_i18n:formatMoney(value or 0, 0, true, true)
-        if s ~= nil then
-            return s
-        end
-    end
-    return tostring(math.floor((value or 0) + 0.5))
-end
+Tab.formatMoney = ContractManager.formatMoney
 
 ---istatistik satirlarinin metinleri (saf; test edilir)
 function Tab.buildStatsLines(stats, history, board)

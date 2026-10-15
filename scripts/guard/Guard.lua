@@ -15,11 +15,10 @@ ContractGuard = {
     savedBaselines = {}
 }
 
+-- FS25'te teslim noktali tek tur hasat kontrati. (Eski listedeki chaff/fruitCollect/mowBale FS22 adlariydi;
+-- FS25 balya kontratinin teslim noktasi yok, korunmuyor - bkz. 1.26.0.0 denetimi.)
 ContractGuard.KNOWN_DELIVERY_MISSION_TYPES = {
     harvestMission = true,
-    chaffMission = true,
-    fruitCollectMission = true,
-    mowBaleMission = true
 }
 
 function ContractGuard:getMissionTypeName(mission)
@@ -302,14 +301,9 @@ function ContractGuard:clearDischargeWarning(dischargeNode)
     end
 end
 
+---Kontrat kimligi tek yerde: ContractManager.getMissionKey (Main.lua).
 function ContractGuard:getMissionId(mission)
-    if mission == nil then
-        return nil
-    end
-    if mission.getUniqueId ~= nil then
-        return mission:getUniqueId()
-    end
-    return mission.uniqueId
+    return ContractManager.getMissionKey(mission)
 end
 
 function ContractGuard:getItemSystemItems()
@@ -714,8 +708,7 @@ function ContractGuard:isBaleDeliveryBlocked(trigger, bale)
 end
 
 -- ---------------------------------------------------------------------------
--- durum: Persistence xmlId ve temel anahtari verir (yeni dosya: contractManager.guard,
--- eski bagimsiz dosya: contractGuard). Bu katman dosya acmaz.
+-- durum: Persistence xmlId ve temel anahtari verir (contractManager.guard). Bu katman dosya acmaz.
 -- ---------------------------------------------------------------------------
 
 function ContractGuard:resetState()
@@ -914,12 +907,6 @@ local function hasRequiredApi()
         and MissionFinishState ~= nil and MissionFinishState.SUCCESS ~= nil
         and MissionManager ~= nil and MissionManager.startMission ~= nil and MissionManager.cancelMission ~= nil
         and AbstractMission ~= nil and AbstractMission.finish ~= nil
-end
-
-if ContractManager ~= nil and not ContractManager.guardEnabled then
-    Logging.warning("[CM/Guard] Guard layer disabled by Contract Manager (legacy FS25_ContractGuard active)")
-    ContractGuard.disabled = true
-    return
 end
 
 if not hasRequiredApi() then

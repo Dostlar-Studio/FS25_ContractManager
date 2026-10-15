@@ -739,7 +739,7 @@ function ContractManagerReservationEvent:run(connection)
             ok, key = Res.reserve(uniqueId, farmId)
         elseif self.kind == ContractManagerReservationEvent.RELEASE then
             local uniqueId = ContractManager.resolveMissionKey(self.objectId, self.uniqueId)
-            ok, key = Res.release(uniqueId, farmId, false)
+            ok, key = Res.release(uniqueId, farmId)
         else
             return
         end
@@ -764,7 +764,7 @@ function ContractManagerReservationEvent.send(kind, uniqueId, objectId)
         if kind == ContractManagerReservationEvent.RESERVE then
             ok, key = Res.reserve(uniqueId, farmId)
         else
-            ok, key = Res.release(uniqueId, farmId, false)
+            ok, key = Res.release(uniqueId, farmId)
         end
         if ContractManagerAdmin ~= nil then ContractManagerAdmin.showResult(key, ok) end
         return ok, key

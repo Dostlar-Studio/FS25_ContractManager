@@ -129,16 +129,3 @@ function ContractManagerTransferEvent:run(connection)
         Transfer.applyLocal(mission, self.farmId)
     end
 end
-
-if addConsoleCommand ~= nil and ContractManagerAdmin ~= nil then
-    function ContractManagerAdmin:consoleTransfer(uniqueId, farmId)
-        if uniqueId == nil or tonumber(farmId) == nil then
-            return "usage: cmTransferContract <uniqueId> <farmId>"
-        end
-        ContractManagerAdminEvent.send(ContractManagerAdmin.ACTION_TRANSFER, uniqueId, tonumber(farmId))
-        return "transfer requested"
-    end
-    if ContractManager.consoleCommands then
-        addConsoleCommand("cmTransferContract", "ContractManager: move an active contract to another farm", "consoleTransfer", ContractManagerAdmin)
-    end
-end

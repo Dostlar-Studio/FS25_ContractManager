@@ -150,17 +150,21 @@ function Hud.afterMissionUpdate(mission, dt)
     if farmId == nil then
         return
     end
-    -- metin her kare degil, REFRESH_MS'de bir yenilenir (pay hesabi katilimci listesi kurar)
+    -- ROL once ve her kare bakilir (ucuz: tek tablo aramasi) ki uyelik bitince cubuk aninda kalksin.
+    -- Uye olmayan ciftligin kontratinda odul ve pay HIC hesaplanmaz: eskiden panodaki her calisan
+    -- kontrat icin saniyede bir getReward (tum bonus zinciri) calisiyordu (1.26.0.0).
+    local isOwner = Hud.role(mission, farmId)
+    if isOwner == nil then
+        Hud.removePartnerBar(mission)
+        return
+    end
+    -- metin her kare degil, REFRESH_MS'de bir yenilenir (pay hesabi katilimci listesi kurar,
+    -- getReward bonus zincirini gezer)
     mission.cmHudTimer = (mission.cmHudTimer or Hud.REFRESH_MS) + (dt or 0)
     local refresh = mission.cmHudTimer >= Hud.REFRESH_MS
     if refresh then
         mission.cmHudTimer = 0
     end
-
-    -- ROL her kare bakilir (ucuz: tek tablo aramasi) ki uyelik bitince cubuk aninda kalksin.
-    -- PAY hesabi pahali (Part.getParticipants tablo kuruyor, getReward tum bonus zincirini
-    -- gezmiyor) - o yalnizca REFRESH_MS'de bir hesaplanir. 2026-09-13 denetimi.
-    local isOwner = Hud.role(mission, farmId)
     local cached = mission.cmHudCache
     if refresh or cached == nil then
         local _, p, sh = Hud.describe(mission, farmId, reward(mission))
@@ -174,10 +178,6 @@ function Hud.afterMissionUpdate(mission, dt)
             mission.progressBar.title = Hud.buildTitle(true, nil)
             mission.progressBar.text = Hud.buildText(mission.progressTitle, true, payout, nil)
         end
-        Hud.removePartnerBar(mission)
-        return
-    end
-    if isOwner == nil then
         Hud.removePartnerBar(mission)
         return
     end
@@ -203,8 +203,10 @@ function Hud.afterMissionUpdate(mission, dt)
     end
 end
 
+-- AbstractMission:update deger dondurmez (AbstractMission.lua:329-404): oyunun appendedFunction'i yeterli.
+-- appendKeepingReturn her cagrida (kontrat basina her kare) donus tablosu kuruyordu (1.26.0.0).
 if AbstractMission ~= nil and AbstractMission.update ~= nil then
-    AbstractMission.update = ContractManager.appendKeepingReturn(AbstractMission.update, Hud.afterMissionUpdate)
+    AbstractMission.update = Utils.appendedFunction(AbstractMission.update, Hud.afterMissionUpdate)
 end
 
 -- kontrat silinince cubuk kalmasin

@@ -127,12 +127,12 @@ function Res.reserve(uniqueId, farmId)
     return true, "cm_resReserved"
 end
 
-function Res.release(uniqueId, farmId, force)
+function Res.release(uniqueId, farmId)
     local r = Res.list[uniqueId]
     if r == nil then
         return false, "cm_resNone"
     end
-    if not force and r.farmId ~= farmId then
+    if r.farmId ~= farmId then
         return false, "cm_resTakenByOther"
     end
     Res.list[uniqueId] = nil
@@ -212,15 +212,10 @@ function Res.overwriteStartMission(manager, superFunc, mission, farmId, spawnVeh
     end
     local result = superFunc(manager, mission, farmId, spawnVehicles)
     if result == MissionStartState.OK then
+        -- Rezervasyon yalniz kabul edilmemis kontratta olur: kabulde silinir (bitiste bakmaya gerek yok).
         Res.clearForMission(mission)
     end
     return result
-end
-
-function Res.afterMissionFinish(mission, finishState)
-    if mission ~= nil and mission.isServer then
-        Res.clearForMission(mission)
-    end
 end
 
 -- ---------------------------------------------------------------------------
@@ -365,9 +360,8 @@ if addModEventListener ~= nil then
     addModEventListener(Res)
 end
 
-if MissionManager ~= nil and MissionManager.startMission ~= nil and AbstractMission ~= nil and AbstractMission.finish ~= nil then
+if MissionManager ~= nil and MissionManager.startMission ~= nil then
     MissionManager.startMission = Utils.overwrittenFunction(MissionManager.startMission, Res.overwriteStartMission)
-    AbstractMission.finish = ContractManager.appendKeepingReturn(AbstractMission.finish, Res.afterMissionFinish)
     if g_messageCenter ~= nil and MessageType ~= nil then
         if MessageType.CURRENT_MISSION_START ~= nil then
             g_messageCenter:subscribe(MessageType.CURRENT_MISSION_START, function() Res.installButton() end, Res)

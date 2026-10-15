@@ -56,8 +56,12 @@ function Info.resolveTotalLiters(mission)
             return liters, false
         end
     end
+    -- Tur once: teslimatsiz kontratta (cogunluk) tarla verimi hic hesaplanmaz.
+    if not Info.isDeliveryType(mission) then
+        return 0, false
+    end
     local estimate = Info.estimateFieldYield(mission)
-    if estimate > 0 and Info.isDeliveryType(mission) then
+    if estimate > 0 then
         return estimate, true
     end
     return 0, false

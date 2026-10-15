@@ -100,9 +100,6 @@
         <text name="cm_secInterface" text="Interface"/>
         <text name="cm_ui_managePage" text="Contract Manager page in the menu"/>
         <text name="cm_ui_managePage_tooltip" text="Shows or hides the Contract Manager tab in the sidebar. The game's own Contracts page keeps all buttons."/>
-        <text name="cm_partInviteTo" text="Invite: %s"/>
-        <text name="cm_partNextFarm" text="Next farm"/>
-        <text name="cm_partTargetSet" text="Invite target: %s"/>
         <text name="cm_integrations_discord" text="Discord Bridge events"/>
         <text name="cm_integrations_discord_tooltip" text="When FS25_DiscordBridge is loaded, contract accept/finish/payout, expiry warnings and blocked product moves are sent to Discord."/>
         <text name="cm_adminRefreshButton" text="Refresh board"/>

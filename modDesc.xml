@@ -191,6 +191,5 @@ Değişiklikler 1.24.9.0:
         <sourceFile filename="scripts/core/Safety.lua"/>
         <sourceFile filename="scripts/integrations/DiscordBridge.lua"/>
         <sourceFile filename="scripts/integrations/DiscordBridgePanel.lua"/>
-        <sourceFile filename="scripts/Debug.lua"/>
     </extraSourceFiles>
 </modDesc>

@@ -100,9 +100,6 @@
         <text name="cm_secInterface" text="Oberfläche"/>
         <text name="cm_ui_managePage" text="Vertragsmanager-Seite im Menü"/>
         <text name="cm_ui_managePage_tooltip" text="Blendet den Reiter Vertragsmanager in der Seitenleiste ein oder aus. Die Verträge-Seite des Spiels behält alle Knöpfe."/>
-        <text name="cm_partInviteTo" text="Einladen: %s"/>
-        <text name="cm_partNextFarm" text="Nächster Hof"/>
-        <text name="cm_partTargetSet" text="Einladungsziel: %s"/>
         <text name="cm_integrations_discord" text="Discord-Bridge-Ereignisse"/>
         <text name="cm_integrations_discord_tooltip" text="Wenn FS25_DiscordBridge geladen ist, gehen Vertragsannahme/-abschluss/-auszahlung, Ablaufwarnungen und Schutzsperren an Discord."/>
         <text name="cm_adminRefreshButton" text="Tafel erneuern"/>

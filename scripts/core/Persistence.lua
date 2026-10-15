@@ -6,9 +6,8 @@
 --     <guard>    ... ContractGuard baseline'lari   (ContractGuard:writeToXML)
 --     <registry> ... aktif meta / gecmis / istatistik (ContractManagerRegistry:writeToXML)
 --
--- Yeni dosya yoksa eski bagimsiz FS25_ContractGuard.xml (kok: contractGuard) okunur;
--- ilk kayitta yeni bicime yazilir. Bu dosya modDesc'te guard/* SONRASINDA yuklenir:
--- loadMap sirasi kayit sirasidir ve Guard.loadMap'in once calismasi gerekir.
+-- Bu dosya modDesc'te guard/* SONRASINDA yuklenir: loadMap sirasi kayit sirasidir ve
+-- Guard.loadMap'in once calismasi gerekir.
 --
 -- Yazma noktasi tek: FSCareerMissionInfo.saveToXMLFile (oyunun kendi kayit yolu).
 -- addModEventListener saveSavegame'i cagirmaz.
@@ -17,9 +16,6 @@
 ContractManagerPersistence = {
     FILE_VERSION = 2,
     ROOT = "contractManager",
-    LEGACY_ROOT = "contractGuard",
-    migratedFromLegacy = false,
-    loadedFromFile = false,
 }
 
 local Persistence = ContractManagerPersistence
@@ -32,17 +28,7 @@ function Persistence:getFilename()
     return directory .. "/" .. ContractManager.SAVEGAME_FILENAME
 end
 
-function Persistence:getLegacyFilename()
-    local directory = ContractManager:getSavegameDirectory()
-    if directory == nil then
-        return nil
-    end
-    return directory .. "/" .. ContractManager.LEGACY_GUARD_SAVEGAME_FILENAME
-end
-
 function Persistence:reset()
-    self.migratedFromLegacy = false
-    self.loadedFromFile = false
     if ContractGuard ~= nil and ContractGuard.resetState ~= nil then
         ContractGuard:resetState()
     end
@@ -58,47 +44,27 @@ function Persistence:load()
     self:reset()
 
     local filename = self:getFilename()
-    if filename == nil then
+    if filename == nil or not fileExists(filename) then
         return
     end
 
-    if fileExists(filename) then
-        local xmlId = loadXMLFile("ContractManagerSavegame", filename)
-        if xmlId == nil or xmlId == 0 then
-            ContractManager.warning("Could not load '%s'", filename)
-            return
-        end
-        local version = getXMLInt(xmlId, self.ROOT .. "#version") or 0
-        if ContractGuard ~= nil and ContractGuard.readFromXML ~= nil then
-            ContractGuard:readFromXML(xmlId, self.ROOT .. ".guard")
-        end
-        if ContractManagerRegistry ~= nil then
-            ContractManagerRegistry:readFromXML(xmlId, self.ROOT .. ".registry")
-        end
-        if ContractManagerPartnership ~= nil then
-            ContractManagerPartnership:readFromXML(xmlId, self.ROOT .. ".partnerships")
-        end
-        delete(xmlId)
-        self.loadedFromFile = true
-        ContractManager.info("State loaded from '%s' (version %d)", filename, version)
+    local xmlId = loadXMLFile("ContractManagerSavegame", filename)
+    if xmlId == nil or xmlId == 0 then
+        ContractManager.warning("Could not load '%s'", filename)
         return
     end
-
-    local legacy = self:getLegacyFilename()
-    if legacy ~= nil and fileExists(legacy) then
-        local xmlId = loadXMLFile("ContractGuardLegacySavegame", legacy)
-        if xmlId == nil or xmlId == 0 then
-            ContractManager.warning("Could not load legacy '%s'", legacy)
-            return
-        end
-        if ContractGuard ~= nil and ContractGuard.readFromXML ~= nil then
-            ContractGuard:readFromXML(xmlId, self.LEGACY_ROOT)
-        end
-        delete(xmlId)
-        self.migratedFromLegacy = true
-        self.loadedFromFile = true
-        ContractManager.info("Migrated guard baselines from legacy '%s'; will be rewritten as '%s' on next save", legacy, filename)
+    local version = getXMLInt(xmlId, self.ROOT .. "#version") or 0
+    if ContractGuard ~= nil and ContractGuard.readFromXML ~= nil then
+        ContractGuard:readFromXML(xmlId, self.ROOT .. ".guard")
     end
+    if ContractManagerRegistry ~= nil then
+        ContractManagerRegistry:readFromXML(xmlId, self.ROOT .. ".registry")
+    end
+    if ContractManagerPartnership ~= nil then
+        ContractManagerPartnership:readFromXML(xmlId, self.ROOT .. ".partnerships")
+    end
+    delete(xmlId)
+    ContractManager.info("State loaded from '%s' (version %d)", filename, version)
 end
 
 function Persistence:save()
@@ -132,7 +98,6 @@ function Persistence:save()
 
     saveXMLFile(xmlId)
     delete(xmlId)
-    self.migratedFromLegacy = false
     return true
 end
 

@@ -100,9 +100,6 @@
         <text name="cm_secInterface" text="Arayüz"/>
         <text name="cm_ui_managePage" text="Menüde Kontrat Yönetimi sayfası"/>
         <text name="cm_ui_managePage_tooltip" text="Kenar çubuğundaki Kontrat Yönetimi sekmesini gösterir veya gizler. Oyunun kendi Kontratlar sayfasındaki butonlar çalışmaya devam eder."/>
-        <text name="cm_partInviteTo" text="Davet et: %s"/>
-        <text name="cm_partNextFarm" text="Sonraki çiftlik"/>
-        <text name="cm_partTargetSet" text="Davet hedefi: %s"/>
         <text name="cm_integrations_discord" text="Discord Bridge olayları"/>
         <text name="cm_integrations_discord_tooltip" text="FS25_DiscordBridge yüklüyse kontrat kabul/bitiş/ödeme, süre uyarısı ve koruma engelleri Discord'a gider."/>
         <text name="cm_adminRefreshButton" text="Panoyu yenile"/>

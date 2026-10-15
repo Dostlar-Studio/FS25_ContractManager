@@ -454,7 +454,7 @@ function Admin.installButtons()
         return false
     end
     if ContractManager:isBetterContractsLoaded() then
-        ContractManager.info("BetterContracts present; admin buttons skipped (console commands available)")
+        ContractManager.info("BetterContracts present; admin buttons skipped (admin actions stay on the Contract Manager page)")
         return false
     end
     -- Tek kanca + tus secimi + cubuk dogrulamasi Main.lua'da (ContractManager.installButtonBar).
@@ -466,50 +466,6 @@ function Admin.installButtons()
     Admin.buttonsInstalled = true
     ContractManager.info("Admin buttons installed on contracts page")
     return true
-end
-
--- ---------------------------------------------------------------------------
--- konsol komutlari (yalnizca yonetici; sunucuda dogrulanir)
--- ---------------------------------------------------------------------------
-
-function Admin:consoleList()
-    if g_missionManager == nil then
-        return "no mission manager"
-    end
-    local lines = {}
-    for _, m in ipairs(g_missionManager.missions or {}) do
-        lines[#lines + 1] = string.format("%s | %s | farm=%s | status=%s | %s",
-            tostring(m.uniqueId), tostring(m.type ~= nil and m.type.name or "?"), tostring(m.farmId), tostring(m.status), tostring(m.title))
-    end
-    return table.concat(lines, "\n")
-end
-
-function Admin:consoleRefresh()
-    ContractManagerAdminEvent.send(Admin.ACTION_REFRESH)
-    return "contract board refresh requested"
-end
-
-function Admin:consoleCancel(uniqueId)
-    if uniqueId == nil then
-        return "usage: cmCancelContract <uniqueId>  (see cmListContracts)"
-    end
-    ContractManagerAdminEvent.send(Admin.ACTION_CANCEL, uniqueId)
-    return "cancel requested for " .. tostring(uniqueId)
-end
-
-function Admin:consoleAssign(uniqueId, farmId)
-    if uniqueId == nil or tonumber(farmId) == nil then
-        return "usage: cmAssignContract <uniqueId> <farmId>"
-    end
-    ContractManagerAdminEvent.send(Admin.ACTION_ASSIGN, uniqueId, tonumber(farmId))
-    return "assign requested"
-end
-
-if addConsoleCommand ~= nil and ContractManager.consoleCommands then
-    addConsoleCommand("cmListContracts", "ContractManager: list contracts with ids", "consoleList", Admin)
-    addConsoleCommand("cmRefreshContracts", "ContractManager: remove unaccepted contracts and regenerate", "consoleRefresh", Admin)
-    addConsoleCommand("cmCancelContract", "ContractManager: force-cancel a contract by uniqueId", "consoleCancel", Admin)
-    addConsoleCommand("cmAssignContract", "ContractManager: start an unaccepted contract for a farm", "consoleAssign", Admin)
 end
 
 if g_messageCenter ~= nil and MessageType ~= nil and MessageType.CURRENT_MISSION_START ~= nil then

@@ -34,20 +34,9 @@ local function getGameClock()
     return env.currentMonotonicDay or 0, env.dayTime or 0
 end
 
+-- Kontrat kimligi tek yerde: ContractManager.getMissionKey (Main.lua).
 local function getMissionId(mission)
-    if mission == nil then
-        return nil
-    end
-    if mission.getUniqueId ~= nil then
-        local id = mission:getUniqueId()
-        if id ~= nil then
-            return tostring(id)
-        end
-    end
-    if mission.uniqueId ~= nil then
-        return tostring(mission.uniqueId)
-    end
-    return nil
+    return ContractManager.getMissionKey(mission)
 end
 
 local function getTypeName(mission)
@@ -659,5 +648,4 @@ if MissionManager ~= nil and MissionManager.startMission ~= nil and AbstractMiss
     ContractManager.info("Registry hooks installed")
 else
     ContractManager.error("Mission API missing; registry disabled")
-    Registry.disabled = true
 end

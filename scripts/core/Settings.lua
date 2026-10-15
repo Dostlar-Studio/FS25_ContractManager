@@ -281,7 +281,6 @@ end
 function Settings:load()
     self:resetToDefaults()
     self.dirty = false
-    self.loaded = true
 
     local path = self:getPath()
     if not fileExists(path) then
@@ -457,7 +456,6 @@ function Settings:readStream(streamId, discard)
     end
     -- istemcideki kopya diske yazilmaz
     self.dirty = false
-    self.loaded = true
 end
 
 -- ---------------------------------------------------------------------------

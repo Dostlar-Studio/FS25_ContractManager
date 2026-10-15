@@ -100,9 +100,6 @@
         <text name="cm_secInterface" text="Interface"/>
         <text name="cm_ui_managePage" text="Page Gestionnaire de contrats dans le menu"/>
         <text name="cm_ui_managePage_tooltip" text="Affiche ou masque l'onglet Gestionnaire de contrats dans la barre latérale. La page Contrats du jeu conserve tous ses boutons."/>
-        <text name="cm_partInviteTo" text="Inviter : %s"/>
-        <text name="cm_partNextFarm" text="Ferme suivante"/>
-        <text name="cm_partTargetSet" text="Cible de l'invitation : %s"/>
         <text name="cm_integrations_discord" text="Événements Discord Bridge"/>
         <text name="cm_integrations_discord_tooltip" text="Si FS25_DiscordBridge est chargé, l'acceptation, la fin et le paiement des contrats, les alertes d'expiration et les blocages de protection sont envoyés à Discord."/>
         <text name="cm_adminRefreshButton" text="Actualiser le tableau"/>

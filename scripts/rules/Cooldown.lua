@@ -103,7 +103,8 @@ function Cooldown.afterRegisterMission(manager, mission, missionType)
         if manager.markMissionForDeletion ~= nil then
             manager:markMissionForDeletion(mission)
         end
-        ContractManager.info("Contract on field %d dropped: field on cooldown (%.1f h left)", fieldId, Cooldown.getRemainingHours(fieldId))
+        -- Oyun birkac dakikada bir rastgele tarla dener: her eleme loga yazilirsa log dolar (yalniz debug).
+        ContractManager.debug("Contract on field %d dropped: field on cooldown (%.1f h left)", fieldId, Cooldown.getRemainingHours(fieldId))
     end
 end
 

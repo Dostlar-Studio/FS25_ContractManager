@@ -259,11 +259,7 @@ function Reward.appendedGetFinishedDetails(mission, superFunc)
     local penalty = Reward.getPenalty(mission)
     if penalty > 0 and type(details) == "table" then
         local title = g_i18n ~= nil and g_i18n:getText("cm_penalty") or "Penalty"
-        local value = tostring(penalty)
-        if g_i18n ~= nil and g_i18n.formatMoney ~= nil then
-            value = g_i18n:formatMoney(penalty, 0, true, true)
-        end
-        table.insert(details, { title = title, value = value })
+        table.insert(details, { title = title, value = ContractManager.formatMoney(penalty) })
     end
     return details
 end

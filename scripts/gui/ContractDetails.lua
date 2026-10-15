@@ -30,15 +30,7 @@ function Details.formatMinutes(minutes)
     return table.concat(parts, " ")
 end
 
-function Details.formatMoney(value)
-    if g_i18n ~= nil and g_i18n.formatMoney ~= nil then
-        local s = g_i18n:formatMoney(value, 0, true, true)
-        if s ~= nil then
-            return s
-        end
-    end
-    return tostring(math.floor(value + 0.5))
-end
+Details.formatMoney = ContractManager.formatMoney
 
 function Details.formatLiters(liters)
     liters = math.max(0, math.floor((liters or 0) + 0.5))

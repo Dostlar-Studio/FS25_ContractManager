@@ -37,7 +37,7 @@ function Panel.buildSection()
         version = ContractManager.VERSION,
         rulesEnabled = ContractManager:getRulesEnabled(),
         betterContracts = ContractManager:isBetterContractsLoaded(),
-        guardEnabled = ContractManager.guardEnabled,
+        guardEnabled = ContractGuard ~= nil and not ContractGuard.disabled,
         settings = {},
         spec = {},
         types = {},

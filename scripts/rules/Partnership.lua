@@ -815,28 +815,11 @@ function Part.resolveStockTarget(ids, current)
     return ids[1]
 end
 
----Sonraki ciftlik (dongusel; saf)
-function Part.nextStockTarget(ids, current)
-    for index, id in ipairs(ids) do
-        if id == current then
-            return ids[index % #ids + 1]
-        end
-    end
-    return ids[1]
-end
-
 local function otherFarmIds(farmId)
     if ContractManagerManagePage ~= nil and ContractManagerManagePage.getFarmIds ~= nil then
         return ContractManagerManagePage.getFarmIds(farmId)
     end
     return {}
-end
-
-local function farmLabel(farmId)
-    if ContractManagerManagePage ~= nil and ContractManagerManagePage.farmName ~= nil then
-        return ContractManagerManagePage.farmName(farmId)
-    end
-    return tostring(farmId)
 end
 
 ---Sahip degilsek oyunun "Iptal" butonu kalmamali: ortak/davetli ciftlik baskasinin
@@ -884,25 +867,18 @@ function Part.appendOwnerButtons(frame, mission, farmId)
         Part.reportInviteSkip("partner limit reached", string.format("%d/%d", partners, maxPartners))
         return 0
     end
-    -- Pencere varsa tek buton: "Ortak davet et" -> ciftlik secme penceresi acilir.
-    -- Pencere yuklenemediyse eski yol: "Davet et: X" + "Sonraki ciftlik".
-    -- Tuslar oyunun tanimladiklarindan secilir (MENU_EXTRA_3/4 FS25'te YOK; bkz. Main.lua).
-    local keys = ContractManager.MENU_KEYS_PLAYER
-    if Part.canUseDialog() then
-        if ContractManager.addMenuButton(frame.menuButtonInfo, keys, text("cm_pageInvite", "Invite partner"), Part.onClickOpenDialog) == nil then
-            return 0
-        end
-        return 1
-    end
-    if ContractManager.addMenuButton(frame.menuButtonInfo, keys,
-        string.format(text("cm_partInviteTo", "Invite: %s"), farmLabel(Part.stockTarget)), Part.onClickInvite) == nil then
+    -- Tek buton: "Ortak davet et" -> ciftlik secme penceresi acilir. Pencere yuklenemediyse buton yok;
+    -- davet Kontrat Yonetimi sayfasindaki hedef ciftlik secicisiyle yapilir ("Davet et: X" + "Sonraki
+    -- ciftlik" eski yedegi 1.26.0.0'da kaldirildi). Tuslar oyunun tanimladiklarindan secilir (bkz. Main.lua).
+    if not Part.canUseDialog() then
+        Part.reportInviteSkip("farm picker window unavailable", "invite from the Contract Manager page")
         return 0
     end
-    local added = 1
-    if #ids > 1 and ContractManager.addMenuButton(frame.menuButtonInfo, keys, text("cm_partNextFarm", "Next farm"), Part.onClickNextFarm) ~= nil then
-        added = 2
+    if ContractManager.addMenuButton(frame.menuButtonInfo, ContractManager.MENU_KEYS_PLAYER,
+        text("cm_pageInvite", "Invite partner"), Part.onClickOpenDialog) == nil then
+        return 0
     end
-    return added
+    return 1
 end
 
 ---Ciftlik secme penceresi kullanilabilir mi? (yuklenmisse ya da henuz denenmediyse)
@@ -924,9 +900,9 @@ function Part.onClickOpenDialog()
         Part.stockTarget = targetFarmId
         ContractManagerPartnerEvent.send(ContractManagerPartnerEvent.INVITE, key, targetFarmId, objectId)
     end, Part.stockTarget)
-    if not opened then
-        -- pencere acilamadi: butonlar bir sonraki cizimde eski donguye doner
-        Part.onClickNextFarm()
+    if not opened and ContractManagerAdmin ~= nil and ContractManagerAdmin.showResult ~= nil then
+        -- pencere acilamadi (yukleme bu tiklamada basarisiz oldu): buton bir sonraki cizimde gizlenir
+        ContractManagerAdmin.showResult("cm_adminFailed", false)
     end
 end
 
@@ -969,29 +945,6 @@ function Part.appendMenuButton(frame)
     end
 end
 
-function Part.onClickInvite()
-    local frame = g_inGameMenu ~= nil and g_inGameMenu.pageContracts or nil
-    local mission = ContractManagerAdmin ~= nil and ContractManagerAdmin.getSelectedMission(frame) or nil
-    if mission == nil or Part.stockTarget == nil then
-        return
-    end
-    ContractManagerPartnerEvent.send(ContractManagerPartnerEvent.INVITE,
-        ContractManager.getMissionKey(mission), Part.stockTarget, ContractManager.getMissionObjectId(mission))
-end
-
-function Part.onClickNextFarm()
-    local farmId = g_currentMission ~= nil and g_currentMission.getFarmId ~= nil and g_currentMission:getFarmId() or nil
-    Part.stockTarget = Part.nextStockTarget(otherFarmIds(farmId), Part.stockTarget)
-    if ContractManagerAdmin ~= nil and ContractManagerAdmin.showLine ~= nil then
-        ContractManagerAdmin.showLine(string.format(text("cm_partTargetSet", "Invite target: %s"), farmLabel(Part.stockTarget)), true)
-    end
-    -- butonlari yeniden kur (secili kontrat degismedi ama etiket degisti)
-    local frame = g_inGameMenu ~= nil and g_inGameMenu.pageContracts or nil
-    if frame ~= nil and frame.updateList ~= nil then
-        pcall(frame.updateList, frame)
-    end
-end
-
 function Part.onClickDecline()
     local frame = g_inGameMenu ~= nil and g_inGameMenu.pageContracts or nil
     local mission = ContractManagerAdmin ~= nil and ContractManagerAdmin.getSelectedMission(frame) or nil
@@ -1000,30 +953,6 @@ function Part.onClickDecline()
     end
     ContractManagerPartnerEvent.send(ContractManagerPartnerEvent.DECLINE,
         ContractManager.getMissionKey(mission), nil, ContractManager.getMissionObjectId(mission))
-end
-
-function Part:consoleInvite(uniqueId, farmId)
-    if uniqueId == nil or tonumber(farmId) == nil then
-        return "usage: cmInvitePartner <uniqueId> <farmId>  (see cmListContracts)"
-    end
-    local ok, key = ContractManagerPartnerEvent.send(ContractManagerPartnerEvent.INVITE, uniqueId, tonumber(farmId))
-    return tostring(key or "sent")
-end
-
-function Part:consoleAccept(uniqueId)
-    if uniqueId == nil then
-        return "usage: cmAcceptPartner <uniqueId>"
-    end
-    local ok, key = ContractManagerPartnerEvent.send(ContractManagerPartnerEvent.ACCEPT, uniqueId)
-    return tostring(key or "sent")
-end
-
-function Part:consoleLeave(uniqueId)
-    if uniqueId == nil then
-        return "usage: cmLeavePartner <uniqueId>"
-    end
-    local ok, key = ContractManagerPartnerEvent.send(ContractManagerPartnerEvent.LEAVE, uniqueId)
-    return tostring(key or "sent")
 end
 
 -- ---------------------------------------------------------------------------
@@ -1152,11 +1081,6 @@ if addModEventListener ~= nil then
     addModEventListener(Part)
 end
 
-if addConsoleCommand ~= nil and ContractManager.consoleCommands then
-    addConsoleCommand("cmInvitePartner", "ContractManager: invite a farm to share your contract", "consoleInvite", Part)
-    addConsoleCommand("cmAcceptPartner", "ContractManager: accept a partnership invite", "consoleAccept", Part)
-    addConsoleCommand("cmLeavePartner", "ContractManager: leave a shared contract", "consoleLeave", Part)
-end
 -- Tek kanca + tus secimi + cubuk dogrulamasi Main.lua'da (ContractManager.installButtonBar).
 -- Ortaklik once calisir: oyuncu eylemi cubukta yonetici aracindan once yer alir ve stok
 -- "Iptal"i ayiklamasi yonetici butonlarindan etkilenmez.

@@ -187,15 +187,7 @@ local function minutesText(mission)
     return string.format("%d", math.floor(minutes))
 end
 
-local function money(value)
-    if g_i18n ~= nil and g_i18n.formatMoney ~= nil then
-        local s = g_i18n:formatMoney(value or 0, 0, true, true)
-        if s ~= nil then
-            return s
-        end
-    end
-    return tostring(math.floor((value or 0) + 0.5))
-end
+local money = ContractManager.formatMoney
 
 Page.money = money
 
