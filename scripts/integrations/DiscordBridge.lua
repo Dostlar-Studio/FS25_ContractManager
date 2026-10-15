@@ -166,6 +166,17 @@ function Discord.payloadGuard(code, farmId, fillTypeIndex, amount)
     return { code = code, codeName = GUARD_CODE_NAMES[code] or tostring(code), farmId = farmId, fillType = fillType, amount = math.floor((amount or 0) + 0.5) }
 end
 
+function Discord.payloadProductLost(mission, liters)
+    local fillType = nil
+    if g_fillTypeManager ~= nil and ContractGuard ~= nil and ContractGuard.getMissionFillType ~= nil then
+        local index = ContractGuard:getMissionFillType(mission)
+        local ft = index ~= nil and g_fillTypeManager:getFillTypeByIndex(index) or nil
+        if ft ~= nil then fillType = ft.name or ft.title end
+    end
+    return { id = ContractManager.getMissionKey(mission), title = missionTitle(mission),
+        farmId = mission ~= nil and mission.farmId or nil, fillType = fillType, liters = math.floor((liters or 0) + 0.5) }
+end
+
 -- ---------------------------------------------------------------------------
 -- mesaj abonelikleri (Registry / Duration / Guard / Settings yayinlar)
 -- ---------------------------------------------------------------------------
@@ -188,6 +199,10 @@ function Discord.install()
     end, Discord)
     g_messageCenter:subscribe(ContractManager.MESSAGE_GUARD_BLOCKED, function(_, code, farmId, fillTypeIndex, amount)
         Discord.emit("cm_guard_blocked", Discord.payloadGuard(code, farmId, fillTypeIndex, amount))
+    end, Discord)
+    -- Urun kaybi: 1.22.0.0'dan beri yayinlaniyordu ama buraya hic abone olunmamisti (1.26.0.0).
+    g_messageCenter:subscribe(ContractManager.MESSAGE_PRODUCT_LOST, function(_, mission, liters)
+        Discord.emit("cm_product_lost", Discord.payloadProductLost(mission, liters))
     end, Discord)
     g_messageCenter:subscribe(ContractManager.MESSAGE_CONTRACT_TRANSFERRED, function(_, mission, oldFarmId, newFarmId)
         Discord.emit("cm_contract_transferred", { id = mission and mission.uniqueId, title = mission and mission.title, fromFarmId = oldFarmId, farmId = newFarmId })

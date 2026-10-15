@@ -14,7 +14,9 @@ ContractManager = {
     VERSION = "1.25.1.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
-    PROTOCOL = 2,
+    -- 3 (1.26.0.0): ayar senkronuna 1.24.8.0'da harvest.grassContracts eklenmisti (artirilmamisti);
+    -- devir olayina ag kimligi, ortaklik senkronuna paylar eklendi.
+    PROTOCOL = 3,
     LOG_PREFIX = "[CM]",
 
     -- savegame icindeki birlesik durum dosyasi ve devralinacak eski Guard dosyasi
@@ -75,6 +77,34 @@ function ContractManager.appendKeepingReturn(oldFunc, appendFunc)
         appendFunc(...)
         return unpack(results)
     end
+end
+
+-- ---------------------------------------------------------------------------
+-- Tek hata siniri (1.26.0.0)
+--
+-- Oyunun bizi cagirdigi noktalarda (kancalar, olaylar, baska modlarin fonksiyonlari) modun bir
+-- hatasi oyunun kendi akisini yarida kesmesin diye kullanilir. Hata YUTULMAZ: etiket basina ilk
+-- GUARD_LOG_MAX hata loglanir (her karede calisan kancalarda log tasmasin). Donus pcall gibidir:
+-- true + fn'in donusleri ya da false + hata. Firlatmayan oyun fonksiyonlari bununla SARILMAZ.
+-- ---------------------------------------------------------------------------
+ContractManager.GUARD_LOG_MAX = 3
+ContractManager.guardErrors = {}
+
+local function guardResult(label, ok, ...)
+    if not ok then
+        local key = tostring(label)
+        local count = (ContractManager.guardErrors[key] or 0) + 1
+        ContractManager.guardErrors[key] = count
+        if count <= ContractManager.GUARD_LOG_MAX then
+            ContractManager.warning("%s failed: %s%s", key, tostring((...)),
+                count == ContractManager.GUARD_LOG_MAX and " (further errors of this kind are not logged)" or "")
+        end
+    end
+    return ok, ...
+end
+
+function ContractManager.guard(label, fn, ...)
+    return guardResult(label, pcall(fn, ...))
 end
 
 -- ---------------------------------------------------------------------------

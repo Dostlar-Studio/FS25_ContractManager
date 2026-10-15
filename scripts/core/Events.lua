@@ -48,7 +48,9 @@ function ContractManagerSyncEvent:readStream(streamId, connection)
         -- pakette gelen SONRAKI olaylarin basligi sanilip cop veriden cozuluyordu
         -- (degistirilmis bir istemcinin tek satirla sunucuyu bozmasi icin yeterliydi).
         local fromServer = connection == nil or connection:getIsServer()
-        ContractManagerSettings:readStream(streamId, not fromServer)
+        -- Farkli protokolde gelen degerler UYGULANMAZ (once uygulanip sonra uyariliyordu, 1.26.0.0).
+        local sameProtocol = self.protocol == ContractManager.PROTOCOL
+        ContractManagerSettings:readStream(streamId, not fromServer or not sameProtocol)
         if not fromServer then
             ContractManager.warning("Ignored settings state sent by a client")
             return
@@ -464,7 +466,8 @@ function ContractManagerStatsEvent.newResponse(farmId)
     self.isResponse = true
     self.farmId = farmId
     local registry = ContractManagerRegistry
-    self.stats = registry ~= nil and registry:getFarmStats(farmId) or {}
+    -- Salt okunur: satir yoksa olusturulmaz (1.26.0.0).
+    self.stats = registry ~= nil and registry:peekFarmStats(farmId) or {}
     self.history = {}
     if registry ~= nil then
         for i, entry in ipairs(registry:getHistory(farmId)) do
@@ -490,11 +493,16 @@ function ContractManagerStatsEvent.buildBoard()
     if registry == nil then return board end
     for farmId, st in pairs(registry.stats) do
         local name = "Farm " .. tostring(farmId)
-        if g_farmManager ~= nil and g_farmManager.getFarmById ~= nil then
+        local exists = farmId ~= 0
+        if exists and g_farmManager ~= nil and g_farmManager.getFarmById ~= nil then
             local farm = g_farmManager:getFarmById(farmId)
+            exists = farm ~= nil
             if farm ~= nil and farm.name ~= nil then name = tostring(farm.name) end
         end
-        board[#board + 1] = { farmId = farmId, name = name, reputation = st.reputation or 0, completed = st.completed or 0, earned = st.earned or 0 }
+        -- izleyici (0) ve silinmis ciftlikler siralamaya girmez (1.26.0.0)
+        if exists then
+            board[#board + 1] = { farmId = farmId, name = name, reputation = st.reputation or 0, completed = st.completed or 0, earned = st.earned or 0 }
+        end
     end
     table.sort(board, function(a, b)
         if a.reputation ~= b.reputation then return a.reputation > b.reputation end
@@ -573,8 +581,9 @@ function ContractManagerStatsEvent:run(connection)
         if not ContractManagerSyncEvent.allowRequest(connection, "stats") then
             return
         end
-        -- sunucu: istek geldi; yalnizca istemcinin KENDI ciftligini yanitla
-        local farmId = self.farmId
+        -- Sunucu: istek geldi; yalnizca istemcinin KENDI ciftligini yanitla. Ciftlik baglantidan cozulemezse
+        -- istemcinin gonderdigi kimlige GUVENILMEZ, izleyici (0) gibi yanitlanir (1.26.0.0).
+        local farmId = 0
         if g_currentMission ~= nil and g_currentMission.userManager ~= nil and g_farmManager ~= nil then
             local ok, user = pcall(g_currentMission.userManager.getUserByConnection, g_currentMission.userManager, connection)
             if ok and user ~= nil and user.getId ~= nil and g_farmManager.getFarmByUserId ~= nil then
@@ -864,6 +873,7 @@ function ContractManagerPartnerEvent.newRequest(kind, uniqueId, targetFarmId, ob
     self.pending = {}
     self.targetFarmId = targetFarmId or 0
     self.farms = {}
+    self.shares = {}
     return self
 end
 
@@ -896,6 +906,17 @@ function ContractManagerPartnerEvent.newSync(uniqueId)
             end
         end
     end
+    -- Paylar ve teslim litresi (sunucunun olctugu katkidan, 1.26.0.0): istemci bunlari kendisi olcemez.
+    -- Pay anlamli degilse (esit bolunur) gitmez; istemci de sunucu gibi "esit bolunur" gosterir.
+    self.shares = {}
+    if entry ~= nil and Part.getShares ~= nil and Part.hasContribution(uniqueId) then
+        local shares = Part.getShares(uniqueId)
+        for _, farmId in ipairs(Part.getFarms(uniqueId)) do
+            if #self.shares <= ContractManagerPartnerEvent.MAX_FARMS then
+                self.shares[#self.shares + 1] = { farmId = farmId, share = shares[farmId] or 0, liters = entry.liters[farmId] or 0 }
+            end
+        end
+    end
     return self
 end
 
@@ -912,6 +933,12 @@ function ContractManagerPartnerEvent:writeStream(streamId, connection)
     for _, invite in ipairs(self.pending) do
         streamWriteUIntN(streamId, invite.farmId, FarmManager.FARM_ID_SEND_NUM_BITS)
         streamWriteUInt8(streamId, math.min(255, math.max(0, invite.minutesLeft or 0)))
+    end
+    streamWriteUInt8(streamId, #(self.shares or {}))
+    for _, item in ipairs(self.shares or {}) do
+        streamWriteUIntN(streamId, item.farmId, FarmManager.FARM_ID_SEND_NUM_BITS)
+        streamWriteUInt16(streamId, math.floor(math.max(0, math.min(1, item.share or 0)) * 10000 + 0.5))
+        streamWriteFloat32(streamId, item.liters or 0)
     end
 end
 
@@ -931,6 +958,13 @@ function ContractManagerPartnerEvent:readStream(streamId, connection)
         local farmId = streamReadUIntN(streamId, FarmManager.FARM_ID_SEND_NUM_BITS)
         local minutesLeft = streamReadUInt8(streamId)
         self.pending[#self.pending + 1] = { farmId = farmId, minutesLeft = minutesLeft }
+    end
+    self.shares = {}
+    local shareCount = streamReadUInt8(streamId)
+    for _ = 1, shareCount do
+        local farmId = streamReadUIntN(streamId, FarmManager.FARM_ID_SEND_NUM_BITS)
+        local share = streamReadUInt16(streamId) / 10000
+        self.shares[#self.shares + 1] = { farmId = farmId, share = share, liters = streamReadFloat32(streamId) }
     end
     self:run(connection)
 end
@@ -956,10 +990,10 @@ function ContractManagerPartnerEvent:run(connection)
     if self.kind == ContractManagerPartnerEvent.SYNC then
         -- kontrata sunucunun kimligini yapistir ki isPartner/getShares eslesebilsin
         local resolved = ContractManager.rememberMissionKey(self.objectId, self.uniqueId)
-        Part.applyRemote(self.uniqueId, self.targetFarmId, self.farms, self.pending)
-        -- Teshis: senkron geldi mi, kontrat nesnesi bulundu mu? objectId=0 ya da
+        Part.applyRemote(self.uniqueId, self.targetFarmId, self.farms, self.pending, self.shares)
+        -- Teshis (yalniz debug): senkron geldi mi, kontrat nesnesi bulundu mu? objectId=0 ya da
         -- resolved=false ise istemci ortakligi HIC goremez (kimlik eslesmez).
-        ContractManager.info("Partnership sync: contract=%s objectId=%s resolved=%s owner=%s partners=%d pending=%d",
+        ContractManager.debug("Partnership sync: contract=%s objectId=%s resolved=%s owner=%s partners=%d pending=%d",
             tostring(self.uniqueId), tostring(self.objectId), tostring(resolved ~= nil),
             tostring(self.targetFarmId), #(self.farms or {}), #(self.pending or {}))
     end

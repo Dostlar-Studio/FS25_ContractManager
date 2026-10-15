@@ -106,15 +106,27 @@ function Quota.getRemaining(farmId)
         end
         return remote.day, remote.month
     end
-    local record = Quota.getRecord(farmId)
-    if record == nil then
+    if farmId == nil then
         return nil, nil
     end
+    -- Salt okunur: kayit yoksa olusturulmaz (istatistik yaniti hayalet ciftlik 0 satiri uretiyordu, 1.26.0.0).
+    local dayCount, monthCount = Quota.peekCounts(farmId)
     local perDay = settings():get("limits.quotaPerDay") or 0
     local perMonth = settings():get("limits.quotaPerMonth") or 0
-    local day = perDay > 0 and math.max(0, perDay - record.dayCount) or nil
-    local month = perMonth > 0 and math.max(0, perMonth - record.monthCount) or nil
+    local day = perDay > 0 and math.max(0, perDay - dayCount) or nil
+    local month = perMonth > 0 and math.max(0, perMonth - monthCount) or nil
     return day, month
+end
+
+---Bu donemin sayaclari; kayit yoksa ya da donem degistiyse 0. Kayit OLUSTURMAZ.
+function Quota.peekCounts(farmId)
+    local record = ContractManagerRegistry ~= nil and farmId ~= nil and ContractManagerRegistry.quota[farmId] or nil
+    if record == nil then
+        return 0, 0
+    end
+    local dayKey, monthKey = Quota.getPeriodKeys()
+    return record.dayKey == dayKey and (record.dayCount or 0) or 0,
+        record.monthKey == monthKey and (record.monthCount or 0) or 0
 end
 
 function Quota.overwriteStartMission(manager, superFunc, mission, farmId, spawnVehicles)

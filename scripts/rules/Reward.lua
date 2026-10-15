@@ -66,7 +66,12 @@ function Reward.getPenalty(mission)
     if state == nil or state == MissionFinishState.SUCCESS or state == MissionFinishState.NONE then
         return 0
     end
-    local percent = Reward.getPenaltyPercent(mission.farmId)
+    -- Kiralik araclar yuklenemedi: oyun kontrati kendisi FAILED bitirir (AbstractMission.lua:373); oyuncunun
+    -- hatasi degil, ceza yok (1.26.0.0).
+    if state == MissionFinishState.FAILED and mission.failedToLoadVehicles then
+        return 0
+    end
+    local percent = Reward.getFrozenPenaltyPercent(mission)
     if percent <= 0 then
         return 0
     end
@@ -85,13 +90,39 @@ function Reward.getPenaltyPercent(farmId)
     local s = settings()
     local base = s:get("reward.failPenaltyPercent") or 0
     local step = s:get("reward.penaltyStepPercent") or 0
+    -- Tavan HER ZAMAN uygulanir. Eskiden adim 0 iken atlaniyordu: taban 100 / tavan 75 ayarinda adim 0
+    -- -> %100, adim acilinca -> %75 (artan cezayi acmak cezayi dusuruyordu, 1.26.0.0).
+    local cap = s:get("reward.penaltyMaxPercent") or 100
     if step <= 0 or farmId == nil or ContractManagerRegistry == nil then
-        return base
+        return math.min(cap, base)
     end
     local stats = ContractManagerRegistry.stats[farmId]
     local streak = stats ~= nil and (stats.failStreak or 0) or 0
     streak = math.max(0, streak - 1)
-    return math.min(s:get("reward.penaltyMaxPercent") or 100, base + streak * step)
+    return math.min(cap, base + streak * step)
+end
+
+---Bitiste dondurulan ceza yuzdesi (Registry yazar). Yoksa (eski kayit, yeniden baslatma) gecmis kaydindaki
+---deger, o da yoksa canli hesap. Eskiden kapatma anindaki seri okunuyordu: kapatilmadan biriken uc
+---basarisizligin ucu de son serinin yuzdesini oduyordu (1.26.0.0).
+function Reward.getFrozenPenaltyPercent(mission)
+    if type(mission.cmFrozenPenaltyPercent) == "number" then
+        return mission.cmFrozenPenaltyPercent
+    end
+    local entry = Reward.historyEntry(mission)
+    if entry ~= nil and type(entry.penaltyPercent) == "number" then
+        return entry.penaltyPercent
+    end
+    return Reward.getPenaltyPercent(mission.farmId)
+end
+
+---Sunucu: kontratin gecmis kaydi (bitiste yazilir). Istemcide gecmis kimliksiz gelir -> nil.
+function Reward.historyEntry(mission)
+    if g_server == nil or ContractManagerRegistry == nil or ContractManagerRegistry.findHistoryEntry == nil then
+        return nil
+    end
+    local key = ContractManager.getMissionKey(mission)
+    return key ~= nil and ContractManagerRegistry:findHistoryEntry(key) or nil
 end
 
 ---basarisiz kontratta tamamlanma oranina gore kismi odeme (0 = yok)
@@ -155,6 +186,16 @@ function Reward.overwriteGetReward(mission, superFunc)
     -- bitiste dondurulmus deger varsa odeme, ceza ve gosterim hep ayni sayiyi kullanir
     if type(mission.cmFrozenReward) == "number" then
         return mission.cmFrozenReward
+    end
+    -- Sunucu bitis ile kapatma arasinda yeniden baslarsa dondurulmus deger bellekte yoktur: bitiste gecmise
+    -- yazilan tutar gecerlidir. Eskiden yeniden hesaplaniyordu ve zincir/NPC/itibar bonusu degisiyordu
+    -- (ana sunucu: bir kayitta odeme dondurulandan %10 fazla, 1.26.0.0).
+    if mission.status == MissionStatus.FINISHED or mission.status == MissionStatus.DISMISSED then
+        local entry = Reward.historyEntry(mission)
+        if entry ~= nil and type(entry.reward) == "number" then
+            mission.cmFrozenReward = entry.reward
+            return entry.reward
+        end
     end
     mission.cmInReward = true
     -- Oyunun kendi getReward'i hata atarsa bayrak temizlenmeden kalirdi ve o kontrat

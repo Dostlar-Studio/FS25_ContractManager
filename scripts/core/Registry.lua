@@ -120,6 +120,12 @@ function Registry:getFarmStats(farmId)
     return stats
 end
 
+---Salt okunur: satir yoksa OLUSTURMAZ. Istatistik yaniti izleyici (ciftlik 0) ve cozulemeyen istekler
+---icin kayitta kalici hayalet satir uretiyordu (1.26.0.0).
+function Registry:peekFarmStats(farmId)
+    return self.stats[farmId]
+end
+
 function Registry:getActiveMeta(mission)
     local id = getMissionId(mission)
     return id ~= nil and self.active[id] or nil
@@ -262,6 +268,13 @@ function Registry:onMissionFinished(mission, finishState)
         stats.failed = stats.failed + 1
     end
 
+    -- Ceza yuzdesini seri BU basarisizligi icerdigi anda dondur; odeme kapatmada, seri o ana kadar degisebilir.
+    if finishState ~= MissionFinishState.SUCCESS and ContractManagerReward ~= nil
+        and ContractManagerReward.getPenaltyPercent ~= nil then
+        entry.penaltyPercent = ContractManagerReward.getPenaltyPercent(entry.farmId)
+        mission.cmFrozenPenaltyPercent = entry.penaltyPercent
+    end
+
     self.active[id] = nil
     ContractManager.info("Contract %s finished state=%s farm=%s reward=%d", id, tostring(finishState), tostring(entry.farmId), entry.reward)
     ContractManager.publish(ContractManager.MESSAGE_CONTRACT_FINISHED, mission, entry)
@@ -280,6 +293,23 @@ function Registry:onMissionDeleted(mission)
     ContractManager.info("Contract %s (%s) removed without finishing; dropped from active list (farm %s)",
         id, tostring(meta.typeName), tostring(meta.farmId))
     return true
+end
+
+---Ciftlik silindi (sunucu): istatistik, kota, NPC ve zincir kayitlari temizlenir. Oyun ayni kimligi yeni
+---bir ciftlige verirse eski itibari, ceza serisini ve NPC bonusunu devralmasin (1.26.0.0).
+function Registry:onFarmDeleted(farmId)
+    if farmId == nil then
+        return
+    end
+    self.stats[farmId] = nil
+    self.quota[farmId] = nil
+    self.npcJobs[farmId] = nil
+    for fieldId, chain in pairs(self.fieldChain) do
+        if chain.farmId == farmId then
+            self.fieldChain[fieldId] = nil
+        end
+    end
+    ContractManager.info("Farm %s deleted: contract statistics, quota and bonus records removed", tostring(farmId))
 end
 
 ---Kayittan yuklenen aktif kontratlardan oyunda artik OLMAYANLARI at. Kontratlar yuklendikten sonra
@@ -334,7 +364,7 @@ end
 
 local ACTIVE_FIELDS = { "typeName", "farmId", "fieldId", "acceptedDay", "acceptedDayTime", "rewardAtAccept" }
 local HISTORY_FIELDS = { "typeName", "farmId", "fieldId", "acceptedDay", "acceptedDayTime",
-    "finishedDay", "finishedDayTime", "finishState", "reward", "completion", "payout" }
+    "finishedDay", "finishedDayTime", "finishState", "reward", "completion", "payout", "penaltyPercent" }
 
 local function writeRecord(xmlId, key, record, fields)
     setXMLString(xmlId, key .. "#id", record.id)
@@ -481,7 +511,8 @@ function Registry:readFromXML(xmlId, baseKey)
             break
         end
         local farmId = getXMLInt(xmlId, key .. "#farmId")
-        if farmId ~= nil then
+        -- ciftlik 0 (izleyici) eski surumlerin istatistik isteginden kalan hayalet satir: yuklenmez
+        if farmId ~= nil and farmId ~= 0 then
             local stats = self:getFarmStats(farmId)
             for field in pairs(stats) do
                 stats[field] = getXMLFloat(xmlId, key .. "#" .. field) or 0
@@ -509,7 +540,7 @@ function Registry:readFromXML(xmlId, baseKey)
         local key = string.format("%s.quota.farm(%d)", baseKey, index)
         if not hasXMLProperty(xmlId, key) then break end
         local farmId = getXMLInt(xmlId, key .. "#farmId")
-        if farmId ~= nil then
+        if farmId ~= nil and farmId ~= 0 then
             self.quota[farmId] = {
                 dayKey = getXMLFloat(xmlId, key .. "#dayKey") or 0,
                 dayCount = getXMLFloat(xmlId, key .. "#dayCount") or 0,
@@ -614,6 +645,13 @@ if MissionManager ~= nil and MissionManager.startMission ~= nil and AbstractMiss
             g_messageCenter:subscribe(MessageType.CURRENT_MISSION_START, function()
                 if g_currentMission ~= nil and g_currentMission:getIsServer() and g_missionManager ~= nil then
                     Registry:pruneActive(g_missionManager.missions)
+                end
+            end, Registry)
+        end
+        if MessageType.FARM_DELETED ~= nil then
+            g_messageCenter:subscribe(MessageType.FARM_DELETED, function(_, farmId)
+                if g_currentMission ~= nil and g_currentMission:getIsServer() then
+                    Registry:onFarmDeleted(farmId)
                 end
             end, Registry)
         end

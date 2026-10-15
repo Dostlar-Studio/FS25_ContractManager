@@ -39,6 +39,11 @@ function Transfer.execute(uniqueId, farmId)
 
     local oldFarmId = mission.farmId
     Transfer.applyLocal(mission, farmId)
+    -- Ortakli kontrat: sahip yeni ciftlik olur, eski sahip ortak kalir (katkisi ve on payi korunur).
+    -- Oncesinde ortagin payi artik kontratla ilgisi olmayan ESKI sahipten kesiliyordu (1.26.0.0).
+    if ContractManagerPartnership ~= nil and ContractManagerPartnership.onTransferred ~= nil then
+        ContractManagerPartnership.onTransferred(mission, oldFarmId, farmId)
+    end
 
     -- Registry meta + Guard baseline yeni ciftlige gore
     if ContractManagerRegistry ~= nil then
@@ -89,21 +94,26 @@ function ContractManagerTransferEvent.emptyNew()
     return Event.new(ContractManagerTransferEvent_mt)
 end
 
+---Olay kontratin AG kimligini de tasir: istemcide uniqueId yok ve kontrat oyunun kimlik tablosunda
+---degil; yalnizca uniqueId gonderildigi icin devir istemcilere HIC uygulanmiyordu (1.26.0.0).
 function ContractManagerTransferEvent.new(uniqueId, farmId)
     local self = ContractManagerTransferEvent.emptyNew()
     self.uniqueId = uniqueId or ""
     self.farmId = farmId or 0
+    self.objectId = ContractManager.getMissionObjectIdByKey(uniqueId)
     return self
 end
 
 function ContractManagerTransferEvent:writeStream(streamId, connection)
     streamWriteString(streamId, tostring(self.uniqueId))
     streamWriteUIntN(streamId, self.farmId or 0, FarmManager.FARM_ID_SEND_NUM_BITS)
+    NetworkUtil.writeNodeObjectId(streamId, self.objectId or 0)
 end
 
 function ContractManagerTransferEvent:readStream(streamId, connection)
     self.uniqueId = streamReadString(streamId)
     self.farmId = streamReadUIntN(streamId, FarmManager.FARM_ID_SEND_NUM_BITS)
+    self.objectId = NetworkUtil.readNodeObjectId(streamId)
     self:run(connection)
 end
 
@@ -111,7 +121,10 @@ function ContractManagerTransferEvent:run(connection)
     if connection ~= nil and not connection:getIsServer() then
         return -- istemciden gelmez
     end
-    local mission = ContractManagerAdmin ~= nil and ContractManagerAdmin.findMission(self.uniqueId) or nil
+    local mission = ContractManager.rememberMissionKey(self.objectId, self.uniqueId)
+    if mission == nil and ContractManagerAdmin ~= nil then
+        mission = ContractManagerAdmin.findMission(self.uniqueId)
+    end
     if mission ~= nil then
         Transfer.applyLocal(mission, self.farmId)
     end

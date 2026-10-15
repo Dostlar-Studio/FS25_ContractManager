@@ -250,9 +250,10 @@ function Info.broadcast(mission, connection)
     if data == nil then
         return false
     end
-    -- kontratin ilk yayini loga: sunucu logundan hangi alanin doldugu gorulsun (alan adlari yayinlanmamis sinifta)
+    -- Kontratin ilk yayini (yalniz debug): alan adlari dogrulandi; INFO seviyesinde ana sunucu logundaki [CM]
+    -- satirlarinin cogunu bu tek satir uretiyordu (1.26.0.0).
     if Info.lastSent[objectId] == nil and connection == nil and not Info.dirty then
-        ContractManager.info("MissionInfo '%s': total=%d%s toDeliver=%d keep=%d fillType=%d deposited=%d",
+        ContractManager.debug("MissionInfo '%s': total=%d%s toDeliver=%d keep=%d fillType=%d deposited=%d",
             tostring(mission.title or mission.progressTitle or "?"), data.total, data.estimated and " (est)" or "",
             data.deliver or 0, data.keep or 0, data.fillTypeIndex or 0, data.deposited or 0)
     end
@@ -264,7 +265,10 @@ function Info.broadcast(mission, connection)
     else
         return false
     end
-    Info.lastSent[objectId] = data.deposited
+    -- Tek baglantiya (gec katilan istemci) gonderim ortak esigi kaydirmasin: digerleri o degeri almadi.
+    if connection == nil then
+        Info.lastSent[objectId] = data.deposited
+    end
     return true
 end
 

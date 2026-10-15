@@ -47,9 +47,17 @@ function ContractGuardVehicle.dischargeToObject(self, superFunc, dischargeNode, 
     if blocked then
         return 0
     end
+    -- Bosaltma her karede calisir: ortaklik yoksa katki yolu hic calismaz.
+    local Part = ContractManagerPartnership
+    local countDelivery = Part ~= nil and next(Part.list) ~= nil
+    -- Dolum turu bosaltmadan ONCE: bosalan bolmede tur sifirlanabilir.
+    local fillTypeIndex = nil
+    if countDelivery and self.getDischargeFillType ~= nil then
+        fillTypeIndex = self:getDischargeFillType(dischargeNode)
+    end
     local dischargedLiters = superFunc(self, dischargeNode, emptyLiters, object, targetFillUnitIndex)
-    if ContractManagerPartnership ~= nil then
-        pcall(ContractManagerPartnership.onDelivered, self, object, dischargedLiters)
+    if countDelivery then
+        ContractManager.guard("Partnership delivery", Part.onDelivered, self, object, dischargedLiters, fillTypeIndex)
     end
     return dischargedLiters
 end

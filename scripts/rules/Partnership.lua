@@ -118,6 +118,7 @@ function Part.addLiters(mission, farmId, liters)
         return
     end
     entry.liters[farmId] = (entry.liters[farmId] or 0) + liters
+    entry.sharesDirty = true
 end
 
 ---Tarlada gecen SURE (saniye). Onceden her cagrida 1 artiyordu, oysa oyun bu yolu
@@ -138,6 +139,21 @@ function Part.addWork(mission, farmId)
     end
     entry.workTick[farmId] = now
     entry.work[farmId] = (entry.work[farmId] or 0) + 1
+    entry.sharesDirty = true
+end
+
+---Is suresi YALNIZ sunucuda sayilir: oyun is alani kontrolunu her makinede calistiriyor; istemci kendi
+---gordugu sureyle paylari carpik gosteriyordu ("Payiniz %100"). Paylar istemciye senkronla gider (1.26.0.0).
+function Part.countWork(mission, farmId)
+    if g_server ~= nil then
+        Part.addWork(mission, farmId)
+    end
+end
+
+---Kontratin tamamlanma orani (0..1); ortaklik basladiginda sahibin on payi olur.
+function Part.completionOf(mission)
+    local value = mission ~= nil and tonumber(mission.completion) or 0
+    return math.max(0, math.min(1, value or 0))
 end
 
 local function bucketShares(bucket, farms)
@@ -162,20 +178,37 @@ function Part.getShares(mission)
         return {}
     end
     local farms = Part.getFarms(mission)
+    -- Istemci: paylar sunucudan gelir (katki yalnizca sunucuda olculur, 1.26.0.0).
+    if entry.syncedShares ~= nil then
+        local synced = {}
+        for _, farmId in ipairs(farms) do
+            synced[farmId] = entry.syncedShares[farmId] or 0
+        end
+        return synced
+    end
     local litersShares = bucketShares(entry.liters, farms)
     local workShares = bucketShares(entry.work, farms)
+    local base = math.max(0, math.min(1, tonumber(entry.base) or 0))
     local shares = {}
     for _, farmId in ipairs(farms) do
+        local share
         if litersShares ~= nil and workShares ~= nil then
-            shares[farmId] = (litersShares[farmId] + workShares[farmId]) / 2
+            share = (litersShares[farmId] + workShares[farmId]) / 2
         elseif litersShares ~= nil then
-            shares[farmId] = litersShares[farmId]
+            share = litersShares[farmId]
         elseif workShares ~= nil then
-            shares[farmId] = workShares[farmId]
+            share = workShares[farmId]
         else
-            shares[farmId] = 1 / #farms
+            share = 1 / #farms
         end
+        shares[farmId] = share * (1 - base)
     end
+    -- On pay onu kazanan ciftlige gider (devirden sonra eski sahip ortak olarak kalir); o artik uye degilse sahibe.
+    local baseFarm = entry.baseFarm
+    if baseFarm == nil or shares[baseFarm] == nil then
+        baseFarm = entry.owner
+    end
+    shares[baseFarm] = (shares[baseFarm] or 0) + base
     return shares
 end
 
@@ -205,10 +238,12 @@ function Part.getParticipants(mission, reward)
     return out
 end
 
----Katki olculdu mu? (olculmediyse pay esit boluner, yuzde gostermek yaniltici olur)
+---Pay yuzdesi anlamli mi? Katki olculduyse, sahibin on payi varsa ya da paylar sunucudan geldiyse.
+---Degilse pay esit bolunur ve yuzde gostermek yaniltici olur.
 function Part.hasContribution(mission)
     local entry = Part.get(mission)
-    return entry ~= nil and (next(entry.liters) ~= nil or next(entry.work) ~= nil)
+    return entry ~= nil and (entry.syncedShares ~= nil or (tonumber(entry.base) or 0) > 0
+        or next(entry.liters) ~= nil or next(entry.work) ~= nil)
 end
 
 ---Bekleyen davetler: { {farmId, minutesLeft}, ... } (saf; sirali)
@@ -312,7 +347,11 @@ function Part.accept(uniqueId, farmId)
     local id = Part.getMissionId(uniqueId)
     local entry = Part.list[id]
     if entry == nil then
-        entry = { owner = mission.farmId, partners = {}, liters = {}, work = {} }
+        -- Sahibin ortaklik ONCESI emegi: o ana kadarki tamamlanma orani sahibe ayrilir, kalani katkiya gore
+        -- bolunur. Oncesinde %80'ini tek basina yapip davet eden sahip odulu davetten sonraki katkiyla
+        -- bolusuyordu (1.26.0.0).
+        entry = { owner = mission.farmId, partners = {}, liters = {}, work = {},
+            base = Part.completionOf(mission), baseFarm = mission.farmId }
         Part.list[id] = entry
     end
     if Part.countPartners(entry) >= (settings():get("partnership.maxPartners") or 1) then
@@ -365,6 +404,11 @@ function Part.leave(uniqueId, farmId)
     if entry == nil or not entry.partners[farmId] then
         return false, "cm_partNotMember"
     end
+    -- Yalniz kontrat surerken: bittikten sonra ayrilan ortak zarar payindan kaciyordu (1.26.0.0).
+    local mission = ContractManagerAdmin ~= nil and ContractManagerAdmin.findMission(uniqueId) or nil
+    if mission ~= nil and mission.status ~= MissionStatus.RUNNING and mission.status ~= MissionStatus.PREPARING then
+        return false, "cm_adminNotActive"
+    end
     entry.partners[farmId] = nil
     if next(entry.partners) == nil then
         Part.list[id] = nil
@@ -389,6 +433,14 @@ end
 -- odeme bolusumu (sunucu): oyun tutarin tamamini sahibe oder, ortagin payi aktarilir
 -- ---------------------------------------------------------------------------
 
+---Ciftlik hala var mi? (silinmis ortaga odeme yapilmaz)
+function Part.farmExists(farmId)
+    if g_farmManager == nil or g_farmManager.getFarmById == nil then
+        return true
+    end
+    return g_farmManager:getFarmById(farmId) ~= nil
+end
+
 function Part.splitPayment(mission)
     local entry = Part.get(mission)
     if entry == nil or g_currentMission == nil or not g_currentMission:getIsServer() then
@@ -407,7 +459,8 @@ function Part.splitPayment(mission)
     local shares = Part.getShares(mission)
     local moved = 0
     for farmId, share in pairs(shares) do
-        if farmId ~= entry.owner and share > 0 then
+        -- silinmis ciftlige odeme yapilmaz, sahipten de kesilmez (1.26.0.0)
+        if farmId ~= entry.owner and share > 0 and Part.farmExists(farmId) then
             local amount = total * share
             g_currentMission:addMoney(-amount, entry.owner, MoneyType.MISSIONS, true, true)
             g_currentMission:addMoney(amount, farmId, MoneyType.MISSIONS, true, true)
@@ -432,7 +485,7 @@ function Part.overwriteIsMissionWorkAllowed(manager, superFunc, farmId, x, z, wo
         if Part.isEnabled() and manager.getMissionAtWorldPosition ~= nil then
             local mission = manager:getMissionAtWorldPosition(x, z)
             if mission ~= nil and Part.get(mission) ~= nil then
-                Part.addWork(mission, farmId)
+                Part.countWork(mission, farmId)
             end
         end
         return true
@@ -447,13 +500,21 @@ function Part.overwriteIsMissionWorkAllowed(manager, superFunc, farmId, x, z, wo
     if mission.getIsWorkAllowed ~= nil and not mission:getIsWorkAllowed(mission.farmId, x, z, workAreaType, vehicle) then
         return false
     end
-    Part.addWork(mission, farmId)
+    Part.countWork(mission, farmId)
     return true
 end
 
----teslim edilen litre katkisi (Guard bosaltma yolundan cagrilir)
-function Part.onDelivered(vehicle, object, liters)
-    if type(liters) ~= "number" or liters <= 0 or ContractGuard == nil then
+---Teslim edilen litre katkisi (Guard bosaltma yolundan cagrilir). 1.26.0.0'a kadar HIC sayilmiyordu:
+---oyun bosaltilan miktari kaynak aracin seviye DEGISIMI olarak (negatif) doner (Dischargeable.lua:1080),
+---burada <= 0 diye atiliyordu; odul yalnizca tarlada gecen sureye gore bolunuyordu. Ayrica dolum turu
+---ve kontrat durumu bakilmiyordu: ayni istasyona baska urun satmak ya da bitisten sonra bosaltmak payi buyutuyordu.
+function Part.onDelivered(vehicle, object, liters, fillTypeIndex)
+    if next(Part.list) == nil or type(liters) ~= "number" or object == nil or fillTypeIndex == nil
+        or ContractGuard == nil then
+        return
+    end
+    liters = math.abs(liters)
+    if liters <= 0 then
         return
     end
     local farmId = ContractGuard:getVehicleFarmId(vehicle)
@@ -461,7 +522,8 @@ function Part.onDelivered(vehicle, object, liters)
         return
     end
     for _, mission in ipairs(ContractGuard:getMissions()) do
-        if Part.get(mission) ~= nil and Part.isMember(mission, farmId) then
+        if mission.status == MissionStatus.RUNNING and Part.get(mission) ~= nil and Part.isMember(mission, farmId)
+            and ContractGuard:getMissionFillType(mission) == fillTypeIndex then
             local station = ContractGuard:getAssignedStation(mission)
             if station ~= nil and (object == station or object.target == station) then
                 Part.addLiters(mission, farmId, liters)
@@ -500,6 +562,8 @@ function Part:writeToXML(xmlId, baseKey)
         local key = string.format("%s.contract(%d)", baseKey, index)
         setXMLString(xmlId, key .. "#id", id)
         setXMLInt(xmlId, key .. "#owner", entry.owner or 0)
+        setXMLFloat(xmlId, key .. "#base", entry.base or 0)
+        setXMLInt(xmlId, key .. "#baseFarm", entry.baseFarm or entry.owner or 0)
         local farmIndex = 0
         for _, farmId in ipairs(Part.getFarms(id)) do
             local fkey = string.format("%s.farm(%d)", key, farmIndex)
@@ -524,7 +588,8 @@ function Part:readFromXML(xmlId, baseKey)
         local id = getXMLString(xmlId, key .. "#id")
         local owner = getXMLInt(xmlId, key .. "#owner")
         if id ~= nil and owner ~= nil then
-            local entry = { owner = owner, partners = {}, liters = {}, work = {} }
+            local entry = { owner = owner, partners = {}, liters = {}, work = {},
+                base = getXMLFloat(xmlId, key .. "#base") or 0, baseFarm = getXMLInt(xmlId, key .. "#baseFarm") or owner }
             local farmIndex = 0
             while true do
                 local fkey = string.format("%s.farm(%d)", key, farmIndex)
@@ -583,8 +648,8 @@ function Part.sendAllTo(connection)
     end
 end
 
----istemci: uyelik durumunu uygula (katki verisi istemciye gonderilmez)
-function Part.applyRemote(uniqueId, ownerFarmId, farms, pending)
+---istemci: uyelik durumunu ve sunucunun hesapladigi paylari uygula (is suresi istemciye gonderilmez)
+function Part.applyRemote(uniqueId, ownerFarmId, farms, pending, shares)
     if uniqueId == nil or uniqueId == "" then
         return
     end
@@ -609,6 +674,15 @@ function Part.applyRemote(uniqueId, ownerFarmId, farms, pending)
     local entry = { owner = ownerFarmId, partners = {}, liters = {}, work = {} }
     for _, farmId in ipairs(farms) do
         entry.partners[farmId] = true
+    end
+    if shares ~= nil and #shares > 0 then
+        entry.syncedShares = {}
+        for _, item in ipairs(shares) do
+            entry.syncedShares[item.farmId] = item.share
+            if (item.liters or 0) > 0 then
+                entry.liters[item.farmId] = item.liters
+            end
+        end
     end
     Part.list[uniqueId] = entry
     -- acik yonetim sayfasi eski veriyi gostermesin
@@ -664,7 +738,7 @@ function Part.getDetailRow(mission)
         return nil
     end
     local shares = Part.getShares(mission)
-    local hasContribution = next(entry.liters) ~= nil or next(entry.work) ~= nil
+    local hasContribution = Part.hasContribution(mission)
     local parts = {}
     for _, farmId in ipairs(Part.getFarms(mission)) do
         if hasContribution then
@@ -949,6 +1023,81 @@ function Part:consoleLeave(uniqueId)
 end
 
 -- ---------------------------------------------------------------------------
+-- devir, ciftlik silinmesi, pay senkronu (1.26.0.0)
+-- ---------------------------------------------------------------------------
+
+---Yonetici devri (sunucu): sahip yeni ciftlik olur, eski sahip ortak olarak kalir. Katki tablolari
+---ciftlik kimligiyle tutuldugu icin herkesin payi korunur; on pay (base) onu kazanan ciftlikte kalir.
+function Part.onTransferred(mission, oldFarmId, newFarmId)
+    local id = Part.getMissionId(mission)
+    local entry = id ~= nil and Part.list[id] or nil
+    if entry == nil or newFarmId == nil then
+        return false
+    end
+    entry.partners[newFarmId] = nil
+    if oldFarmId ~= nil and oldFarmId ~= newFarmId then
+        entry.partners[oldFarmId] = true
+    end
+    entry.owner = newFarmId
+    entry.sharesDirty = true
+    Part.broadcast(id)
+    return true
+end
+
+---Ciftlik silindi (sunucu): ortakliklardan ve bekleyen davetlerden cikar. Sahibi silinen kontrati oyun
+---kendisi kaldirir (MISSION_DELETED -> clearForMission).
+function Part.onFarmDeleted(farmId)
+    if farmId == nil then
+        return 0
+    end
+    local changed = 0
+    for id, entry in pairs(Part.list) do
+        if entry.partners[farmId] then
+            entry.partners[farmId] = nil
+            entry.sharesDirty = true
+            if next(entry.partners) == nil then
+                Part.list[id] = nil
+            end
+            Part.broadcast(id)
+            changed = changed + 1
+        end
+    end
+    for id, farms in pairs(Part.pending) do
+        if farms[farmId] ~= nil then
+            farms[farmId] = nil
+            if next(farms) == nil then
+                Part.pending[id] = nil
+            end
+            Part.broadcast(id)
+            changed = changed + 1
+        end
+    end
+    return changed
+end
+
+---Paylar katki degistikce istemcilere gider, ama her karede degil: SYNC_INTERVAL_MS'de bir ve yalnizca
+---degisen ortakliklar. Istemci payi kendisi hesaplamaz (katki verisi yalnizca sunucuda).
+Part.SYNC_INTERVAL_MS = 15000
+Part.syncTimer = 0
+
+function Part:update(dt)
+    if g_server == nil or next(Part.list) == nil then
+        return
+    end
+    Part.syncTimer = Part.syncTimer + (dt or 0)
+    if Part.syncTimer < Part.SYNC_INTERVAL_MS then
+        return
+    end
+    Part.syncTimer = 0
+    for id, entry in pairs(Part.list) do
+        if entry.sharesDirty then
+            entry.sharesDirty = nil
+            Part.broadcast(id)
+        end
+    end
+end
+
+-- ---------------------------------------------------------------------------
 -- kurulum
 -- ---------------------------------------------------------------------------
 
@@ -987,6 +1136,16 @@ if g_messageCenter ~= nil and MessageType ~= nil and MessageType.MISSION_DELETED
             Part.clearForMission(mission)
         end
     end, Part)
+end
+if g_messageCenter ~= nil and MessageType ~= nil and MessageType.FARM_DELETED ~= nil then
+    g_messageCenter:subscribe(MessageType.FARM_DELETED, function(_, farmId)
+        if g_currentMission ~= nil and g_currentMission:getIsServer() then
+            Part.onFarmDeleted(farmId)
+        end
+    end, Part)
+end
+if addModEventListener ~= nil then
+    addModEventListener(Part)
 end
 
 if addConsoleCommand ~= nil and ContractManager.consoleCommands then

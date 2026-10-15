@@ -44,8 +44,11 @@ function Admin.findMission(uniqueId)
             return m
         end
     end
+    -- Istemcide kontrat oyunun kimlik tablosuna eklenmez (readStream dogrudan listeye koyar) ve uniqueId
+    -- ag uzerinden gelmez: senkronla ogrenilen kopya (cmUniqueId) da aranir (1.26.0.0).
+    local key = tostring(uniqueId)
     for _, m in ipairs(g_missionManager.missions or {}) do
-        if tostring(m.uniqueId) == tostring(uniqueId) then
+        if tostring(m.uniqueId) == key or tostring(ContractManager.getMissionKey(m)) == key then
             return m
         end
     end
