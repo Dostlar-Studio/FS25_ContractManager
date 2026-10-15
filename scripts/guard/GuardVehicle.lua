@@ -61,3 +61,32 @@ function ContractGuardVehicle.dischargeToObject(self, superFunc, dischargeNode, 
     end
     return dischargedLiters
 end
+
+---Yere dokme Guard'a takilinca oyun HICBIR uyari gostermez: tus yalniz getCanDischargeToGround true ise
+---ilerler (Dischargeable.lua:2029). Oyuncu tusa basiyor, hicbir sey olmuyordu (1.26.0.0). Bosaltma kapaliyken
+---basildiysa ve kapali kaldiysa, engelleyen Guard ise sebebi yazilir.
+function ContractGuardVehicle.overwriteToggleDischargeToGround(self, superFunc, ...)
+    local spec = self.spec_dischargeable
+    local offState = Dischargeable.DISCHARGE_STATE_OFF
+    local wasOff = spec ~= nil and spec.currentDischargeState == offState
+    superFunc(self, ...)
+    if not wasOff or spec.currentDischargeState ~= offState or g_currentMission == nil then
+        return
+    end
+    local blocked, reason, fillTypeIndex = ContractGuard:isGroundDischargeBlocked(self, spec.currentDischargeNode)
+    if blocked then
+        g_currentMission:showBlinkingWarning(ContractGuard:getWarningText(reason, fillTypeIndex), 5000)
+    end
+end
+
+-- Statik tus geri cagrisi: arac tuslarini kaydederken bu tablodan okunur, mod yuklenirken bir kez sarilir.
+if Dischargeable ~= nil and Dischargeable.actionEventToggleDischargeToGround ~= nil then
+    Dischargeable.cmGroundWarning = ContractGuardVehicle.overwriteToggleDischargeToGround
+    if not Dischargeable.cmGroundWarningInstalled then
+        Dischargeable.actionEventToggleDischargeToGround = Utils.overwrittenFunction(Dischargeable.actionEventToggleDischargeToGround,
+            function(self, superFunc, ...)
+                return Dischargeable.cmGroundWarning(self, superFunc, ...)
+            end)
+        Dischargeable.cmGroundWarningInstalled = true
+    end
+end

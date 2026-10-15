@@ -153,6 +153,23 @@ end
 ---108 bos tarla varken tek tur sonucu produced=0).
 Admin.FILL_ROUNDS = 25
 
+---Panoda KALACAK kontrat sayisi: silinmeye isaretlenenler sayilmaz. Tarla bekleme suresi yeni kontrati
+---kayit aninda silinmeye isaretler (Cooldown.afterRegisterMission); doldurma onu "uretildi" sayip duruyordu,
+---pano bir sonraki karede eksik kaliyordu (1.26.0.0).
+function Admin.countLiveMissions(manager)
+    local pending = {}
+    for _, mission in ipairs(manager.missionsToDelete or {}) do
+        pending[mission] = true
+    end
+    local count = 0
+    for _, mission in ipairs(manager.missions or {}) do
+        if not pending[mission] then
+            count = count + 1
+        end
+    end
+    return count
+end
+
 ---Oyunun uretim dongusunu ELDE cevirir. Normalde update basina en fazla BIR kontrat
 ---uretilir (generateMission -> finishMissionGeneration -> generationTimer sifirlanir),
 ---bu yuzden pano yenilendikten sonra kontratlar damla damla gelirdi. Donus: uretilen sayi.
@@ -178,7 +195,7 @@ function Admin.fillBoard(target, quiet)
         end
         local made = false
         for _ = 1, Admin.FILL_ROUNDS do
-            local before = #(manager.missions or {})
+            local before = Admin.countLiveMissions(manager)
             manager.missionGenerationInProgress = false
             if not pcall(manager.startMissionGeneration, manager) then
                 ContractManager.warning("Board fill: startMissionGeneration failed")
@@ -194,7 +211,7 @@ function Admin.fillBoard(target, quiet)
                 steps = steps + 1
             end
             rounds = rounds + 1
-            if #(manager.missions or {}) > before then
+            if Admin.countLiveMissions(manager) > before then
                 made = true
                 break
             end

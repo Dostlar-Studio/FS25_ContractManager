@@ -53,6 +53,15 @@ end
 -- sure carpani
 -- ---------------------------------------------------------------------------
 
+Duration.DAY_MS = 24 * 60 * 60 * 1000
+
+---Bitis tarihi = simdi + offset (saf). Oyunun setEndDateByOffset'i environment:getDayAndDayTime'a dayaniyor;
+---govdesi yayinlanmamis, offset'i simdiden mi gece yarisindan mi saydigi dogrulanamadi. Hesap burada yapilir (1.26.0.0).
+function Duration.endDateFromNow(currentDay, dayTime, offsetMs)
+    local absolute = (dayTime or 0) + math.max(0, offsetMs or 0)
+    return (currentDay or 0) + math.floor(absolute / Duration.DAY_MS), absolute % Duration.DAY_MS
+end
+
 function Duration.overwriteSetEndDate(mission, superFunc, endDay, endDayTime)
     superFunc(mission, endDay, endDayTime)
 
@@ -63,7 +72,8 @@ function Duration.overwriteSetEndDate(mission, superFunc, endDay, endDayTime)
         return
     end
     local multiplier = settings():get("duration.multiplier")
-    if multiplier == 1 or mission.getMinutesLeft == nil or mission.setEndDateByOffset == nil then
+    local env = g_currentMission ~= nil and g_currentMission.environment or nil
+    if multiplier == 1 or mission.getMinutesLeft == nil or env == nil then
         return
     end
 
@@ -73,7 +83,29 @@ function Duration.overwriteSetEndDate(mission, superFunc, endDay, endDayTime)
     end
 
     mission.cmDurationApplied = true
-    mission:setEndDateByOffset(minutesLeft * multiplier * 60 * 1000)
+    local newDay, newDayTime = Duration.endDateFromNow(env.currentMonotonicDay, env.dayTime, minutesLeft * multiplier * 60 * 1000)
+    mission:setEndDate(newDay, newDayTime)
+end
+
+---Oyunun getMinutesLeft'i bitis saati gunun sonu degilken yanlis: bitis gununden onceki bir gunde saat bitis
+---saatini gecince kalan sureyi "gun saati + (gun - bitis saati)" diye hesapliyor (AbstractMission.lua:741-742);
+---dogrusu "(gun - gun saati) + bitis saati". Oyunun kendi kontratlari gun sonunda bittigi icin o dala girmez; sure
+---carpani bitis saatini kaydirdigi icin CM'in kontratlari giriyordu: kalan sure 36 saate kadar fazla gorunuyor,
+---bitis uyarisi gec geliyordu (1.26.0.0). Yalniz o dal duzeltilir, digerlerinde oyunun degeri aynen doner.
+function Duration.overwriteGetMinutesLeft(mission, superFunc)
+    local value = superFunc(mission)
+    local endDate = mission.endDate
+    local env = g_currentMission ~= nil and g_currentMission.environment or nil
+    if type(value) ~= "number" or type(endDate) ~= "table" or env == nil then
+        return value
+    end
+    local endDay, endDayTime = endDate.endDay, endDate.endDayTime
+    local day, dayTime = env.currentMonotonicDay, env.dayTime
+    if type(endDay) == "number" and type(endDayTime) == "number" and type(day) == "number" and type(dayTime) == "number"
+        and endDayTime <= dayTime and day < endDay then
+        return ((endDay - day) * Duration.DAY_MS + endDayTime - dayTime) / 60000
+    end
+    return value
 end
 
 local function markLoading(mission, superFunc, ...)
@@ -150,6 +182,9 @@ end
 
 if AbstractMission ~= nil and AbstractMission.setEndDate ~= nil then
     AbstractMission.setEndDate = Utils.overwrittenFunction(AbstractMission.setEndDate, Duration.overwriteSetEndDate)
+    if AbstractMission.getMinutesLeft ~= nil then
+        AbstractMission.getMinutesLeft = Utils.overwrittenFunction(AbstractMission.getMinutesLeft, Duration.overwriteGetMinutesLeft)
+    end
     if AbstractMission.loadFromXMLFile ~= nil then
         AbstractMission.loadFromXMLFile = Utils.overwrittenFunction(AbstractMission.loadFromXMLFile, Duration.overwriteLoadFromXMLFile)
     end

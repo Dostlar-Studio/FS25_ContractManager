@@ -83,18 +83,20 @@ function ContractGuard:getMissions()
     return g_missionManager.missions or {}
 end
 
+---Bosaltma her karede buradan gecer (her bosaltma dugumu icin birkac kez): koruma kapaliysa hic donulmez,
+---kontrat basina en ucuz kosul (durum, dolum turu) once bakilir (1.26.0.0).
 function ContractGuard:getMatchingMissions(farmId, fillTypeIndex)
     local result = {}
-    if farmId == nil or fillTypeIndex == nil then
+    if farmId == nil or fillTypeIndex == nil or not self:getSetting("guard.enabled", true) then
         return result
     end
 
     for _, mission in ipairs(self:getMissions()) do
         if self:isMissionActive(mission)
+            and self:getMissionFillType(mission) == fillTypeIndex
             and (mission.farmId == farmId
                 or (ContractManagerPartnership ~= nil and ContractManagerPartnership.isMember(mission, farmId)))
-            and self:isProtectedMission(mission)
-            and self:getMissionFillType(mission) == fillTypeIndex then
+            and self:isProtectedMission(mission) then
             table.insert(result, mission)
         end
     end
@@ -268,7 +270,8 @@ function ContractGuard:getFillTypeTitle(fillTypeIndex)
 end
 
 function ContractGuard:setDischargeWarning(dischargeNode, reason, fillTypeIndex)
-    if dischargeNode == nil then
+    -- Metni yalniz ekrani olan makine gosterir; dedicated sunucuda her karede bicimlendirmeye gerek yok.
+    if dischargeNode == nil or g_client == nil then
         return
     end
 
@@ -276,7 +279,11 @@ function ContractGuard:setDischargeWarning(dischargeNode, reason, fillTypeIndex)
         dischargeNode.contractGuardPreviousWarning = dischargeNode.customNotAllowedWarning
         dischargeNode.contractGuardWarningActive = true
     end
+    dischargeNode.customNotAllowedWarning = self:getWarningText(reason, fillTypeIndex)
+end
 
+---Engel uyarisinin metni (urun adiyla).
+function ContractGuard:getWarningText(reason, fillTypeIndex)
     local key = "cg_warningWrongDestination"
     if reason == self.WARNING_GROUND then
         key = "cg_warningGroundBlocked"
@@ -284,7 +291,7 @@ function ContractGuard:setDischargeWarning(dischargeNode, reason, fillTypeIndex)
         key = "cg_warningCrossFarm"
     end
     -- Ceviri metinlerinin ucunde de %s var; bicimlendirilmezse ekranda ham "%s" gorunur.
-    dischargeNode.customNotAllowedWarning = string.format(g_i18n:getText(key), self:getFillTypeTitle(fillTypeIndex))
+    return string.format(g_i18n:getText(key), self:getFillTypeTitle(fillTypeIndex))
 end
 
 function ContractGuard:clearDischargeWarning(dischargeNode)
@@ -351,7 +358,8 @@ function ContractGuard:collectFillEntries(farmId, fillTypeIndex)
                             kind = "vehicle",
                             object = vehicle,
                             fillUnitIndex = fillUnitIndex,
-                            amount = amount
+                            amount = amount,
+                            farmId = farmId
                         })
                     end
                 end
@@ -459,32 +467,80 @@ function ContractGuard.evaluateLoss(prevVolume, prevDeposited, volume, deposited
     return lost
 end
 
+---Iki uye listesinin ortak ciftligi var mi? (saf)
+local function sharesFarm(a, b)
+    for _, x in ipairs(a) do
+        for _, y in ipairs(b) do
+            if x == y then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 ---Sunucuda seyrek: aktif korunan kontratlarin urunu teslim edilmeden azaldi mi?
 ---Donus: bildirilen kontrat sayisi.
+---
+---Yanlis alarmlar (1.26.0.0): olcu yalniz SAHIBIN araclariydi, sahip ortagin romorkuna bosaltinca urun
+---"kayboldu"; ayni urunlu ikinci kontratin teslimati da "kayip" sayiliyordu (yalniz kendi teslimati
+---dusuluyordu); devirde hacim yeni ciftlikten olculup eskisiyle karsilastiriliyordu. Simdi uye ciftliklerin
+---hepsi olculur, ayni urunde uyeleri kesisen kontratlarin TUM teslimatlari dusulur, uyelik (sahip ya da ortak)
+---degistiyse o tur karsilastirma yapilmaz.
 function ContractGuard:checkProductLoss()
     if not self:getSetting("guard.warnProductLoss", true) then
         return 0
     end
-    local volumeCache, reported = {}, 0
+    local tracked = {}
     for _, mission in ipairs(self:getMissions()) do
         if self:isMissionActive(mission) and self:isProtectedMission(mission) then
-            local fillTypeIndex = self:getMissionFillType(mission)
-            local key = tostring(mission.farmId) .. "|" .. tostring(fillTypeIndex)
-            if volumeCache[key] == nil then
-                volumeCache[key] = self:getFarmFillVolume(mission.farmId, fillTypeIndex)
-            end
-            local volume, deposited = volumeCache[key], mission.depositedLiters or 0
-            local lost = ContractGuard.evaluateLoss(mission.contractGuardLastVolume,
-                mission.contractGuardLastDeposited, volume, deposited, self.LOSS_MIN_LITERS)
-            mission.contractGuardLastVolume = volume
-            mission.contractGuardLastDeposited = deposited
-            if lost > 0 then
-                reported = reported + 1
-                self:reportProductLoss(mission, lost)
-            end
+            local farms = self:getMemberFarmIds(mission)
+            local sorted = {}
+            for index, farmId in ipairs(farms) do sorted[index] = farmId end
+            table.sort(sorted)
+            local deposited = mission.depositedLiters or 0
+            local membersKey = table.concat(sorted, ",")
+            local prev = mission.contractGuardLastMembers == membersKey and mission.contractGuardLastDeposited or nil
+            tracked[#tracked + 1] = { mission = mission, farms = farms, membersKey = membersKey, deposited = deposited,
+                fillTypeIndex = self:getMissionFillType(mission),
+                delivered = prev ~= nil and math.max(0, deposited - prev) or 0 }
         else
             mission.contractGuardLastVolume = nil
             mission.contractGuardLastDeposited = nil
+            mission.contractGuardLastMembers = nil
+        end
+    end
+
+    local volumeCache, reportedGroups, reported = {}, {}, 0
+    for _, t in ipairs(tracked) do
+        local mission = t.mission
+        local volume = 0
+        for _, farmId in ipairs(t.farms) do
+            local key = tostring(farmId) .. "|" .. tostring(t.fillTypeIndex)
+            if volumeCache[key] == nil then
+                volumeCache[key] = self:getFarmFillVolume(farmId, t.fillTypeIndex)
+            end
+            volume = volume + volumeCache[key]
+        end
+        local lost = 0
+        if mission.contractGuardLastMembers == t.membersKey then
+            local delivered = 0
+            for _, other in ipairs(tracked) do
+                if other.fillTypeIndex == t.fillTypeIndex and sharesFarm(t.farms, other.farms) then
+                    delivered = delivered + other.delivered
+                end
+            end
+            lost = ContractGuard.evaluateLoss(mission.contractGuardLastVolume, 0, volume, delivered, self.LOSS_MIN_LITERS)
+        end
+        mission.contractGuardLastVolume = volume
+        mission.contractGuardLastDeposited = t.deposited
+        mission.contractGuardLastMembers = t.membersKey
+        -- Ayni ciftlik(ler)in ayni urunlu iki kontrati ayni kaybi ikiser kez bildirmesin.
+        local group = t.membersKey .. "|" .. tostring(t.fillTypeIndex)
+        if lost > 0 and not reportedGroups[group] then
+            reportedGroups[group] = true
+            reported = reported + 1
+            self:reportProductLoss(mission, lost)
         end
     end
     return reported
@@ -598,8 +654,10 @@ function ContractGuard:confiscateMissionProduct(mission)
         local take = math.min(entry.amount, remaining)
         local removed = 0
         if entry.kind == "vehicle" and entry.object.addFillUnitFillLevel ~= nil then
+            -- Aracin KENDI ciftligi adina: oyun erisimi olmayan ciftlik adina bosaltmayi sessizce 0 dondurur
+            -- (FillUnit.lua:1491); ortagin romorkundaki urun sahibin kimligiyle hic alinamiyordu (1.26.0.0).
             local applied = entry.object:addFillUnitFillLevel(
-                mission.farmId,
+                entry.farmId or mission.farmId,
                 entry.fillUnitIndex,
                 -take,
                 fillTypeIndex,
