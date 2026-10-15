@@ -52,7 +52,7 @@ function Transfer.execute(uniqueId, farmId)
     end
     if ContractGuard ~= nil and not ContractGuard.disabled and ContractGuard.isProtectedMission ~= nil and ContractGuard:isProtectedMission(mission) then
         mission.contractGuardBaselineLiters = nil
-        pcall(ContractGuard.initializeMission, ContractGuard, mission, false)
+        ContractGuard:initializeMission(mission, false)
     end
     if ContractManagerReservation ~= nil then
         ContractManagerReservation.clearForMission(mission)
@@ -71,9 +71,11 @@ function Transfer.applyLocal(mission, farmId)
     mission.farmId = farmId
     local localFarm = g_currentMission ~= nil and g_currentMission.getFarmId ~= nil and g_currentMission:getFarmId() or nil
     if localFarm ~= farmId then
-        if mission.removeHotspot ~= nil then pcall(mission.removeHotspot, mission) end
+        if mission.removeHotspot ~= nil then
+            mission:removeHotspot()
+        end
         if mission.progressBar ~= nil and g_currentMission ~= nil and g_currentMission.hud ~= nil and g_currentMission.hud.removeSideNotificationProgressBar ~= nil then
-            pcall(g_currentMission.hud.removeSideNotificationProgressBar, g_currentMission.hud, mission.progressBar)
+            g_currentMission.hud:removeSideNotificationProgressBar(mission.progressBar)
             mission.progressBar = nil
         end
     else

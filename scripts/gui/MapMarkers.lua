@@ -53,10 +53,8 @@ function Markers.mark(mission)
     if mission == nil or Markers.marked[mission] then
         return
     end
-    local ok = pcall(mission.addHotspots, mission)
-    if ok then
-        Markers.marked[mission] = true
-    end
+    mission:addHotspots()
+    Markers.marked[mission] = true
 end
 
 function Markers.unmark(mission)
@@ -65,7 +63,7 @@ function Markers.unmark(mission)
     end
     Markers.marked[mission] = nil
     if mission.status == MissionStatus.CREATED and mission.removeHotspot ~= nil then
-        pcall(mission.removeHotspot, mission)
+        mission:removeHotspot()
     end
 end
 
@@ -117,7 +115,7 @@ function Markers:update(dt)
         return
     end
     Markers.syncTimer = 0
-    Markers.refresh()
+    ContractManager.guard("Map markers", Markers.refresh)
 end
 
 function Markers:deleteMap()
@@ -127,17 +125,17 @@ end
 
 if g_messageCenter ~= nil and MessageType ~= nil then
     if MessageType.CURRENT_MISSION_START ~= nil then
-        g_messageCenter:subscribe(MessageType.CURRENT_MISSION_START, function() pcall(Markers.refresh) end, Markers)
+        g_messageCenter:subscribe(MessageType.CURRENT_MISSION_START, function() ContractManager.guard("Map markers", Markers.refresh) end, Markers)
     end
     if MessageType.MISSION_GENERATED ~= nil then
         g_messageCenter:subscribe(MessageType.MISSION_GENERATED, function(_, mission)
-            if mission ~= nil and Markers.shouldMark(mission) then pcall(Markers.mark, mission) end
+            if mission ~= nil and Markers.shouldMark(mission) then ContractManager.guard("Map markers", Markers.mark, mission) end
         end, Markers)
     end
     if MessageType.MISSION_DELETED ~= nil then
         g_messageCenter:subscribe(MessageType.MISSION_DELETED, function(_, mission) Markers.onMissionDeleted(mission) end, Markers)
     end
-    g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED, function() pcall(Markers.refresh) end, Markers)
+    g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED, function() ContractManager.guard("Map markers", Markers.refresh) end, Markers)
 end
 if addModEventListener ~= nil then
     addModEventListener(Markers)

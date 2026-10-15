@@ -29,8 +29,8 @@ function Schedule.now()
     if getDate == nil then
         return nil, nil
     end
-    local ok, s = pcall(getDate, "%w %H")
-    if not ok or type(s) ~= "string" then
+    local s = getDate("%w %H")
+    if type(s) ~= "string" then
         return nil, nil
     end
     local w, h = s:match("(%d+) (%d+)")

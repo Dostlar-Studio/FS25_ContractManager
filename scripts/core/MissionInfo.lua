@@ -51,7 +51,8 @@ function Info.resolveTotalLiters(mission)
         return expected, false
     end
     if type(mission.getMaxCutLiters) == "function" then
-        local ok, liters = pcall(mission.getMaxCutLiters, mission)
+        -- yayinlanmamis kontrat sinifinin yontemi (tarla durumuna bakar): korumali
+        local ok, liters = ContractManager.guard("Contract yield (game)", mission.getMaxCutLiters, mission)
         if ok and type(liters) == "number" and liters > 0 then
             return liters, false
         end
@@ -111,8 +112,8 @@ function Info.resolveFruitType(mission)
         if type(state) == "table" and valid(state.fruitTypeIndex) then return state.fruitTypeIndex end
         if valid(field.fruitTypeIndex) then return field.fruitTypeIndex end
         if type(field.getFruitType) == "function" then
-            local ok, v = pcall(field.getFruitType, field)
-            if ok and valid(v) then return v end
+            local v = field:getFruitType()
+            if valid(v) then return v end
         end
     end
     return nil
@@ -184,12 +185,9 @@ function Info.applyRemote(objectId, data)
     Info.byObjectId[objectId] = data
     local mission = nil
     if NetworkUtil ~= nil and NetworkUtil.getObject ~= nil then
-        local ok, object = pcall(NetworkUtil.getObject, objectId)
-        if ok then
-            mission = object
-        end
+        mission = NetworkUtil.getObject(objectId)
     end
-    if mission ~= nil then
+    if type(mission) == "table" then
         mission.cmInfo = data
     end
     return mission

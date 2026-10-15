@@ -593,7 +593,8 @@ end
 ---istemciye aktarilmadigi icin detay paneli bunsuz bos kalir).
 function Registry.pushMissionInfo(mission)
     if ContractManagerMissionInfo ~= nil and g_currentMission ~= nil and g_currentMission:getIsServer() then
-        pcall(ContractManagerMissionInfo.broadcast, mission)
+        -- oyunun kontrat kaydi akisinda calisir: hatamiz kaydi yarida kesmesin
+        ContractManager.guard("Contract info broadcast", ContractManagerMissionInfo.broadcast, mission)
     end
 end
 
@@ -605,7 +606,11 @@ end
 
 if MissionManager ~= nil and MissionManager.startMission ~= nil and AbstractMission ~= nil and AbstractMission.finish ~= nil then
     MissionManager.startMission = Utils.overwrittenFunction(MissionManager.startMission, Registry.overwriteStartMission)
-    AbstractMission.finish = ContractManager.appendKeepingReturn(AbstractMission.finish, Registry.afterMissionFinish)
+    -- Bitis kaydi (odul dondurma, istatistik, gecmis): hatamiz oyunun kontrati bitirmesini durdurmasin
+    -- (kanca siniri korumali, 1.26.0.0).
+    AbstractMission.finish = ContractManager.appendKeepingReturn(AbstractMission.finish, function(mission, finishState)
+        ContractManager.guard("Contract finish (records)", Registry.afterMissionFinish, mission, finishState)
+    end)
     if MissionManager.registerMission ~= nil then
         MissionManager.registerMission = ContractManager.appendKeepingReturn(MissionManager.registerMission,
             function(manager, mission) Registry.pushMissionInfo(mission) end)
@@ -618,7 +623,7 @@ if MissionManager ~= nil and MissionManager.startMission ~= nil and AbstractMiss
         -- 2026-09-09, 8 kez).
         MissionManager.dismissMission = Utils.overwrittenFunction(MissionManager.dismissMission,
             function(manager, superFunc, mission)
-                Registry.beforeDismissMission(manager, mission)
+                ContractManager.guard("Contract dismiss (records)", Registry.beforeDismissMission, manager, mission)
                 return superFunc(manager, mission)
             end)
     end

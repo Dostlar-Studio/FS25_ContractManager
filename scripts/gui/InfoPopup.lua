@@ -88,7 +88,7 @@ if DialogElement ~= nil then
             return false
         end
         local instance = Popup.new()
-        local ok = pcall(g_gui.loadGui, g_gui, xmlPath, Popup.GUI_NAME, instance)
+        local ok = ContractManager.guard("Info popup load", g_gui.loadGui, g_gui, xmlPath, Popup.GUI_NAME, instance)
         if not ok or instance.dialogText == nil or instance.okButton == nil then
             Popup.loadFailed = true
             ContractManager.warning("Info popup could not be loaded; falling back to notifications")
@@ -154,10 +154,7 @@ if DialogElement ~= nil then
         local action = self.action
         self.action = nil
         if action ~= nil and type(action.onAccept) == "function" then
-            local ok, err = pcall(action.onAccept)
-            if not ok then
-                ContractManager.warning("Popup action failed: %s", tostring(err))
-            end
+            ContractManager.guard("Popup action", action.onAccept)
         end
         self:close()
     end

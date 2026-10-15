@@ -43,15 +43,16 @@ function Pricing.getMissionPosition(mission)
         return nil
     end
     if mission.getWorldPosition ~= nil then
-        local ok, x, z = pcall(mission.getWorldPosition, mission)
+        -- yayinlanmamis kontrat siniflari bunu kendileri tanimlayabilir: korumali
+        local ok, x, z = ContractManager.guard("Contract position", mission.getWorldPosition, mission)
         if ok and type(x) == "number" and type(z) == "number" and (x ~= 0 or z ~= 0) then
             return x, z
         end
     end
     -- yedek: tarlanin gosterge noktasi
     if mission.field ~= nil and mission.field.getIndicatorPosition ~= nil then
-        local ok, x, z = pcall(mission.field.getIndicatorPosition, mission.field)
-        if ok and type(x) == "number" and type(z) == "number" then
+        local x, z = mission.field:getIndicatorPosition()
+        if type(x) == "number" and type(z) == "number" then
             return x, z
         end
     end
@@ -64,13 +65,12 @@ local function farmhousePosition(farmId)
         return nil
     end
     for _, placeable in ipairs(ps.placeables) do
-        if placeable.spec_farmhouse ~= nil and placeable.getOwnerFarmId ~= nil and placeable.rootNode ~= nil then
-            local ok, owner = pcall(placeable.getOwnerFarmId, placeable)
-            if ok and owner == farmId then
-                local okPos, x, _, z = pcall(getWorldTranslation, placeable.rootNode)
-                if okPos and type(x) == "number" then
-                    return x, z
-                end
+        if placeable.spec_farmhouse ~= nil and placeable.getOwnerFarmId ~= nil and placeable.rootNode ~= nil
+            and placeable:getOwnerFarmId() == farmId
+            and (entityExists == nil or entityExists(placeable.rootNode)) then
+            local x, _, z = getWorldTranslation(placeable.rootNode)
+            if type(x) == "number" then
+                return x, z
             end
         end
     end

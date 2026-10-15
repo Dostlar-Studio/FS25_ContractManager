@@ -186,8 +186,8 @@ function Details.buildRows(mission)
     -- kalan sure
     local running = mission.status == MissionStatus.RUNNING or mission.status == MissionStatus.PREPARING
     if running and mission.getMinutesLeft ~= nil then
-        local ok, minutes = pcall(mission.getMinutesLeft, mission)
-        if ok and type(minutes) == "number" then
+        local minutes = mission:getMinutesLeft()
+        if type(minutes) == "number" then
             rows[#rows + 1] = { title = text("cm_detailTimeLeft"), value = Details.formatMinutes(minutes) }
         end
     end
@@ -333,9 +333,10 @@ function Details.overwriteGetDetails(mission, superFunc)
     if type(details) ~= "table" then
         return details
     end
-    pcall(Details.stripLeaseRow, details, mission)
-    local ok, rows = pcall(Details.buildRows, mission)
-    if ok then
+    -- Oyunun ayrinti listesine ekleme: hatamiz oyunun kontrat ekranini bozmasin, loga yazilsin.
+    ContractManager.guard("Contract details (lease row)", Details.stripLeaseRow, details, mission)
+    local ok, rows = ContractManager.guard("Contract details", Details.buildRows, mission)
+    if ok and type(rows) == "table" then
         for _, row in ipairs(rows) do
             table.insert(details, row)
         end

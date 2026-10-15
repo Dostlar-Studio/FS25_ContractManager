@@ -108,7 +108,8 @@ function ContractGuard:getAssignedStation(mission)
     end
 
     if mission.sellingStation == nil and mission.tryToResolveSellingStation ~= nil then
-        pcall(mission.tryToResolveSellingStation, mission)
+        -- yayinlanmamis kontrat sinifinin yontemi: korumali
+        ContractManager.guard("Delivery station lookup", mission.tryToResolveSellingStation, mission)
     end
 
     if type(mission.sellingStation) == "table" then
@@ -312,8 +313,8 @@ function ContractGuard:getItemSystemItems()
         return {}
     end
     if itemSystem.getItems ~= nil then
-        local ok, items = pcall(itemSystem.getItems, itemSystem)
-        if ok and type(items) == "table" then
+        local items = itemSystem:getItems()
+        if type(items) == "table" then
             return items
         end
     end
@@ -580,8 +581,8 @@ function ContractGuard:getMemberFarmIds(mission)
     local ids = { mission.farmId }
     local Part = ContractManagerPartnership
     if Part ~= nil and Part.getFarms ~= nil then
-        local ok, farms = pcall(Part.getFarms, mission)
-        if ok and type(farms) == "table" then
+        local farms = Part.getFarms(mission)
+        if type(farms) == "table" then
             ids = {}
             for _, farmId in ipairs(farms) do
                 ids[#ids + 1] = farmId
@@ -601,8 +602,8 @@ function ContractGuard:getConfiscationCap(mission)
     if Info == nil or Info.measure == nil then
         return nil
     end
-    local ok, data = pcall(Info.measure, mission)
-    if not ok or type(data) ~= "table" or (data.total or 0) <= 0 then
+    local data = Info.measure(mission)
+    if type(data) ~= "table" or (data.total or 0) <= 0 then
         return nil
     end
     return math.max(0, data.total - (data.deposited or 0))
@@ -766,10 +767,7 @@ function ContractGuard:update(dt)
     self.lossTimer = self.lossTimer + dt
     if self.lossTimer >= self.LOSS_CHECK_INTERVAL_MS then
         self.lossTimer = 0
-        local ok, err = pcall(self.checkProductLoss, self)
-        if not ok then
-            Logging.warning("[CM/Guard] Product loss check failed: %s", tostring(err))
-        end
+        ContractManager.guard("Product loss check", self.checkProductLoss, self)
     end
 
     self.updateTimer = self.updateTimer + dt
@@ -917,7 +915,10 @@ end
 
 MissionManager.startMission = Utils.overwrittenFunction(MissionManager.startMission, ContractGuard.overwriteStartMission)
 MissionManager.cancelMission = Utils.overwrittenFunction(MissionManager.cancelMission, ContractGuard.overwriteCancelMission)
-AbstractMission.finish = Utils.prependedFunction(AbstractMission.finish, ContractGuard.beforeMissionFinish)
+-- Bitis oncesi musadere: hatasi oyunun kontrati bitirmesini durdurmasin (kanca siniri korumali, 1.26.0.0).
+AbstractMission.finish = Utils.prependedFunction(AbstractMission.finish, function(mission, finishState)
+    ContractManager.guard("Contract finish (protection)", ContractGuard.beforeMissionFinish, mission, finishState)
+end)
 
 if BaleUnloadTrigger ~= nil and BaleUnloadTrigger.update ~= nil then
     BaleUnloadTrigger.update = Utils.overwrittenFunction(BaleUnloadTrigger.update, ContractGuard.overwriteBaleUnloadTriggerUpdate)

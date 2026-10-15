@@ -77,8 +77,8 @@ function Reward.getPenalty(mission)
     end
     local reward = 0
     if mission.getReward ~= nil then
-        local ok, value = pcall(mission.getReward, mission)
-        if ok and type(value) == "number" then
+        local value = mission:getReward()
+        if type(value) == "number" then
             reward = value
         end
     end
@@ -143,8 +143,8 @@ function Reward.getPartialReward(mission)
     end
     local reward = 0
     if mission.getReward ~= nil then
-        local ok, value = pcall(mission.getReward, mission)
-        if ok and type(value) == "number" then
+        local value = mission:getReward()
+        if type(value) == "number" then
             reward = value
         end
     end
@@ -169,11 +169,11 @@ end
 ---Yani oyuncunun ekranda gordugu tutar ile hesabina gecen tutar farkliydi (2026-09-13).
 ---Schedule bonusu gercek duvar saatinden okundugu icin ayni sorun orada daha da buyuktu.
 function Reward.freeze(mission)
-    if mission == nil then
+    if mission == nil or mission.getReward == nil then
         return nil
     end
-    local ok, value = pcall(mission.getReward, mission)
-    if ok and type(value) == "number" then
+    local value = mission:getReward()
+    if type(value) == "number" then
         mission.cmFrozenReward = value
     end
     return mission.cmFrozenReward
@@ -200,8 +200,8 @@ function Reward.overwriteGetReward(mission, superFunc)
     mission.cmInReward = true
     -- Oyunun kendi getReward'i hata atarsa bayrak temizlenmeden kalirdi ve o kontrat
     -- bundan sonra HEP ham oyun odulunu dondururdu (carpan, itibar, bonuslar kaybolurdu).
-    -- Hata getPenalty'deki pcall'da yutuldugu icin logda iz de birakmiyordu.
-    local ok, base = pcall(superFunc, mission)
+    -- Hata asagida loglanip YENIDEN firlatilir (yutulmaz).
+    local ok, base = ContractManager.attempt(superFunc, mission)
     mission.cmInReward = nil
     if not ok then
         ContractManager.warning("getReward failed for contract %s: %s",

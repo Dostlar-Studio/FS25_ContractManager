@@ -81,7 +81,7 @@ function Tab.registerGlobalText(key)
         return false
     end
     if type(g_i18n.setText) == "function" then
-        pcall(g_i18n.setText, g_i18n, key, value)
+        g_i18n:setText(key, value)
     end
     if type(g_i18n.texts) == "table" and g_i18n.texts[key] == nil then
         g_i18n.texts[key] = value
@@ -260,8 +260,7 @@ function Tab.formatValue(spec, value)
         end
         return string.format("%.1f ha", value)
     end
-    local ok, s = pcall(string.format, spec.format or "%s", value)
-    return ok and s or tostring(value)
+    return ContractManager.formatSafe(spec.format or "%s", value)
 end
 
 ---kontrolun secenek metinleri
@@ -670,7 +669,7 @@ end
 function Tab:onStatsReceived(farmId, stats, history, board)
     self.stats = { farmId = farmId, stats = stats, history = history, board = board }
     if self.built then
-        pcall(function()
+        ContractManager.guard("Settings tab statistics", function()
             self:populateStats()
             if self.page ~= nil and self.page.settingsLayout ~= nil then
                 self.page.settingsLayout:invalidateLayout()
@@ -747,16 +746,20 @@ function Tab:insertIntoSettingsPage()
     local controls = self.controls
     -- Bu kanca HER ekran acilisinda (magaza, harita, her diyalog) ~130 kontrolu tariyordu.
     -- Yalnizca oyunun ayar ekrani acilirken calissin. 2026-09-13 denetimi.
-    FocusManager.setGui = Utils.appendedFunction(FocusManager.setGui, function(_, gui)
-        if gui ~= nil and gui ~= "ingameMenu" and gui ~= "InGameMenu" then
-            return
-        end
+    -- Oyunun odak yoneticisine ek: hatamiz oyunun menu odagini bozmasin (kanca siniri korumali, 1.26.0.0).
+    local function registerFocus()
         for _, control in ipairs(controls) do
             if not control.focusId or not FocusManager.currentFocusData.idToElementMapping[control.focusId] then
                 FocusManager:loadElementFromCustomValues(control, nil, nil, false, false)
             end
         end
         page.settingsLayout:invalidateLayout()
+    end
+    FocusManager.setGui = Utils.appendedFunction(FocusManager.setGui, function(_, gui)
+        if gui ~= nil and gui ~= "ingameMenu" and gui ~= "InGameMenu" then
+            return
+        end
+        ContractManager.guard("Settings tab focus", registerFocus)
     end)
 
     local currentGui = FocusManager.currentGui
@@ -778,7 +781,7 @@ function Tab:insertIntoSettingsPage()
     pageSettings.onFrameOpen = Utils.appendedFunction(pageSettings.onFrameOpen, function(frame)
         local texts = frame.subCategoryPaging.texts
         Tab.modState = Tab.findPagingState(texts, InGameMenuSettingsFrame.SUB_CATEGORY.CONTRACTMANAGER) or #texts
-        pcall(function()
+        ContractManager.guard("Settings tab open", function()
             Tab:populate()
             Tab:requestStats()
             frame:updateAlternatingElements(page.settingsLayout)
@@ -792,13 +795,16 @@ function Tab:insertIntoSettingsPage()
             local result = superFunc(frame, state)
             local value = frame.subCategoryPaging.texts[state]
             if value ~= nil and tonumber(value) == InGameMenuSettingsFrame.SUB_CATEGORY.CONTRACTMANAGER then
-                local layout = page.settingsLayout
-                frame.settingsSlider:setDataElement(layout)
-                pcall(Tab.fixMissingTexts, frame, "cm_tabTitle")
-                if #layout.elements > 0 then
-                    FocusManager:linkElements(frame.subCategoryPaging, FocusManager.TOP, layout.elements[#layout.elements].elements[1])
-                    FocusManager:linkElements(frame.subCategoryPaging, FocusManager.BOTTOM, layout:findFirstFocusable(true))
-                end
+                -- hatamiz oyunun alt sekme gecisini bozmasin (kanca siniri korumali, 1.26.0.0)
+                ContractManager.guard("Settings tab paging", function()
+                    local layout = page.settingsLayout
+                    frame.settingsSlider:setDataElement(layout)
+                    Tab.fixMissingTexts(frame, "cm_tabTitle")
+                    if #layout.elements > 0 then
+                        FocusManager:linkElements(frame.subCategoryPaging, FocusManager.TOP, layout.elements[#layout.elements].elements[1])
+                        FocusManager:linkElements(frame.subCategoryPaging, FocusManager.BOTTOM, layout:findFirstFocusable(true))
+                    end
+                end)
             end
             return result
         end)
@@ -819,7 +825,7 @@ function Tab:init()
         return false
     end
 
-    local ok, err = pcall(function()
+    local ok, err = ContractManager.attempt(function()
         self.page = ContractManagerSettingsPage.new()
         local loaded = g_gui:loadGui(xmlPath, "ContractManagerSettingsFrame", self.page)
         if loaded == nil and self.page.cmPage == nil then
@@ -844,7 +850,7 @@ if g_messageCenter ~= nil and MessageType ~= nil and MessageType.CURRENT_MISSION
     end, Tab)
     g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED, function()
         if Tab.built then
-            pcall(Tab.populate, Tab)
+            ContractManager.guard("Settings tab refresh", Tab.populate, Tab)
         end
     end, Tab)
 end

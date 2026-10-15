@@ -290,7 +290,8 @@ function Settings:load()
         return
     end
 
-    local ok, xmlFile = pcall(XMLFile.load, "contractManagerSettings", path, self.xmlSchema)
+    -- bozuk dosya oyunun XML katmaninda firlatabilir: korumali, varsayilanlarla devam
+    local ok, xmlFile = ContractManager.guard("Settings file load", XMLFile.load, "contractManagerSettings", path, self.xmlSchema)
     if not ok or xmlFile == nil then
         ContractManager.warning("Settings file unreadable, defaults in use: %s", path)
         return
@@ -333,7 +334,7 @@ end
 
 function Settings:save()
     local path = self:getPath()
-    local ok, xmlFile = pcall(XMLFile.create, "contractManagerSettings", path, self.ROOT, self.xmlSchema)
+    local ok, xmlFile = ContractManager.guard("Settings file save", XMLFile.create, "contractManagerSettings", path, self.ROOT, self.xmlSchema)
     if not ok or xmlFile == nil then
         ContractManager.warning("Settings file could not be written: %s", path)
         return false

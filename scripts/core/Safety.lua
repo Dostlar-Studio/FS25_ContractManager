@@ -4,7 +4,7 @@
 -- Oyunun kendi kontrat kodunda her karede tekrarlayan bir hata oyunu kapatir
 -- (2026-09-07: AbstractFieldMission.lua:472, completionPartitions bos/nil -> "attempt to
 -- index nil with number", gubreleme kontrati, Recanto da Alvorada haritasi).
--- Bu kalkan getFieldCompletion'i pcall ile sarar: hata olursa kontrat basina BIR kez
+-- Bu kalkan getFieldCompletion'i korumali cagirir: hata olursa kontrat basina BIR kez
 -- teshis satiri yazar ve son bilinen ilerlemeyi dondurur; oyun kapanmaz.
 --
 
@@ -17,13 +17,14 @@ local Safety = ContractManagerSafety
 local function describeMission(mission)
     local typeName = mission.type ~= nil and mission.type.name or "?"
     local fieldId, areaHa = "?", "?"
+    -- Hata yolunda calisir (tarla nesnesi bozuk olabilir): okumalar da korumali.
     if mission.field ~= nil then
         if mission.field.getId ~= nil then
-            local ok, id = pcall(mission.field.getId, mission.field)
+            local ok, id = ContractManager.attempt(mission.field.getId, mission.field)
             if ok then fieldId = tostring(id) end
         end
         if mission.field.getAreaHa ~= nil then
-            local ok, area = pcall(mission.field.getAreaHa, mission.field)
+            local ok, area = ContractManager.attempt(mission.field.getAreaHa, mission.field)
             if ok then areaHa = tostring(area) end
         end
     end
@@ -34,7 +35,8 @@ local function describeMission(mission)
 end
 
 function Safety.overwriteGetFieldCompletion(mission, superFunc)
-    local ok, result = pcall(superFunc, mission)
+    -- kontrat basina BIR kez ayrintili satir yazilir (asagida); guard'in genel satiri gerekmez
+    local ok, result = ContractManager.attempt(superFunc, mission)
     if ok then
         return result
     end

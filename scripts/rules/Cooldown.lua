@@ -115,8 +115,13 @@ function Cooldown.afterMissionFinish(mission, finishState)
 end
 
 if MissionManager ~= nil and MissionManager.registerMission ~= nil and AbstractMission ~= nil and AbstractMission.finish ~= nil then
-    MissionManager.registerMission = ContractManager.appendKeepingReturn(MissionManager.registerMission, Cooldown.afterRegisterMission)
-    AbstractMission.finish = ContractManager.appendKeepingReturn(AbstractMission.finish, Cooldown.afterMissionFinish)
+    -- oyunun kayit ve bitis akisinda: hatamiz bu akislari yarida kesmesin (kanca siniri korumali, 1.26.0.0)
+    MissionManager.registerMission = ContractManager.appendKeepingReturn(MissionManager.registerMission, function(manager, mission, missionType)
+        ContractManager.guard("Field cooldown (new contract)", Cooldown.afterRegisterMission, manager, mission, missionType)
+    end)
+    AbstractMission.finish = ContractManager.appendKeepingReturn(AbstractMission.finish, function(mission, finishState)
+        ContractManager.guard("Field cooldown (finish)", Cooldown.afterMissionFinish, mission, finishState)
+    end)
 else
     ContractManager.warning("MissionManager.registerMission missing; field cooldown disabled")
 end

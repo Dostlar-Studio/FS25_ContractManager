@@ -124,10 +124,11 @@ function Persistence:update(dt)
 end
 
 if FSCareerMissionInfo ~= nil and FSCareerMissionInfo.saveToXMLFile ~= nil then
+    -- Oyunun kayit akisinda: hatamiz oyunun kaydini yarida kesmesin (kanca siniri korumali, 1.26.0.0).
     FSCareerMissionInfo.saveToXMLFile = ContractManager.appendKeepingReturn(FSCareerMissionInfo.saveToXMLFile, function()
-        Persistence:save()
+        ContractManager.guard("Savegame write", Persistence.save, Persistence)
         if ContractManagerSettings ~= nil then
-            ContractManagerSettings:saveIfDirty()
+            ContractManager.guard("Settings write", ContractManagerSettings.saveIfDirty, ContractManagerSettings)
         end
     end)
 else

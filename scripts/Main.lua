@@ -29,10 +29,54 @@ ContractManager = {
 -- log
 -- ---------------------------------------------------------------------------
 
-local function formatLine(fmt, ...)
-    local ok, line = pcall(string.format, fmt, ...)
-    return ok and line or tostring(fmt)
+-- string.format belirtecleri: sayi bekleyenler; %s / %q metin ya da sayi alir
+local NUMERIC_CONVERSIONS = { d = true, i = true, o = true, u = true, x = true, X = true, c = true,
+    e = true, E = true, f = true, g = true, G = true }
+
+---string.format, ama ASLA firlatmaz: belirtecler ve argumanlar once denetlenir; uymuyorsa (eksik ya da
+---yanlis turde arguman, bilinmeyen belirtec) sablon ve argumanlar yan yana yazilir. %s'e verilen nil/tablo
+---tostring ile yazilir. Log satirlari ve ayar etiketleri bununla bicimlenir (pcall gerekmez, 1.26.0.0).
+function ContractManager.formatSafe(template, ...)
+    template = tostring(template)
+    local count = select("#", ...)
+    local args = { ... }
+    local index, position, valid = 0, 1, true
+    while valid do
+        local start = string.find(template, "%", position, true)
+        if start == nil then
+            break
+        end
+        local flags, width, dot, precision, conversion = string.match(template, "^%%([-+ #0]*)(%d*)(%.?)(%d*)(.?)", start)
+        if conversion == "%" and flags == "" and width == "" and dot == "" and precision == "" then
+            position = start + 2
+        else
+            index = index + 1
+            local value = args[index]
+            if index > count or #flags > 5 or #width > 2 or #precision > 2 then
+                valid = false
+            elseif NUMERIC_CONVERSIONS[conversion] then
+                valid = tonumber(value) ~= nil
+            elseif conversion == "s" or conversion == "q" then
+                if type(value) ~= "string" and type(value) ~= "number" then
+                    args[index] = tostring(value)
+                end
+            else
+                valid = false
+            end
+            position = start + 2 + #flags + #width + #dot + #precision
+        end
+    end
+    if valid then
+        return string.format(template, unpack(args, 1, count))
+    end
+    local parts = { template }
+    for i = 1, count do
+        parts[#parts + 1] = tostring(args[i])
+    end
+    return table.concat(parts, " ")
 end
+
+local formatLine = ContractManager.formatSafe
 
 function ContractManager.info(fmt, ...)
     Logging.info("%s %s", ContractManager.LOG_PREFIX, formatLine(fmt, ...))
@@ -118,7 +162,7 @@ ContractManager.GUARD_LOG_MAX = 3
 ContractManager.guardErrors = {}
 
 local function guardResult(label, ok, ...)
-    if not ok then
+    if not ok and label ~= nil then
         local key = tostring(label)
         local count = (ContractManager.guardErrors[key] or 0) + 1
         ContractManager.guardErrors[key] = count
@@ -132,6 +176,21 @@ end
 
 function ContractManager.guard(label, fn, ...)
     return guardResult(label, pcall(fn, ...))
+end
+
+---Hatayi CAGIRAN raporlar (kendi teshis satirini yazar, ornek: Safety kalkani): guard gibi, ama loglamaz.
+function ContractManager.attempt(fn, ...)
+    return ContractManager.guard(nil, fn, ...)
+end
+
+---Istemci: olayi sunucuya gonder. Baglanti yoksa (ana menuye donus sirasinda) false. Alti yerde ayni
+---korumali "g_client:getServerConnection():sendEvent(...)" kalibi vardi (1.26.0.0).
+function ContractManager.sendToServer(event)
+    local connection = g_client ~= nil and g_client.getServerConnection ~= nil and g_client:getServerConnection() or nil
+    if connection == nil or event == nil then
+        return false
+    end
+    return (ContractManager.guard("Send to server", connection.sendEvent, connection, event))
 end
 
 -- ---------------------------------------------------------------------------
@@ -150,11 +209,8 @@ function ContractManager.getMissionObjectId(mission)
     if mission == nil or NetworkUtil == nil or NetworkUtil.getObjectId == nil then
         return 0
     end
-    local ok, id = pcall(NetworkUtil.getObjectId, mission)
-    if ok and type(id) == "number" then
-        return id
-    end
-    return 0
+    local id = NetworkUtil.getObjectId(mission)
+    return type(id) == "number" and id or 0
 end
 
 ---Yerel kimlik: sunucuda mission.uniqueId, istemcide senkronla gelen kopya.
@@ -191,8 +247,8 @@ end
 ---Sunucu: ag kimliginden kontratin kendi uniqueId'sine.
 function ContractManager.resolveMissionKey(objectId, fallback)
     if objectId ~= nil and objectId ~= 0 and NetworkUtil ~= nil and NetworkUtil.getObject ~= nil then
-        local ok, mission = pcall(NetworkUtil.getObject, objectId)
-        if ok and mission ~= nil then
+        local mission = NetworkUtil.getObject(objectId)
+        if type(mission) == "table" then
             local key = ContractManager.getMissionKey(mission)
             if key ~= nil then
                 return key
@@ -212,8 +268,8 @@ function ContractManager.rememberMissionKey(objectId, uniqueId)
         or NetworkUtil == nil or NetworkUtil.getObject == nil then
         return nil
     end
-    local ok, mission = pcall(NetworkUtil.getObject, objectId)
-    if ok and mission ~= nil then
+    local mission = NetworkUtil.getObject(objectId)
+    if type(mission) == "table" then
         mission.cmUniqueId = uniqueId
         return mission
     end
@@ -275,7 +331,6 @@ ContractManager.MENU_BAR_SLOTS = 6
 local ownButtons = setmetatable({}, { __mode = "k" })      -- bizim cubuga koydugumuz girdiler
 local replacedStock = setmetatable({}, { __mode = "k" })   -- bizim girdi -> yerine gectigi stok girdi
 local hiddenStock = setmetatable({}, { __mode = "k" })     -- liste -> { {index, info} } gizledigimiz stok girdiler
-local buttonErrorsReported = {}
 local buttonSkipsReported = {}
 
 ---Ekleyici kaydet (ad benzersiz; ayni adla tekrar kayit onu gunceller). Kucuk sira once calisir.
@@ -515,11 +570,8 @@ function ContractManager.runButtonAppenders(frame, state)
         stock[info] = true
     end
     for _, entry in ipairs(ContractManager.buttonAppenders) do
-        local ok, err = pcall(entry.fn, frame)
-        if not ok and not buttonErrorsReported[entry.name] then
-            buttonErrorsReported[entry.name] = true
-            ContractManager.warning("Contracts page button '%s' failed: %s", entry.name, tostring(err))
-        end
+        -- bir ekleyicinin hatasi digerlerini ve oyunun cubugunu durdurmaz; loga yazilir (etiket basina sinirli)
+        ContractManager.guard("Contracts page button '" .. tostring(entry.name) .. "'", entry.fn, frame)
     end
     ContractManager.sanitizeButtons(frame.menuButtonInfo, stock)
     if stripped > 0 or ContractManager.countAddedButtons(frame.menuButtonInfo) > 0 then
@@ -540,7 +592,7 @@ function ContractManager.installButtonBar()
     cls.setButtonsForState = Utils.appendedFunction(cls.setButtonsForState, function(frame, state)
         local dispatch = InGameMenuContractsFrame ~= nil and InGameMenuContractsFrame.cmButtonDispatch or nil
         if dispatch ~= nil then
-            dispatch(frame, state)
+            ContractManager.guard("Contracts page buttons", dispatch, frame, state)
         end
     end)
     cls.cmButtonHookInstalled = true
@@ -559,17 +611,14 @@ end
 
 function ContractManager.cursorVisible()
     if g_inputBinding ~= nil and g_inputBinding.getShowMouseCursor ~= nil then
-        local ok, value = pcall(g_inputBinding.getShowMouseCursor, g_inputBinding)
-        if ok then
-            return value == true
-        end
+        return g_inputBinding:getShowMouseCursor() == true
     end
     return false
 end
 
 function ContractManager.setCursor(visible)
     if g_inputBinding ~= nil and g_inputBinding.setShowMouseCursor ~= nil then
-        pcall(g_inputBinding.setShowMouseCursor, g_inputBinding, visible == true)
+        g_inputBinding:setShowMouseCursor(visible == true)
     end
 end
 

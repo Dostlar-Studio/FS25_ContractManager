@@ -136,9 +136,7 @@ function ContractManagerSyncEvent.requestFromServer()
     if g_currentMission == nil or g_currentMission:getIsServer() or g_client == nil then
         return false
     end
-    local ok = pcall(function()
-        g_client:getServerConnection():sendEvent(ContractManagerSyncEvent.newRequest())
-    end)
+    local ok = ContractManager.sendToServer(ContractManagerSyncEvent.newRequest())
     if not ok then
         ContractManager.warning("Could not request settings from server")
     end
@@ -311,12 +309,11 @@ function ContractManager.getIsConnectionAdmin(connection)
     if g_currentMission == nil or g_currentMission.userManager == nil or connection == nil then
         return false
     end
-    local ok, user = pcall(g_currentMission.userManager.getUserByConnection, g_currentMission.userManager, connection)
-    if not ok or user == nil or user.getIsMasterUser == nil then
+    local user = g_currentMission.userManager:getUserByConnection(connection)
+    if user == nil or user.getIsMasterUser == nil then
         return false
     end
-    local okAdmin, isAdmin = pcall(user.getIsMasterUser, user)
-    return okAdmin and isAdmin == true
+    return user:getIsMasterUser() == true
 end
 
 ---Kullanici adi (log icin). Alan adi yayinlanmamis: DiscordBridge canlida ikisini de
@@ -329,8 +326,8 @@ function ContractManager.getUserName(user)
         return user.nickname
     end
     if user.getNickname ~= nil then
-        local ok, name = pcall(user.getNickname, user)
-        if ok and type(name) == "string" and name ~= "" then
+        local name = user:getNickname()
+        if type(name) == "string" and name ~= "" then
             return name
         end
     end
@@ -342,11 +339,7 @@ function ContractManager.getConnectionUserName(connection)
     if g_currentMission == nil or g_currentMission.userManager == nil or connection == nil then
         return nil
     end
-    local ok, user = pcall(g_currentMission.userManager.getUserByConnection, g_currentMission.userManager, connection)
-    if not ok then
-        return nil
-    end
-    return ContractManager.getUserName(user)
+    return ContractManager.getUserName(g_currentMission.userManager:getUserByConnection(connection))
 end
 
 -- ---------------------------------------------------------------------------
@@ -423,13 +416,8 @@ function ContractManagerSettingChangeEvent.send(key, value)
     if g_currentMission ~= nil and g_currentMission:getIsServer() then
         return ContractManagerSettingsTab.applyOnServer(key, value, "host")
     end
-    if g_client ~= nil then
-        local ok = pcall(function()
-            g_client:getServerConnection():sendEvent(ContractManagerSettingChangeEvent.new(key, value))
-        end)
-        if not ok then
-            ContractManager.warning("Could not send setting change to server")
-        end
+    if g_client ~= nil and not ContractManager.sendToServer(ContractManagerSettingChangeEvent.new(key, value)) then
+        ContractManager.warning("Could not send setting change to server")
     end
     return nil
 end
@@ -585,8 +573,8 @@ function ContractManagerStatsEvent:run(connection)
         -- istemcinin gonderdigi kimlige GUVENILMEZ, izleyici (0) gibi yanitlanir (1.26.0.0).
         local farmId = 0
         if g_currentMission ~= nil and g_currentMission.userManager ~= nil and g_farmManager ~= nil then
-            local ok, user = pcall(g_currentMission.userManager.getUserByConnection, g_currentMission.userManager, connection)
-            if ok and user ~= nil and user.getId ~= nil and g_farmManager.getFarmByUserId ~= nil then
+            local user = g_currentMission.userManager:getUserByConnection(connection)
+            if user ~= nil and user.getId ~= nil and g_farmManager.getFarmByUserId ~= nil then
                 local farm = g_farmManager:getFarmByUserId(user:getId())
                 if farm ~= nil and farm.farmId ~= nil then
                     farmId = farm.farmId
@@ -632,11 +620,7 @@ function ContractManagerStatsEvent.request()
         ContractManagerSettingsTab:onStatsReceived(farmId, response.stats, response.history, response.board)
         return
     end
-    if g_client ~= nil then
-        pcall(function()
-            g_client:getServerConnection():sendEvent(ContractManagerStatsEvent.newRequest(farmId))
-        end)
-    end
+    ContractManager.sendToServer(ContractManagerStatsEvent.newRequest(farmId))
 end
 
 -- ---------------------------------------------------------------------------
@@ -711,8 +695,8 @@ function ContractManagerReservationEvent.getConnectionFarmId(connection)
     if g_currentMission == nil or g_currentMission.userManager == nil or g_farmManager == nil then
         return nil
     end
-    local ok, user = pcall(g_currentMission.userManager.getUserByConnection, g_currentMission.userManager, connection)
-    if not ok or user == nil or user.getId == nil or g_farmManager.getFarmByUserId == nil then
+    local user = g_currentMission.userManager:getUserByConnection(connection)
+    if user == nil or user.getId == nil or g_farmManager.getFarmByUserId == nil then
         return nil
     end
     local farm = g_farmManager:getFarmByUserId(user:getId())
@@ -769,11 +753,7 @@ function ContractManagerReservationEvent.send(kind, uniqueId, objectId)
         if ContractManagerAdmin ~= nil then ContractManagerAdmin.showResult(key, ok) end
         return ok, key
     end
-    if g_client ~= nil then
-        pcall(function()
-            g_client:getServerConnection():sendEvent(ContractManagerReservationEvent.newRequest(kind, uniqueId, objectId))
-        end)
-    end
+    ContractManager.sendToServer(ContractManagerReservationEvent.newRequest(kind, uniqueId, objectId))
     return nil
 end
 
@@ -1012,10 +992,6 @@ function ContractManagerPartnerEvent.send(kind, uniqueId, targetFarmId, objectId
         end
         return ok, key
     end
-    if g_client ~= nil then
-        pcall(function()
-            g_client:getServerConnection():sendEvent(ContractManagerPartnerEvent.newRequest(kind, uniqueId, targetFarmId, objectId))
-        end)
-    end
+    ContractManager.sendToServer(ContractManagerPartnerEvent.newRequest(kind, uniqueId, targetFarmId, objectId))
     return nil
 end

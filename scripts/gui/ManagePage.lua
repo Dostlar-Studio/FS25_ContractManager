@@ -177,8 +177,8 @@ local function minutesText(mission)
     if mission == nil or mission.getMinutesLeft == nil then
         return nil
     end
-    local ok, minutes = pcall(mission.getMinutesLeft, mission)
-    if not ok or type(minutes) ~= "number" then
+    local minutes = mission:getMinutesLeft()
+    if type(minutes) ~= "number" then
         return nil
     end
     if ContractManagerContractDetails ~= nil then
@@ -390,8 +390,8 @@ local function sortKeys(row)
     end
     local minutes = math.huge
     if mission ~= nil and mission.getMinutesLeft ~= nil then
-        local ok, value = pcall(mission.getMinutesLeft, mission)
-        if ok and type(value) == "number" then
+        local value = mission:getMinutesLeft()
+        if type(value) == "number" then
             minutes = value
         end
     end
@@ -560,7 +560,8 @@ function Page.buildDetailLines(mission, entry)
     end
     lines[#lines + 1] = Page.formatMission(mission)
     if mission.getDetails ~= nil then
-        local ok, details = pcall(mission.getDetails, mission)
+        -- oyunun (ve yayinlanmamis kontrat siniflarinin) ayrinti listesi: korumali
+        local ok, details = ContractManager.guard("Contract Manager page details", mission.getDetails, mission)
         if ok and type(details) == "table" then
             for _, row in ipairs(details) do
                 if #lines >= Page.MAX_DETAIL then break end
@@ -709,7 +710,7 @@ function Page:showConfirmDialog(action)
     local question = Page.confirmQuestion(action, Page.farmName(self.targetFarmId),
         pinned ~= nil and pinned.title or nil)
     local title = text("cm_tabTitle", "Contract Manager")
-    local ok = pcall(YesNoDialog.show, self.onConfirmDialog, self, question, title,
+    local ok = ContractManager.guard("Confirm dialog", YesNoDialog.show, self.onConfirmDialog, self, question, title,
         text("cm_pageConfirmButton", "Confirm"), text("cm_pageDialogNo", "Cancel"))
     if not ok then
         return false
@@ -1004,7 +1005,8 @@ function Page:paintRows()
     end
     local frame = g_inGameMenu ~= nil and g_inGameMenu.pageSettings or nil
     if frame ~= nil and frame.updateAlternatingElements ~= nil then
-        if pcall(frame.updateAlternatingElements, frame, layout) then
+        -- baska sayfanin yontemini bizim duzenimize uyguluyoruz: korumali, olmazsa kendi boyamamiz
+        if ContractManager.guard("Contract Manager page rows", frame.updateAlternatingElements, frame, layout) then
             return
         end
     end
@@ -1168,9 +1170,9 @@ function Page:refresh()
     if self.manageLayout ~= nil and self.manageLayout.invalidateLayout ~= nil then
         self.manageLayout:invalidateLayout()
     end
-    pcall(Page.paintRows, self)
+    ContractManager.guard("Contract Manager page rows", Page.paintRows, self)
     if self.manageSlider ~= nil and self.manageSlider.setDataElement ~= nil then
-        pcall(self.manageSlider.setDataElement, self.manageSlider, self.manageLayout)
+        ContractManager.guard("Contract Manager page slider", self.manageSlider.setDataElement, self.manageSlider, self.manageLayout)
     end
 end
 
@@ -1192,7 +1194,7 @@ function Page:onFrameOpen()
         local ids = Page.getFarmIds(self:getLocalFarmId())
         self.targetFarmId = ids[1]
     end
-    pcall(function()
+    ContractManager.guard("Contract Manager page open", function()
         self:refresh()
         if ContractManagerStatsEvent ~= nil then
             ContractManagerStatsEvent.request()
@@ -1209,19 +1211,20 @@ local function verifyRegistration(menu, page)
     if paging == nil or paging.getPageIdByElement == nil or paging.getIsPageDisabled == nil then
         return false, "PagingElement API"
     end
-    local ok, pageId = pcall(paging.getPageIdByElement, paging, page)
+    -- Yoklama: hata beklenen bir sonuctur ve cagirana sebep olarak doner (loglamadan dene).
+    local ok, pageId = ContractManager.attempt(paging.getPageIdByElement, paging, page)
     if not ok or pageId == nil then
         return false, "sayfa paging icinde yok"
     end
-    if not pcall(paging.getIsPageDisabled, paging, pageId) then
+    if not ContractManager.attempt(paging.getIsPageDisabled, paging, pageId) then
         return false, "getIsPageDisabled patladi"
     end
     for _, frame in ipairs(menu.pageFrames or {}) do
-        local okId, id = pcall(paging.getPageIdByElement, paging, frame)
+        local okId, id = ContractManager.attempt(paging.getPageIdByElement, paging, frame)
         if not okId or id == nil then
             return false, "baska bir sayfa bozuldu"
         end
-        if not pcall(paging.getIsPageDisabled, paging, id) then
+        if not ContractManager.attempt(paging.getIsPageDisabled, paging, id) then
             return false, "baska sayfada getIsPageDisabled patladi"
         end
     end
@@ -1249,17 +1252,17 @@ function Page.orderMatches(menu)
     end
     local expected = 0
     for _, frame in ipairs(menu.pageFrames or {}) do
-        local okId, pageId = pcall(paging.getPageIdByElement, paging, frame)
+        local okId, pageId = ContractManager.attempt(paging.getPageIdByElement, paging, frame)
         if not okId or pageId == nil then
             return false
         end
-        local okDis, disabled = pcall(paging.getIsPageDisabled, paging, pageId)
+        local okDis, disabled = ContractManager.attempt(paging.getIsPageDisabled, paging, pageId)
         if not okDis then
             return false
         end
         if not disabled then
             expected = expected + 1
-            local okIdx, mapping = pcall(paging.getPageMappingIndex, paging, pageId)
+            local okIdx, mapping = ContractManager.attempt(paging.getPageMappingIndex, paging, pageId)
             if not okIdx or mapping ~= expected then
                 return false
             end
@@ -1282,11 +1285,11 @@ function Page.movePage(menu, page, position)
         return false   -- yalnizca YUKARI tasima; asagi tasimanin bir anlami yok
     end
     -- kaydin dizideki yerini alan adi tahmin etmeden bul
-    local okId, pageId = pcall(paging.getPageIdByElement, paging, page)
+    local okId, pageId = ContractManager.attempt(paging.getPageIdByElement, paging, page)
     if not okId or pageId == nil then
         return false
     end
-    local okRec, record = pcall(paging.getPageById, paging, pageId)
+    local okRec, record = ContractManager.attempt(paging.getPageById, paging, pageId)
     if not okRec or record == nil then
         return false
     end
@@ -1304,7 +1307,7 @@ function Page.movePage(menu, page, position)
     table.remove(paging.pages, pageIndex)
     table.insert(paging.pages, math.min(position, #paging.pages + 1), record)
 
-    local okMap = pcall(paging.updatePageMapping, paging)
+    local okMap = ContractManager.attempt(paging.updatePageMapping, paging)
     if okMap and Page.orderMatches(menu) then
         return true
     end
@@ -1313,7 +1316,7 @@ function Page.movePage(menu, page, position)
     for i, v in ipairs(framesBefore) do menu.pageFrames[i] = v end
     for i = #paging.pages, 1, -1 do paging.pages[i] = nil end
     for i, v in ipairs(pagesBefore) do paging.pages[i] = v end
-    pcall(paging.updatePageMapping, paging)
+    ContractManager.guard("Contract Manager page order (restore)", paging.updatePageMapping, paging)
     return false
 end
 
@@ -1328,15 +1331,15 @@ function Page.preferredPosition(menu)
 end
 
 ---Yarim kalan kaydi tamamen geri al. `removePage` hata atmadan is gormeyebilir
----(kayda ORNEK verilmisti, removePage'e SINIF tablosu geciyorduk) ve pcall yine true doner;
+---(kayda ORNEK verilmisti, removePage'e SINIF tablosu geciyorduk) ve korumali cagri yine true doner;
 ---bu yuzden her durumda elle temizlik de yapilir. `pagingElement` ve `pageEnablingPredicates`
 ---atlanirsa pageFrames ile pagingElement.pages sayilari ayrisir ve yanlis sekme isaretli
 ---gorunur - movePage yorumlarinda tarif edilen durum. 2026-09-13 denetimi.
 local function rollback(menu, page)
     if menu.removePage ~= nil then
-        pcall(menu.removePage, menu, page)
+        ContractManager.attempt(menu.removePage, menu, page)
     end
-    pcall(function()
+    ContractManager.guard("Contract Manager page rollback", function()
         for index = #(menu.pageFrames or {}), 1, -1 do
             if menu.pageFrames[index] == page then table.remove(menu.pageFrames, index) end
         end
@@ -1345,7 +1348,7 @@ local function rollback(menu, page)
         if type(menu.pageEnablingPredicates) == "table" then menu.pageEnablingPredicates[page] = nil end
         if type(menu.pageTypeControllers) == "table" then menu.pageTypeControllers[page] = nil end
         if menu.pagingElement ~= nil and menu.pagingElement.removeElement ~= nil then
-            pcall(menu.pagingElement.removeElement, menu.pagingElement, page)
+            ContractManager.attempt(menu.pagingElement.removeElement, menu.pagingElement, page)
         end
         if type(menu.pagingElement) == "table" and type(menu.pagingElement.pages) == "table" then
             for index = #menu.pagingElement.pages, 1, -1 do
@@ -1379,10 +1382,10 @@ function Page.registerIconSlice()
     end
     -- customEnv VERILMEZ: getSliceInfoById kimligi "onek.dilim" olarak iki parcaya
     -- boler ve setImageSlice onu customEnv'siz arar. Onek bu yuzden benzersiz.
-    if not pcall(g_overlayManager.addTextureConfigFile, g_overlayManager, path, Page.SLICE_PREFIX) then
+    if not ContractManager.guard("Contract Manager tab icon", g_overlayManager.addTextureConfigFile, g_overlayManager, path, Page.SLICE_PREFIX) then
         return false
     end
-    local ok, slice = pcall(g_overlayManager.getSliceInfoById, g_overlayManager, Page.TAB_SLICE)
+    local ok, slice = ContractManager.guard("Contract Manager tab icon", g_overlayManager.getSliceInfoById, g_overlayManager, Page.TAB_SLICE)
     Page.sliceRegistered = ok and slice ~= nil
     return Page.sliceRegistered
 end
@@ -1395,18 +1398,18 @@ function Page.applyHeaderIcon(page)
         return
     end
     if Page.registerIconSlice() and icon.setImageSlice ~= nil then
-        pcall(icon.setImageSlice, icon, nil, Page.TAB_SLICE)
+        ContractManager.guard("Contract Manager header icon", icon.setImageSlice, icon, nil, Page.TAB_SLICE)
         return
     end
     if icon.setImageFilename == nil then
         return
     end
-    pcall(icon.setImageFilename, icon, ContractManager.MOD_DIRECTORY .. "gui/tabIcon.dds")
+    ContractManager.guard("Contract Manager header icon", icon.setImageFilename, icon, ContractManager.MOD_DIRECTORY .. "gui/tabIcon.dds")
     -- DIKKAT: setImageUVs(state, v0,u0, v1,u1, v2,u2, v3,u3) SEKIZ AYRI SAYI ister.
     -- Tablo verilirse her karede "setOverlayUVs: Expected Float, Actual Table" hatasi
     -- atar; menu acikken log saniyede ~60 satir buyur ve oyun kasar (v1.8.1.0 hatasi).
     if icon.setImageUVs ~= nil then
-        pcall(icon.setImageUVs, icon, nil, 0, 0, 0, 1, 1, 0, 1, 1)
+        ContractManager.guard("Contract Manager header icon", icon.setImageUVs, icon, nil, 0, 0, 0, 1, 1, 0, 1, 1)
     end
 end
 
@@ -1425,7 +1428,7 @@ function Page.onSettingsChanged()
     if not Page.installed or menu == nil or menu.updatePages == nil then
         return
     end
-    pcall(menu.updatePages, menu)
+    ContractManager.guard("Contract Manager page toggle", menu.updatePages, menu)
 end
 
 ---Sayfayi oyunun EKRAN kayitlarindan cikar (1.24.9.0). loadGui cerceve bayragi (isFrame) OLMADAN
@@ -1511,25 +1514,16 @@ function Page.uninstall()
         if paging ~= nil and paging.removeElement ~= nil then
             local neuter = paging.neuterPageUpdates
             paging.neuterPageUpdates = true
-            local ok, err = pcall(paging.removeElement, paging, page)
+            ContractManager.guard("Management page removal", paging.removeElement, paging, page)
             paging.neuterPageUpdates = neuter
-            if not ok then
-                ContractManager.warning("Management page: removing it from the menu failed: %s", tostring(err))
-            end
         end
         if menu.rebuildTabList ~= nil then
-            local ok, err = pcall(menu.rebuildTabList, menu)
-            if not ok then
-                ContractManager.warning("Management page: tab list rebuild after removal failed: %s", tostring(err))
-            end
+            ContractManager.guard("Management page removal (tab list)", menu.rebuildTabList, menu)
         end
     end
     Page.unregisterScreen(page)
     if page.parent == nil and page.delete ~= nil then
-        local ok, err = pcall(page.delete, page)
-        if not ok then
-            ContractManager.warning("Management page: delete failed: %s", tostring(err))
-        end
+        ContractManager.guard("Management page delete", page.delete, page)
     end
     ContractManager.info("Management page removed from the in-game menu")
     return true
@@ -1553,13 +1547,11 @@ function Page.install()
     -- kendi profillerimiz (stok profillerden turer); sayfa yuklenmeden once gelmeli
     local profilePath = ContractManager.MOD_DIRECTORY .. "gui/guiProfiles.xml"
     if fileExists(profilePath) and g_gui.loadProfiles ~= nil then
-        if not pcall(g_gui.loadProfiles, g_gui, profilePath) then
-            ContractManager.warning("Management page: gui profiles could not be loaded")
-        end
+        ContractManager.guard("Management page profiles", g_gui.loadProfiles, g_gui, profilePath)
     end
 
     local page
-    local ok, err = pcall(function()
+    local ok, err = ContractManager.attempt(function()
         page = Page.new()
         page.name = Page.PAGE_NAME
         if g_gui:loadGui(xmlPath, Page.SCREEN_NAME, page) == nil and page.manageLayout == nil then
@@ -1626,7 +1618,7 @@ end
 ---eski veriyi gosteriyor, buton eski metniyle duruyordu. 2026-09-13 denetimi.
 function Page.onRemoteChange()
     if Page.installed and Page.isOpen and Page.page ~= nil then
-        pcall(function() Page.page:refresh() end)
+        ContractManager.guard("Contract Manager page refresh", Page.page.refresh, Page.page)
     end
 end
 

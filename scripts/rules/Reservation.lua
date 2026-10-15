@@ -160,7 +160,7 @@ function Res.broadcast(uniqueId, connection)
     elseif g_server ~= nil then
         g_server:broadcastEvent(ev, false)
         if ContractManagerMapMarkers ~= nil and g_client ~= nil then
-            pcall(ContractManagerMapMarkers.onReservationChanged, uniqueId)
+            ContractManagerMapMarkers.onReservationChanged(uniqueId)
         end
         -- oynayan host yayini kendisi almaz: kendi yonetim sayfasi burada tazelenir
         if g_client ~= nil then
@@ -190,7 +190,7 @@ function Res.applyRemote(uniqueId, farmId, secondsLeft, farmName)
         Res.list[uniqueId] = { farmId = farmId, untilMs = Res.nowMs() + secondsLeft * 1000, farmName = farmName }
     end
     if ContractManagerMapMarkers ~= nil then
-        pcall(ContractManagerMapMarkers.onReservationChanged, uniqueId)
+        ContractManagerMapMarkers.onReservationChanged(uniqueId)
     end
     notifyPage()
 end

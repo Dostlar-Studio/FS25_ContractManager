@@ -95,9 +95,8 @@ function Discord.emit(eventType, payload)
         Discord.dropped = Discord.dropped + 1
         return false
     end
-    local ok, err = pcall(Discord.getEmitter(), eventType, payload)
-    if not ok then
-        ContractManager.warning("Discord emit failed: %s", tostring(err))
+    -- baska modun (DiscordBridge) fonksiyonu: hatasi bizim akisimizi durdurmasin, loga yazilsin
+    if not ContractManager.guard("Discord emit", Discord.getEmitter(), eventType, payload) then
         return false
     end
     Discord.emitted = Discord.emitted + 1
@@ -120,8 +119,8 @@ end
 
 local function minutesLeft(mission)
     if mission ~= nil and mission.getMinutesLeft ~= nil then
-        local ok, m = pcall(mission.getMinutesLeft, mission)
-        if ok and type(m) == "number" then
+        local m = mission:getMinutesLeft()
+        if type(m) == "number" then
             return math.floor(m)
         end
     end

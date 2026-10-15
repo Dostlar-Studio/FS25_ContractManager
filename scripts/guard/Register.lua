@@ -56,4 +56,7 @@ local function injectContractGuardSpecialization(typeManager)
     )
 end
 
-TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, injectContractGuardSpecialization)
+-- Oyunun arac tipi dogrulamasindan ONCE calisir: hatamiz tip dogrulamasini (oyunun yuklenmesini) durdurmasin.
+TypeManager.validateTypes = Utils.prependedFunction(TypeManager.validateTypes, function(typeManager)
+    ContractManager.guard("Vehicle protection install", injectContractGuardSpecialization, typeManager)
+end)

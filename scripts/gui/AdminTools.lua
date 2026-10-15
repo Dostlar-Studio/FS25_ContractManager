@@ -65,7 +65,7 @@ function Admin.cancel(uniqueId)
     end
     mission.cmForceCancel = true     -- Guard iptal engelini asar
     mission.cmAdminCanceled = true   -- Reward cezasi uygulanmaz
-    local ok, result = pcall(g_missionManager.cancelMission, g_missionManager, mission)
+    local ok, result = ContractManager.guard("Admin cancel", g_missionManager.cancelMission, g_missionManager, mission)
     mission.cmForceCancel = nil
     if ok and result then
         ContractManager.info("Admin force-cancelled contract %s (farm %s)", tostring(uniqueId), tostring(mission.farmId))
@@ -119,7 +119,7 @@ function Admin.refreshBoard()
     local created, removed = credit, 0
     for index = #doomed, 1, -1 do
         local mission = doomed[index]
-        if pcall(function() mission:delete() end) then
+        if ContractManager.guard("Board refresh", mission.delete, mission) then
             removed = removed + 1
         end
         if credit > 0 then
@@ -197,15 +197,15 @@ function Admin.fillBoard(target, quiet)
         for _ = 1, Admin.FILL_ROUNDS do
             local before = Admin.countLiveMissions(manager)
             manager.missionGenerationInProgress = false
-            if not pcall(manager.startMissionGeneration, manager) then
-                ContractManager.warning("Board fill: startMissionGeneration failed")
+            if not ContractManager.guard("Board fill (start)", manager.startMissionGeneration, manager) then
                 break
             end
             -- generateMission her cagrida BIR tur dener; basarida ya da tur listesi
             -- dolandiginda finishMissionGeneration cagirilir ve bayrak duser.
             steps = 0
             while manager.missionGenerationInProgress and steps <= typeCount do
-                if not pcall(manager.generateMission, manager) then
+                -- oyunun uretimi kontrat siniflarina (baska modlarinkiler dahil) gider: korumali
+                if not ContractManager.guard("Board fill (generate)", manager.generateMission, manager) then
                     break
                 end
                 steps = steps + 1
@@ -295,7 +295,7 @@ function Admin.assign(uniqueId, farmId)
     if farmId == nil or farmId <= 0 or (g_farmManager ~= nil and g_farmManager.getFarmById ~= nil and g_farmManager:getFarmById(farmId) == nil) then
         return false, "cm_adminNoFarm"
     end
-    local ok, state = pcall(g_missionManager.startMission, g_missionManager, mission, farmId, false)
+    local ok, state = ContractManager.guard("Admin assign", g_missionManager.startMission, g_missionManager, mission, farmId, false)
     if ok and state == MissionStartState.OK then
         ContractManager.info("Admin assigned contract %s to farm %d", tostring(uniqueId), farmId)
         return true, "cm_adminAssigned"
@@ -381,11 +381,7 @@ function ContractManagerAdminEvent.send(action, uniqueId, farmId, objectId)
         Admin.showResult(key, ok)
         return ok, key
     end
-    if g_client ~= nil then
-        pcall(function()
-            g_client:getServerConnection():sendEvent(ContractManagerAdminEvent.new(action, uniqueId, farmId, objectId))
-        end)
-    end
+    ContractManager.sendToServer(ContractManagerAdminEvent.new(action, uniqueId, farmId, objectId))
     return nil
 end
 
@@ -405,7 +401,7 @@ function Admin.showResult(key, ok)
     end
     -- acik kontrat sayfalarini tazele (oyunun listesi ve Kontrat Yonetimi)
     if g_inGameMenu ~= nil and g_inGameMenu.pageContracts ~= nil and g_inGameMenu.pageContracts.updateList ~= nil then
-        pcall(g_inGameMenu.pageContracts.updateList, g_inGameMenu.pageContracts)
+        ContractManager.guard("Contracts page refresh", g_inGameMenu.pageContracts.updateList, g_inGameMenu.pageContracts)
     end
     ContractManager.refreshManagePage()
 end
@@ -418,7 +414,7 @@ function Admin.getSelectedMission(frame)
     if frame == nil or frame.getSelectedContract == nil then
         return nil
     end
-    local ok, contract = pcall(frame.getSelectedContract, frame)
+    local ok, contract = ContractManager.guard("Contracts page selection", frame.getSelectedContract, frame)
     if ok and type(contract) == "table" then
         return contract.mission
     end

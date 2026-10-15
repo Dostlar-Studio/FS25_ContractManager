@@ -131,7 +131,7 @@ function Hud.removePartnerBar(mission)
     end
     local hud = g_currentMission ~= nil and g_currentMission.hud or nil
     if hud ~= nil and hud.removeSideNotificationProgressBar ~= nil then
-        pcall(hud.removeSideNotificationProgressBar, hud, mission.cmPartnerBar)
+        hud:removeSideNotificationProgressBar(mission.cmPartnerBar)
     end
     mission.cmPartnerBar = nil
 end
@@ -187,9 +187,9 @@ function Hud.afterMissionUpdate(mission, dt)
         if hud.addSideNotificationProgressBar == nil then
             return
         end
-        local ok, bar = pcall(hud.addSideNotificationProgressBar, hud,
-            Hud.buildTitle(false, share), Hud.buildText(mission.progressTitle, false, payout, share), mission.completion or 0)
-        if not ok or bar == nil then
+        local bar = hud:addSideNotificationProgressBar(Hud.buildTitle(false, share),
+            Hud.buildText(mission.progressTitle, false, payout, share), mission.completion or 0)
+        if bar == nil then
             return
         end
         mission.cmPartnerBar = bar
@@ -206,7 +206,10 @@ end
 -- AbstractMission:update deger dondurmez (AbstractMission.lua:329-404): oyunun appendedFunction'i yeterli.
 -- appendKeepingReturn her cagrida (kontrat basina her kare) donus tablosu kuruyordu (1.26.0.0).
 if AbstractMission ~= nil and AbstractMission.update ~= nil then
-    AbstractMission.update = Utils.appendedFunction(AbstractMission.update, Hud.afterMissionUpdate)
+    -- her kontratin her karesinde: hatamiz oyunun kontrat guncellemesini durdurmasin (kanca siniri korumali)
+    AbstractMission.update = Utils.appendedFunction(AbstractMission.update, function(mission, dt)
+        ContractManager.guard("Contract HUD bar", Hud.afterMissionUpdate, mission, dt)
+    end)
 end
 
 -- kontrat silinince cubuk kalmasin

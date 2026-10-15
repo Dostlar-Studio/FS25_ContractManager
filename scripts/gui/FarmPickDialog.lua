@@ -53,7 +53,7 @@ if DialogElement ~= nil then
         return self
     end
 
-    ---Pencereyi bir kez yukle; basarisizsa false (cagiran eski yola duser).
+    ---Pencereyi bir kez yukle; basarisizsa false (davet butonu gizlenir, davet Yonetim sayfasindan yapilir).
     function Dialog.ensureLoaded()
         if Dialog.instance ~= nil then
             return true
@@ -67,10 +67,10 @@ if DialogElement ~= nil then
             return false
         end
         local instance = Dialog.new()
-        local ok = pcall(g_gui.loadGui, g_gui, xmlPath, Dialog.GUI_NAME, instance)
+        local ok = ContractManager.guard("Farm pick dialog load", g_gui.loadGui, g_gui, xmlPath, Dialog.GUI_NAME, instance)
         if not ok or instance.farmOption == nil then
             Dialog.loadFailed = true
-            ContractManager.warning("Farm pick dialog could not be loaded; falling back to farm cycling")
+            ContractManager.warning("Farm pick dialog could not be loaded; invites go through the Contract Manager page")
             return false
         end
         Dialog.instance = instance

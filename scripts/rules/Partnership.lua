@@ -1060,8 +1060,11 @@ if MissionManager ~= nil and MissionManager.getMissionsByFarmId ~= nil then
 end
 
 if AbstractMission ~= nil and AbstractMission.dismiss ~= nil then
-    -- dismiss'in donusu MissionDismissEvent tarafindan streamWriteBool'a veriliyor
-    AbstractMission.dismiss = ContractManager.appendKeepingReturn(AbstractMission.dismiss, Part.afterDismiss)
+    -- dismiss'in donusu MissionDismissEvent tarafindan streamWriteBool'a veriliyor. Odeme bolusumu korumali:
+    -- hatasi oyunun kapatma akisini (ve olayin donusunu) bozmasin, loga yazilsin (1.26.0.0).
+    AbstractMission.dismiss = ContractManager.appendKeepingReturn(AbstractMission.dismiss, function(mission)
+        ContractManager.guard("Partnership payout", Part.afterDismiss, mission)
+    end)
 end
 if g_messageCenter ~= nil and MessageType ~= nil and MessageType.MISSION_DELETED ~= nil then
     g_messageCenter:subscribe(MessageType.MISSION_DELETED, function(_, mission)
