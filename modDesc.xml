@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Dostlar STUDIO</author>
-    <version>1.25.1.0</version>
+    <version>1.26.0.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -25,7 +25,7 @@ WHAT IT DOES
 
 HOW TO USE
 - Settings: ESC > Settings > Contract Manager. Only the admin can change them; every player sees the statistics of their own farm there.
-- Contracts page of the game, bottom bar: C = Reserve, Invite partner, Accept partnership, Leave partnership. Space = Decline invite, Next farm. X = Refresh board (admin). If the game already uses a key, the next free one is taken; the bar always shows it. On a gamepad, use the button shown in the bar.
+- Contracts page of the game, bottom bar: C = Reserve, Invite partner, Accept partnership, Leave partnership. Space = Decline invite. X = Refresh board (admin). If the game already uses a key, the next free one is taken; the bar always shows it. On a gamepad, use the button shown in the bar.
 - Contract Manager page: pick a tab, select a row and click an action button. Actions that cannot be undone ask for confirmation.
 
 NOTES
@@ -35,15 +35,21 @@ NOTES
 - Settings file: modSettings/FS25_ContractManager.xml
 - Source code and bug reports: https://github.com/Dostlar-Studio/FS25_ContractManager
 
+Changelog 1.26.0.0:
+- Partnerships: delivered litres now count toward each farm's share; the owner keeps the share of the work done before the invite; every player sees the share calculated by the server; a partner can no longer leave a finished contract; a transferred contract keeps its partnership; deleted farms are not paid.
+- Penalties: the maximum penalty always applies; each failed contract keeps the penalty percent of its own failure; no penalty when the game fails a contract because the leased vehicles could not be loaded.
+- Multiplayer: admin transfers reach every player; the Contract Manager page and the map markers update for every player.
+- Fixed: a second info window never opened and blocked all later ones; after answering No, the next action could go to the previously selected contract.
+- Product protection: no false "product lost" warnings when unloading into a partner's trailer or delivering a second contract of the same crop; product in a partner's vehicle is also taken back when a contract fails; dumping on the ground now says why it is blocked.
+- Contract types, hours, minutes, field size and litres are shown in the player's language; duration multiplier: correct end time and time left.
+- Less work per frame and a cleaner log; console commands removed.
+
 Changelog 1.25.1.0:
 - New, shorter mod description; English settings texts made consistent.
 - Fixed: the Contract Manager page wrote percentages as %45 in every language; it now shows 45 % like the rest of the mod.
 
 Changelog 1.25.0.0:
-- Single player: partnership, reservation, the reserved marker on the map and contract transfer are switched off and greyed out in the settings.
-
-Changelog 1.24.9.0:
-- Fixed: returning to the main menu filled log.txt with "Unknown entity id" errors.]]></en>
+- Single player: partnership, reservation, the reserved marker on the map and contract transfer are switched off and greyed out in the settings.]]></en>
         <de><![CDATA[Der Vertragsmanager gibt dem Server-Admin die Kontrolle über Feldverträge und sorgt dafür, dass sie für jeden Hof fair bleiben. Er läuft auf dedizierten Servern, in gehosteten Mehrspielerpartien und im Einzelspieler und nutzt ausschließlich die Menüs des Spiels.
 
 WARUM DIESER MOD
@@ -58,7 +64,7 @@ FUNKTIONEN
 
 BEDIENUNG
 - Einstellungen: ESC > Einstellungen > Vertragsmanager. Nur der Admin kann sie ändern; jeder Spieler sieht dort die Statistik seines Hofes.
-- Vertragsseite des Spiels, untere Leiste: C = Reservieren, Partner einladen, Partnerschaft annehmen, Partnerschaft verlassen. Leertaste = Einladung ablehnen, Nächster Hof. X = Tafel erneuern (Admin). Belegt das Spiel eine Taste bereits, wird die nächste freie verwendet; die Leiste zeigt sie immer an. Am Gamepad die in der Leiste angezeigte Taste nutzen.
+- Vertragsseite des Spiels, untere Leiste: C = Reservieren, Partner einladen, Partnerschaft annehmen, Partnerschaft verlassen. Leertaste = Einladung ablehnen. X = Tafel erneuern (Admin). Belegt das Spiel eine Taste bereits, wird die nächste freie verwendet; die Leiste zeigt sie immer an. Am Gamepad die in der Leiste angezeigte Taste nutzen.
 - Seite Vertragsmanager: Reiter wählen, Zeile markieren und eine Aktionsschaltfläche anklicken. Nicht umkehrbare Aktionen fragen vorher nach.
 
 HINWEISE
@@ -68,15 +74,21 @@ HINWEISE
 - Einstellungsdatei: modSettings/FS25_ContractManager.xml
 - Quellcode und Fehlermeldungen: https://github.com/Dostlar-Studio/FS25_ContractManager
 
+Changelog 1.26.0.0:
+- Partnerschaft: gelieferte Liter zählen jetzt zum Anteil jedes Hofes; der Besitzer behält den Anteil der Arbeit vor der Einladung; alle Spieler sehen den vom Server berechneten Anteil; ein Partner kann einen beendeten Vertrag nicht mehr verlassen; ein übertragener Vertrag behält seine Partnerschaft; gelöschte Höfe werden nicht ausgezahlt.
+- Strafen: die Höchststrafe gilt immer; jeder gescheiterte Vertrag behält den Strafsatz seines eigenen Scheiterns; keine Strafe, wenn das Spiel einen Vertrag scheitern lässt, weil die Leihfahrzeuge nicht geladen werden konnten.
+- Mehrspieler: Übertragungen durch den Admin erreichen alle Spieler; die Seite Vertragsmanager und die Kartenmarkierungen aktualisieren sich bei jedem Spieler.
+- Behoben: ein zweites Infofenster öffnete sich nie und blockierte alle weiteren; nach "Nein" konnte die nächste Aktion an den zuvor gewählten Vertrag gehen.
+- Produktschutz: keine falschen "Produkt verloren"-Meldungen mehr beim Abladen in den Anhänger des Partners oder bei einem zweiten Vertrag mit derselben Frucht; Ware im Fahrzeug des Partners wird beim Scheitern ebenfalls eingezogen; beim Abkippen auf den Boden wird der Grund angezeigt.
+- Vertragstypen, Stunden, Minuten, Feldgröße und Liter erscheinen in der Sprache des Spielers; Faktor für die Vertragsdauer: richtige Endzeit und Restzeit.
+- Weniger Rechenarbeit pro Bild und ein saubereres Log; Konsolenbefehle entfernt.
+
 Changelog 1.25.1.0:
 - Neue, kürzere Modbeschreibung; englische Einstellungstexte vereinheitlicht.
 - Behoben: Die Seite Vertragsmanager schrieb Prozentwerte in jeder Sprache als %45; jetzt 45 % wie im restlichen Mod.
 
 Changelog 1.25.0.0:
-- Einzelspieler: Partnerschaft, Reservierung, die Kartenmarkierung reservierter Verträge und das Übertragen sind ausgeschaltet und in den Einstellungen ausgegraut.
-
-Changelog 1.24.9.0:
-- Behoben: Beim Zurückkehren ins Hauptmenü füllte sich log.txt mit "Unknown entity id"-Fehlern.]]></de>
+- Einzelspieler: Partnerschaft, Reservierung, die Kartenmarkierung reservierter Verträge und das Übertragen sind ausgeschaltet und in den Einstellungen ausgegraut.]]></de>
         <fr><![CDATA[Le Gestionnaire de contrats donne à l'administrateur du serveur le contrôle des contrats agricoles et les garde équitables pour chaque ferme. Il fonctionne sur serveur dédié, en partie multijoueur hébergée et en solo, et n'utilise que les menus du jeu.
 
 POURQUOI CE MOD
@@ -91,7 +103,7 @@ FONCTIONS
 
 UTILISATION
 - Réglages : Échap > Paramètres > Gestionnaire de contrats. Seul l'administrateur peut les modifier ; chaque joueur y voit les statistiques de sa ferme.
-- Page des contrats du jeu, barre du bas : C = Réserver, Inviter un partenaire, Accepter le partenariat, Quitter le partenariat. Espace = Refuser l'invitation, Ferme suivante. X = Actualiser le tableau (administrateur). Si le jeu utilise déjà une touche, la suivante libre est prise ; la barre l'affiche toujours. À la manette, utilisez le bouton affiché dans la barre.
+- Page des contrats du jeu, barre du bas : C = Réserver, Inviter un partenaire, Accepter le partenariat, Quitter le partenariat. Espace = Refuser l'invitation. X = Actualiser le tableau (administrateur). Si le jeu utilise déjà une touche, la suivante libre est prise ; la barre l'affiche toujours. À la manette, utilisez le bouton affiché dans la barre.
 - Page Gestionnaire de contrats : choisissez un onglet, sélectionnez une ligne et cliquez sur un bouton d'action. Les actions irréversibles demandent une confirmation.
 
 REMARQUES
@@ -101,15 +113,21 @@ REMARQUES
 - Fichier de réglages : modSettings/FS25_ContractManager.xml
 - Code source et rapports de bugs : https://github.com/Dostlar-Studio/FS25_ContractManager
 
+Changelog 1.26.0.0 :
+- Partenariat : les litres livrés comptent désormais dans la part de chaque ferme ; le propriétaire garde la part du travail fait avant l'invitation ; tous les joueurs voient la part calculée par le serveur ; un partenaire ne peut plus quitter un contrat terminé ; un contrat transféré garde son partenariat ; les fermes supprimées ne sont pas payées.
+- Pénalités : la pénalité maximale s'applique toujours ; chaque contrat échoué garde le pourcentage de son propre échec ; aucune pénalité quand le jeu fait échouer un contrat parce que les véhicules loués n'ont pas pu être chargés.
+- Multijoueur : les transferts de l'administrateur atteignent tous les joueurs ; la page Gestionnaire de contrats et les marqueurs de carte se mettent à jour chez chaque joueur.
+- Corrigé : une deuxième fenêtre d'information ne s'ouvrait jamais et bloquait les suivantes ; après « Non », l'action suivante pouvait viser le contrat sélectionné auparavant.
+- Protection du produit : plus de fausses alertes « produit perdu » en déchargeant dans la remorque du partenaire ou pour un second contrat de la même culture ; le produit dans le véhicule du partenaire est aussi repris en cas d'échec ; le déversement au sol indique pourquoi il est bloqué.
+- Types de contrat, heures, minutes, surface et litres s'affichent dans la langue du joueur ; multiplicateur de durée : heure de fin et temps restant corrects.
+- Moins de calculs par image et un journal plus propre ; commandes de console supprimées.
+
 Changelog 1.25.1.0 :
 - Nouvelle description du mod, plus courte ; textes anglais des réglages harmonisés.
 - Corrigé : la page Gestionnaire de contrats écrivait les pourcentages sous la forme %45 dans toutes les langues ; elle affiche maintenant 45 % comme le reste du mod.
 
 Changelog 1.25.0.0 :
-- Solo : partenariat, réservation, marqueur de carte des contrats réservés et transfert sont désactivés et grisés dans les réglages.
-
-Changelog 1.24.9.0 :
-- Corrigé : le retour au menu principal remplissait log.txt d'erreurs « Unknown entity id ».]]></fr>
+- Solo : partenariat, réservation, marqueur de carte des contrats réservés et transfert sont désactivés et grisés dans les réglages.]]></fr>
         <tr><![CDATA[Kontrat Yöneticisi, tarla kontratlarının denetimini sunucu yöneticisine verir ve kontratların her çiftlik için adil kalmasını sağlar. Dedicated sunucuda, kurulan çok oyunculu oyunlarda ve tek oyunculuda çalışır; yalnızca oyunun kendi menülerini kullanır.
 
 BU MOD NEDEN VAR
@@ -124,7 +142,7 @@ NE YAPAR
 
 KULLANIM
 - Ayarlar: ESC > Ayarlar > Kontrat Yöneticisi. Yalnızca yönetici değiştirebilir; her oyuncu orada kendi çiftliğinin istatistiğini görür.
-- Oyunun kontrat sayfası, alt çubuk: C = Rezerve et, Ortağa davet et, Ortaklığı kabul et, Ortaklıktan ayrıl. Boşluk = Daveti reddet, Sonraki çiftlik. X = Panoyu yenile (yönetici). Oyun bir tuşu zaten kullanıyorsa sıradaki boş tuş alınır; çubuk tuşu her zaman gösterir. Kumandada çubukta gösterilen düğmeyi kullan.
+- Oyunun kontrat sayfası, alt çubuk: C = Rezerve et, Ortağa davet et, Ortaklığı kabul et, Ortaklıktan ayrıl. Boşluk = Daveti reddet. X = Panoyu yenile (yönetici). Oyun bir tuşu zaten kullanıyorsa sıradaki boş tuş alınır; çubuk tuşu her zaman gösterir. Kumandada çubukta gösterilen düğmeyi kullan.
 - Kontrat Yöneticisi sayfası: sekme seç, satıra tıkla, işlem düğmesine bas. Geri alınamayan işlemler önce onay ister.
 
 NOTLAR
@@ -134,15 +152,21 @@ NOTLAR
 - Ayar dosyası: modSettings/FS25_ContractManager.xml
 - Kaynak kod ve hata bildirimi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
+Değişiklikler 1.26.0.0:
+- Ortaklık: teslim edilen litre artık her çiftliğin payına sayılıyor; sahip, davetten önce yaptığı işin payını koruyor; her oyuncu sunucunun hesapladığı payı görüyor; ortak bitmiş kontrattan ayrılamıyor; devredilen kontrat ortaklığını koruyor; silinmiş çiftliğe ödeme yapılmıyor.
+- Ceza: tavan her zaman uygulanıyor; her başarısız kontrat kendi başarısızlığındaki ceza oranını koruyor; kiralık araçlar yüklenemediği için oyunun başarısız saydığı kontrata ceza yok.
+- Çok oyunculu: yönetici devri her oyuncuya ulaşıyor; Kontrat Yöneticisi sayfası ve harita işaretleri her oyuncuda güncelleniyor.
+- Düzeltildi: ikinci bilgi penceresi hiç açılmıyor ve sonrakileri kilitliyordu; "Hayır"dan sonra sıradaki işlem önceden seçilen kontrata gidebiliyordu.
+- Ürün koruması: ortağın römorkuna boşaltırken ya da aynı ürünlü ikinci kontratta yanlış "ürün kayboldu" uyarısı yok; kontrat başarısız olunca ortağın aracındaki ürün de geri alınıyor; yere dökme engellenince sebebi yazılıyor.
+- Kontrat türleri, saat, dakika, tarla büyüklüğü ve litre oyuncunun dilinde; süre çarpanı: bitiş saati ve kalan süre doğru.
+- Kare başına daha az iş ve daha temiz log; konsol komutları kaldırıldı.
+
 Değişiklikler 1.25.1.0:
 - Yeni, daha kısa mod açıklaması; İngilizce ayar metinleri düzeltildi.
 - Düzeltildi: Kontrat Yöneticisi sayfası yüzdeyi diğer dillerde de "%45" diye yazıyordu; artık modun diğer ekranları gibi "45 %" yazıyor.
 
 Değişiklikler 1.25.0.0:
-- Tek oyunculu: ortaklık, rezervasyon, haritadaki rezerv işareti ve devretme kapalı; ayarlarda sönük görünür.
-
-Değişiklikler 1.24.9.0:
-- Düzeltildi: ana menüye dönünce log.txt "Unknown entity id" hatalarıyla doluyordu.]]></tr>
+- Tek oyunculu: ortaklık, rezervasyon, haritadaki rezerv işareti ve devretme kapalı; ayarlarda sönük görünür.]]></tr>
     </description>
 
     <iconFilename>icon_contractManager.dds</iconFilename>

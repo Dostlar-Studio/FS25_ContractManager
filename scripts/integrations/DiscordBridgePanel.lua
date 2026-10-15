@@ -60,7 +60,8 @@ function Panel.buildSection()
     if ContractManagerReservation ~= nil then
         ContractManagerReservation.prune()
         for id, r in pairs(ContractManagerReservation.list) do
-            out.reservations[#out.reservations + 1] = { uniqueId = id, farmId = r.farmId, farmName = r.farmName, secondsLeft = math.max(0, math.floor((r.untilMs - ContractManagerReservation.nowMs()) / 1000)) }
+            local secondsLeft = math.max(0, math.floor((r.untilMs - ContractManagerReservation.nowMs()) / 1000))
+            out.reservations[#out.reservations + 1] = { uniqueId = id, farmId = r.farmId, farmName = r.farmName, secondsLeft = secondsLeft }
         end
     end
     if ContractManagerRegistry ~= nil and ContractManagerCooldown ~= nil then
