@@ -56,6 +56,22 @@
         <text name="cm_typeEnabled_tooltip" text="Kapalıysa bu türde yeni kontrat üretilmez."/>
         <text name="cm_typeWeight" text="ağırlık"/>
         <text name="cm_typeWeight_tooltip" text="Diğer türlere göre üretilme olasılığı. Hepsi eşitse oyun davranışı değişmez."/>
+        <text name="cm_type_plowMission" text="Pulluk"/>
+        <text name="cm_type_cultivateMission" text="Kültivatör"/>
+        <text name="cm_type_sowMission" text="Ekim"/>
+        <text name="cm_type_fertilizeMission" text="Gübreleme"/>
+        <text name="cm_type_herbicideMission" text="İlaçlama"/>
+        <text name="cm_type_weedMission" text="Yabani ot temizleme"/>
+        <text name="cm_type_hoeMission" text="Çapalama"/>
+        <text name="cm_type_harvestMission" text="Hasat"/>
+        <text name="cm_type_mowMission" text="Biçme"/>
+        <text name="cm_type_tedderMission" text="Ot çevirme"/>
+        <text name="cm_type_baleMission" text="Balyalama"/>
+        <text name="cm_type_baleWrapMission" text="Balya sarma"/>
+        <text name="cm_type_stonePickMission" text="Taş toplama"/>
+        <text name="cm_type_deadwoodMission" text="Kuru ağaç temizleme"/>
+        <text name="cm_type_treeTransportMission" text="Ağaç taşıma"/>
+        <text name="cm_type_destructibleRockMission" text="Kaya kırma"/>
         <text name="cm_valNone" text="Yok"/>
         <text name="cm_valFree" text="Ücretsiz"/>
         <text name="cm_valUnlimited" text="Sınırsız"/>

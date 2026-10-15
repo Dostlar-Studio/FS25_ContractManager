@@ -154,7 +154,7 @@ Tab.SPEC = {
     { id = "generation.maxTotal", kind = "range", min = 0, max = 80, step = 5, format = "%d", zero = "cm_valGameDefault" },
     { id = "generation.maxPerType", kind = "range", min = 0, max = 20, step = 1, format = "%d", zero = "cm_valGameDefault" },
     { id = "generation.refreshMultiplier", kind = "range", min = 0.25, max = 4, step = 0.25, format = "x%.2f" },
-    { id = "generation.cooldownPerFieldHours", kind = "range", min = 0, max = 240, step = 6, format = "%d h", zero = "cm_valNone" },
+    { id = "generation.cooldownPerFieldHours", kind = "range", min = 0, max = 240, step = 6, format = "hours", zero = "cm_valNone" },
 
     { section = "cm_secDuration" },
     { id = "duration.multiplier", kind = "range", min = 0.5, max = 4, step = 0.25, format = "x%.2f" },
@@ -174,12 +174,12 @@ Tab.SPEC = {
 
     { section = "cm_secReservation", mpOnly = true },
     { id = "reservation.enabled", kind = "bool", mpOnly = true },
-    { id = "reservation.minutes", kind = "range", min = 1, max = 60, step = 1, format = "%d min", mpOnly = true },
+    { id = "reservation.minutes", kind = "range", min = 1, max = 60, step = 1, format = "minutes", mpOnly = true },
 
     { section = "cm_secPartnership", mpOnly = true },
     { id = "partnership.enabled", kind = "bool", mpOnly = true },
     { id = "partnership.maxPartners", kind = "range", min = 1, max = 4, step = 1, format = "%d", mpOnly = true },
-    { id = "partnership.inviteMinutes", kind = "range", min = 1, max = 30, step = 1, format = "%d min", mpOnly = true },
+    { id = "partnership.inviteMinutes", kind = "range", min = 1, max = 30, step = 1, format = "minutes", mpOnly = true },
 
     { section = "cm_secChain" },
     { id = "chain.enabled", kind = "bool" },
@@ -198,7 +198,7 @@ Tab.SPEC = {
     { id = "pricing.distancePercentPerKm", kind = "range", min = 0, max = 30, step = 1, format = "+%d %%/km", zero = "cm_valNone" },
     { id = "pricing.distanceMaxPercent", kind = "range", min = 0, max = 100, step = 5, format = "+%d %%", zero = "cm_valNone" },
     { id = "pricing.smallFieldEnabled", kind = "bool" },
-    { id = "pricing.smallFieldRefHa", kind = "range", min = 0.5, max = 10, step = 0.5, format = "%.1f ha" },
+    { id = "pricing.smallFieldRefHa", kind = "range", min = 0.5, max = 10, step = 0.5, format = "area" },
     { id = "pricing.smallFieldMaxPercent", kind = "range", min = 0, max = 100, step = 5, format = "+%d %%", zero = "cm_valNone" },
     { id = "pricing.typeDifficultyEnabled", kind = "bool" },
 
@@ -251,6 +251,20 @@ function Tab.formatValue(spec, value)
             end
         end
         return tostring(value)
+    end
+    -- Birimler oyuncunun dilinden: eskiden her dilde "6 h", "10 min", "2.5 ha" yaziliyordu (1.26.0.0).
+    if spec.format == "hours" then
+        return string.format("%d %s", value, text("cm_unitHour", "h"))
+    elseif spec.format == "minutes" then
+        return string.format("%d %s", value, text("cm_unitMinute", "min"))
+    elseif spec.format == "area" then
+        if g_i18n ~= nil and g_i18n.formatArea ~= nil then
+            local s = g_i18n:formatArea(value, 1)
+            if s ~= nil then
+                return s
+            end
+        end
+        return string.format("%.1f ha", value)
     end
     local ok, s = pcall(string.format, spec.format or "%s", value)
     return ok and s or tostring(value)
@@ -478,7 +492,7 @@ function Tab:createControl(spec, key)
     local title = box.elements[2]
     local name, field = Tab.parseTypeKey(key)
     if name ~= nil then
-        local typeTitle = text("cm_type_" .. name, name)
+        local typeTitle = ContractManager.typeTitle(name)
         title:setText(string.format("%s: %s", typeTitle, text(field == "enabled" and "cm_typeEnabled" or "cm_typeWeight")))
     else
         title:setText(text(self.PREFIX .. key:gsub("%.", "_")))
@@ -616,7 +630,7 @@ function Tab.buildStatsLines(stats, history, board)
         ContractManagerReputation.setLocal(farmId, rep)
         local bonus = ContractManagerReputation.getBonusPercent(farmId)
         local extra = ContractManagerReputation.getExtraSlots(farmId)
-        lines[#lines + 1] = string.format("%s: %d (%s +%d%%%s)", text("cm_statReputation"), rep, text("cm_statBonus"), math.floor(bonus + 0.5),
+        lines[#lines + 1] = string.format("%s: %d (%s +%d %%%s)", text("cm_statReputation"), rep, text("cm_statBonus"), math.floor(bonus + 0.5),
             extra > 0 and (", " .. text("cm_statExtraSlot")) or "")
     end
     lines[#lines + 1] = string.format("%s: %d", text("cm_statCompleted"), stats.completed or 0)
@@ -636,7 +650,7 @@ function Tab.buildStatsLines(stats, history, board)
         local stateKey = Tab.finishStateKey(entry.finishState)
         lines[#lines + 1] = string.format("%s %d · %s · %s · %s",
             text("cm_day"), entry.finishedDay or 0,
-            text("cm_type_" .. tostring(entry.typeName), tostring(entry.typeName)),
+            ContractManager.typeTitle(entry.typeName),
             text(stateKey),
             Tab.formatMoney(entry.payout or entry.reward or 0))
     end
@@ -695,6 +709,21 @@ local function addElementAtPosition(element, target, pos)
     end
     table.insert(target.elements, pos, element)
     element.parent = target
+end
+
+---Alt kategori secicisinde CM sekmesinin sirasi (saf). Secici metinleri alt kategori NUMARALARIDIR (asagidaki
+---onClickCallback de boyle okur). Eskiden son sira varsayiliyordu: CM'den SONRA ayar sekmesi ekleyen bir mod
+---kurulunca CM sekme dugmesi o modun sayfasini aciyordu (1.26.0.0).
+function Tab.findPagingState(texts, subCategory)
+    if subCategory == nil then
+        return nil
+    end
+    for state, value in ipairs(texts or {}) do
+        if tonumber(value) == subCategory then
+            return state
+        end
+    end
+    return nil
 end
 
 function Tab:insertIntoSettingsPage()
@@ -761,7 +790,8 @@ function Tab:insertIntoSettingsPage()
 
     -- sayfa acilisi: yetki + degerler + istatistik istegi
     pageSettings.onFrameOpen = Utils.appendedFunction(pageSettings.onFrameOpen, function(frame)
-        Tab.modState = #frame.subCategoryPaging.texts
+        local texts = frame.subCategoryPaging.texts
+        Tab.modState = Tab.findPagingState(texts, InGameMenuSettingsFrame.SUB_CATEGORY.CONTRACTMANAGER) or #texts
         pcall(function()
             Tab:populate()
             Tab:requestStats()

@@ -162,6 +162,10 @@ function Res.broadcast(uniqueId, connection)
         if ContractManagerMapMarkers ~= nil and g_client ~= nil then
             pcall(ContractManagerMapMarkers.onReservationChanged, uniqueId)
         end
+        -- oynayan host yayini kendisi almaz: kendi yonetim sayfasi burada tazelenir
+        if g_client ~= nil then
+            ContractManager.refreshManagePage()
+        end
     end
 end
 
@@ -176,9 +180,7 @@ end
 ---istemci: yayini uygula
 ---Sunucudan senkron gelince acik yonetim sayfasi tazelensin (varsa).
 local function notifyPage()
-    if ContractManagerManagePage ~= nil and ContractManagerManagePage.onRemoteChange ~= nil then
-        ContractManagerManagePage.onRemoteChange()
-    end
+    ContractManager.refreshManagePage()
 end
 
 function Res.applyRemote(uniqueId, farmId, secondsLeft, farmName)

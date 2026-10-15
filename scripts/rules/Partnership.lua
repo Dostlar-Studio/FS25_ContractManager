@@ -630,6 +630,10 @@ function Part.broadcast(uniqueId, connection)
         connection:sendEvent(ev)
     elseif g_server ~= nil then
         g_server:broadcastEvent(ev, false)
+        -- Oynayan host yayini kendisi almaz (sendLocal=false): kendi sayfasi burada tazelenir.
+        if g_client ~= nil then
+            ContractManager.refreshManagePage()
+        end
     end
 end
 
@@ -668,7 +672,9 @@ function Part.applyRemote(uniqueId, ownerFarmId, farms, pending, shares)
         end
     end
     if ownerFarmId == nil or ownerFarmId == 0 or farms == nil or #farms == 0 then
+        -- ortaklik dagildi ya da yalnizca davet degisti: sayfa da tazelenir (eskiden burada erken donuluyordu)
         Part.list[uniqueId] = nil
+        ContractManager.refreshManagePage()
         return
     end
     local entry = { owner = ownerFarmId, partners = {}, liters = {}, work = {} }
@@ -686,9 +692,7 @@ function Part.applyRemote(uniqueId, ownerFarmId, farms, pending, shares)
     end
     Part.list[uniqueId] = entry
     -- acik yonetim sayfasi eski veriyi gostermesin
-    if ContractManagerManagePage ~= nil and ContractManagerManagePage.onRemoteChange ~= nil then
-        ContractManagerManagePage.onRemoteChange()
-    end
+    ContractManager.refreshManagePage()
 end
 
 ---istek yonlendirme (sunucu). Donus: ok, l10n anahtari
@@ -742,7 +746,7 @@ function Part.getDetailRow(mission)
     local parts = {}
     for _, farmId in ipairs(Part.getFarms(mission)) do
         if hasContribution then
-            parts[#parts + 1] = string.format("%s %d%%", farmName(farmId), math.floor((shares[farmId] or 0) * 100 + 0.5))
+            parts[#parts + 1] = string.format("%s %d %%", farmName(farmId), math.floor((shares[farmId] or 0) * 100 + 0.5))
         else
             parts[#parts + 1] = farmName(farmId)
         end

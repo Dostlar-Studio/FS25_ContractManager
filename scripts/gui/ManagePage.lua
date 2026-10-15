@@ -100,7 +100,7 @@ function Page.buildPartnerLines(mission, reward)
         if #lines >= Page.MAX_PARTNER then break end
         local role = text(p.isOwner and "cm_pageOwner" or "cm_pagePartner", p.isOwner and "owner" or "partner")
         if measured then
-            lines[#lines + 1] = string.format("%s (%s) · %d%% · %s · %s",
+            lines[#lines + 1] = string.format("%s (%s) · %d %% · %s · %s",
                 Page.farmName(p.farmId), role,
                 math.floor(p.share * 100 + 0.5),
                 Page.formatLiters(p.liters),
@@ -199,13 +199,23 @@ end
 
 Page.money = money
 
----katki litresi (saf); 1000 ustu k ile kisaltilir ki satir tasmasin
+---Katki litresi (saf). 1000 ustu "k" ile kisaltilir ki satir tasmasin; ondalik ayirici ve birim oyunun
+---dilinden gelir (eskiden her dilde "1.5k l" yaziliyordu, 1.26.0.0).
 function Page.formatLiters(liters)
     liters = math.floor((liters or 0) + 0.5)
-    if liters >= 1000 then
-        return string.format("%.1fk l", liters / 1000)
+    local unit = "l"
+    if g_i18n ~= nil and g_i18n.getVolumeUnit ~= nil then
+        local value = g_i18n:getVolumeUnit()
+        if type(value) == "string" and value ~= "" then
+            unit = value
+        end
     end
-    return string.format("%d l", liters)
+    if liters >= 1000 then
+        local tenths = math.floor(liters / 100 + 0.5)
+        local separator = g_i18n ~= nil and g_i18n.decimalSeparator or "."
+        return string.format("%d%s%dk %s", math.floor(tenths / 10), tostring(separator), tenths % 10, unit)
+    end
+    return string.format("%d %s", liters, unit)
 end
 
 ---kontratin oduru; motor cagrisi korumali (saf mantik disi tek yer)
@@ -223,7 +233,7 @@ function Page.formatMission(mission)
         return "-"
     end
     local parts = {}
-    parts[#parts + 1] = tostring(mission.title or (mission.type ~= nil and mission.type.name) or "?")
+    parts[#parts + 1] = tostring(mission.title or ContractManager.typeTitle(mission.type ~= nil and mission.type.name or nil))
     local fieldId = nil
     if mission.field ~= nil and mission.field.getId ~= nil then
         fieldId = mission.field:getId()
@@ -258,7 +268,7 @@ function Page.formatHistory(entry)
     end
     return string.format("%s %s · %s · %s · %s",
         text("cm_day", "Day"), tostring(entry.finishedDay or 0),
-        text("cm_type_" .. tostring(entry.typeName), tostring(entry.typeName)),
+        ContractManager.typeTitle(entry.typeName),
         text(ContractManagerSettingsTab.finishStateKey(entry.finishState), "-"),
         money(entry.payout or entry.reward or 0))
 end
@@ -292,7 +302,7 @@ function Page.missionCells(mission)
     if mission == nil then
         return cells
     end
-    local title = tostring(mission.title or (mission.type ~= nil and mission.type.name) or "?")
+    local title = tostring(mission.title or ContractManager.typeTitle(mission.type ~= nil and mission.type.name or nil))
     local fieldId = nil
     if mission.field ~= nil and mission.field.getId ~= nil then
         fieldId = mission.field:getId()
@@ -322,7 +332,7 @@ function Page.historyCells(entry)
     if entry == nil then
         return cells
     end
-    cells.cellName = text("cm_type_" .. tostring(entry.typeName), tostring(entry.typeName))
+    cells.cellName = ContractManager.typeTitle(entry.typeName)
     cells.cellFarm = text(ContractManagerSettingsTab.finishStateKey(entry.finishState), "-")
     cells.cellReward = money(entry.payout or entry.reward or 0)
     cells.cellTime = string.format("%s %s", text("cm_day", "Day"), tostring(entry.finishedDay or 0))
@@ -384,7 +394,7 @@ local function sortKeys(row)
     local mission, entry = row.mission, row.entry
     if entry ~= nil then
         return entry.payout or entry.reward or 0, -(entry.finishedDay or 0),
-            Page.farmName(entry.farmId), tostring(entry.typeName or "")
+            Page.farmName(entry.farmId), ContractManager.typeTitle(entry.typeName)
     end
     local minutes = math.huge
     if mission ~= nil and mission.getMinutesLeft ~= nil then
@@ -446,12 +456,14 @@ function Page.buildRows(filter, farmId, isAdmin, sortMode)
             end
         end
     else
+        local Part = ContractManagerPartnership
         for _, mission in ipairs(missions) do
             local isNew = mission.status == MissionStatus.CREATED
             local isActive = mission.status == MissionStatus.RUNNING or mission.status == MissionStatus.PREPARING
             local wanted = (filter == Page.FILTER_NEW and isNew) or (filter == Page.FILTER_ACTIVE and isActive)
+            -- Daveti bekleyen ciftlik de gorur: kabul/ret butonlari bu satirda; eskiden liste disinda kaliyordu (1.26.0.0).
             if wanted and (isAdmin or filter == Page.FILTER_NEW or mission.farmId == farmId
-                or (ContractManagerPartnership ~= nil and ContractManagerPartnership.isMember(mission, farmId))) then
+                or (Part ~= nil and (Part.isMember(mission, farmId) or Part.hasPendingInvite(mission, farmId)))) then
                 rows[#rows + 1] = { kind = "mission", mission = mission, label = Page.formatMission(mission) }
             end
         end
@@ -593,7 +605,7 @@ function Page:onClickFilterHistory() self:setFilter(Page.FILTER_HISTORY) end
 function Page:setFilter(filter)
     self.filter = filter
     self.selectedIndex = 0
-    self.pendingAction = nil
+    self:clearPending()
     self:refresh()
 end
 
@@ -627,31 +639,39 @@ function Page.missionStillListed(mission)
     return false
 end
 
----Onay basladiginda hedefi sabitle.
-function Page:pinTarget()
+---Onay basladiginda hedefi EYLEMLE birlikte sabitle. Sabitleme yalniz o eylemi calistirir: "Hayir"dan
+---sonra kalan sabitleme onaysiz bir sonraki eylemi (rezerve, davet) secili satir yerine eski kontrata
+---gonderiyordu (1.26.0.0).
+function Page:pinTarget(action)
     local row = self:getSelected()
-    self.pendingMission = row ~= nil and row.mission or nil
-    return self.pendingMission
+    local mission = row ~= nil and row.mission or nil
+    self.pin = mission ~= nil and { action = action, mission = mission } or nil
+    return mission
 end
 
 ---Calistirma aninda hedefi al. Donus: kontrat, "kayboldu mu".
-function Page:takeTarget()
-    local pinned = self.pendingMission
-    self.pendingMission = nil
-    if pinned == nil then
+function Page:takeTarget(action)
+    local pin = self.pin
+    self.pin = nil
+    if pin == nil or pin.action ~= action then
         local row = self:getSelected()
         return row ~= nil and row.mission or nil, false
     end
-    if not Page.missionStillListed(pinned) then
+    if not Page.missionStillListed(pin.mission) then
         return nil, true
     end
-    return pinned, false
+    return pin.mission, false
+end
+
+---Kurulu onay ve sabitleme: secim, filtre, siralama, hedef ciftlik degisince ve sayfa kapaninca duser.
+function Page:clearPending()
+    self.pendingAction = nil
+    self.pin = nil
 end
 
 function Page:onClickRow(index)
     self.selectedIndex = (self.selectedIndex == index) and 0 or index
-    self.pendingAction = nil
-    self.pendingMission = nil
+    self:clearPending()
     self:refresh()
 end
 
@@ -668,6 +688,7 @@ function Page:onSortChanged()
     end
     self.sortMode = mode
     self.selectedIndex = 0   -- sira degisti, eski indeks baska kontrati gosterirdi
+    self:clearPending()
     self:refresh()
 end
 
@@ -682,7 +703,7 @@ function Page:onFarmOptionChanged()
         return
     end
     self.targetFarmId = id
-    self.pendingAction = nil   -- hedef degisti, kurulu onay artik baska ciftlige aitti
+    self:clearPending()   -- hedef degisti, kurulu onay artik baska ciftlige aitti
     self:refresh()
 end
 
@@ -692,7 +713,7 @@ function Page:showConfirmDialog(action)
     if YesNoDialog == nil or YesNoDialog.show == nil then
         return false
     end
-    local pinned = self.pendingMission
+    local pinned = self.pin ~= nil and self.pin.mission or nil
     local question = Page.confirmQuestion(action, Page.farmName(self.targetFarmId),
         pinned ~= nil and pinned.title or nil)
     local title = text("cm_tabTitle", "Contract Manager")
@@ -712,6 +733,7 @@ function Page:onConfirmDialog(a, b)
     local action = self.dialogAction
     self.dialogAction = nil
     if yes ~= true or action == nil then
+        self:clearPending()
         self:refresh()
         return
     end
@@ -725,7 +747,7 @@ function Page:onClickAction(action)
         return
     end
     if Page.needsConfirm(action) and self.pendingAction ~= action then
-        self:pinTarget()
+        self:pinTarget(action)
         if self:showConfirmDialog(action) then
             return
         end
@@ -739,7 +761,7 @@ end
 
 ---eylem calistir (saf yonlendirme; olaylar kendi dogrulamasini yapar)
 function Page:runAction(action)
-    local mission, gone = self:takeTarget()
+    local mission, gone = self:takeTarget(action)
     if gone then
         -- onay beklerken kontrat panodan dustu: sessizce baska kontrata uygulama
         if ContractManagerAdmin ~= nil and ContractManagerAdmin.showResult ~= nil then
@@ -1006,11 +1028,32 @@ function Page:paintRows()
     end
 end
 
+---Secili satirin YENI sirasi (saf). Secim kontratin kendisine baglidir: liste her tazelemede yeniden
+---kuruluyor ve araya giren bir degisiklik (pano yenilendi, kontrat bitti) ayni sira numarasini baska
+---kontrata kaydiriyordu; ayrintilar ve butonlar habersizce baska kontrati gosteriyordu (1.26.0.0).
+function Page.findRowIndex(rows, selected)
+    if selected == nil then
+        return 0
+    end
+    for index, row in ipairs(rows or {}) do
+        if selected.mission ~= nil and row.mission == selected.mission then
+            return index
+        end
+        if selected.entry ~= nil and row.entry ~= nil and (row.entry == selected.entry
+            or (selected.entry.id ~= nil and row.entry.id == selected.entry.id)) then
+            return index
+        end
+    end
+    return 0
+end
+
 function Page:refresh()
     local farmId = self:getLocalFarmId()
     local isAdmin = self:getIsAdmin()
     local total
+    local selected = self:getSelected()
     self.rows, total = Page.buildRows(self.filter, farmId, isAdmin, self.sortMode)
+    self.selectedIndex = Page.findRowIndex(self.rows, selected)
 
     for index, box in ipairs(self.rowElements) do
         local row = self.rows[index]
@@ -1143,7 +1186,8 @@ end
 ---(TabbedMenuFrameElement govdesi yayinlanmamis kaynakta yok).
 function Page:onFrameClose()
     Page.isOpen = false
-    Page.pendingMission = nil
+    -- Ornegin alani: eskiden SINIF alani (Page.pendingMission) siliniyordu, sabitleme kapanistan sonra da kaliyordu.
+    self:clearPending()
     if ContractManagerManagePage:superClass().onFrameClose ~= nil then
         ContractManagerManagePage:superClass().onFrameClose(self)
     end

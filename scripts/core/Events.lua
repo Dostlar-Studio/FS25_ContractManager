@@ -609,6 +609,8 @@ function ContractManagerStatsEvent:run(connection)
             local month = (self.quotaMonth or -1) >= 0 and self.quotaMonth or nil
             ContractManagerQuota.setRemoteRemaining(day, month)
         end
+        -- Gecmis istemcide YALNIZ buradan gelir: acik yonetim sayfasinin gecmis listesi eskide kalmasin.
+        ContractManager.refreshManagePage()
     end
     if self.isResponse and ContractManagerSettingsTab ~= nil then
         if ContractManagerReputation ~= nil then

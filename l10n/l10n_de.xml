@@ -56,6 +56,22 @@
         <text name="cm_typeEnabled_tooltip" text="Wenn aus, werden keine neuen Verträge dieses Typs erzeugt."/>
         <text name="cm_typeWeight" text="Gewicht"/>
         <text name="cm_typeWeight_tooltip" text="Erzeugungschance relativ zu anderen Typen. Gleiche Gewichte behalten das Spielverhalten."/>
+        <text name="cm_type_plowMission" text="Pflügen"/>
+        <text name="cm_type_cultivateMission" text="Grubbern"/>
+        <text name="cm_type_sowMission" text="Säen"/>
+        <text name="cm_type_fertilizeMission" text="Düngen"/>
+        <text name="cm_type_herbicideMission" text="Herbizid spritzen"/>
+        <text name="cm_type_weedMission" text="Striegeln"/>
+        <text name="cm_type_hoeMission" text="Hacken"/>
+        <text name="cm_type_harvestMission" text="Ernten"/>
+        <text name="cm_type_mowMission" text="Mähen"/>
+        <text name="cm_type_tedderMission" text="Wenden"/>
+        <text name="cm_type_baleMission" text="Pressen"/>
+        <text name="cm_type_baleWrapMission" text="Ballen wickeln"/>
+        <text name="cm_type_stonePickMission" text="Steine sammeln"/>
+        <text name="cm_type_deadwoodMission" text="Totholz entfernen"/>
+        <text name="cm_type_treeTransportMission" text="Baumtransport"/>
+        <text name="cm_type_destructibleRockMission" text="Felsen zerkleinern"/>
         <text name="cm_valNone" text="Keine"/>
         <text name="cm_valFree" text="Kostenlos"/>
         <text name="cm_valUnlimited" text="Unbegrenzt"/>

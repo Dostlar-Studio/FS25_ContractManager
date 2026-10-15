@@ -56,6 +56,22 @@
         <text name="cm_typeEnabled_tooltip" text="When off, no new contracts of this type are generated."/>
         <text name="cm_typeWeight" text="weight"/>
         <text name="cm_typeWeight_tooltip" text="Generation chance relative to other types. Equal weights keep the game behaviour."/>
+        <text name="cm_type_plowMission" text="Plowing"/>
+        <text name="cm_type_cultivateMission" text="Cultivating"/>
+        <text name="cm_type_sowMission" text="Sowing"/>
+        <text name="cm_type_fertilizeMission" text="Fertilizing"/>
+        <text name="cm_type_herbicideMission" text="Herbicide spraying"/>
+        <text name="cm_type_weedMission" text="Weeding"/>
+        <text name="cm_type_hoeMission" text="Hoeing"/>
+        <text name="cm_type_harvestMission" text="Harvesting"/>
+        <text name="cm_type_mowMission" text="Mowing"/>
+        <text name="cm_type_tedderMission" text="Tedding"/>
+        <text name="cm_type_baleMission" text="Baling"/>
+        <text name="cm_type_baleWrapMission" text="Bale wrapping"/>
+        <text name="cm_type_stonePickMission" text="Stone picking"/>
+        <text name="cm_type_deadwoodMission" text="Deadwood removal"/>
+        <text name="cm_type_treeTransportMission" text="Tree transport"/>
+        <text name="cm_type_destructibleRockMission" text="Rock breaking"/>
         <text name="cm_valNone" text="None"/>
         <text name="cm_valFree" text="Free"/>
         <text name="cm_valUnlimited" text="Unlimited"/>

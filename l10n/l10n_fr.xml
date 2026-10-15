@@ -56,6 +56,22 @@
         <text name="cm_typeEnabled_tooltip" text="Désactivé, aucun nouveau contrat de ce type n'est généré."/>
         <text name="cm_typeWeight" text="poids"/>
         <text name="cm_typeWeight_tooltip" text="Probabilité de génération par rapport aux autres types. Des poids égaux conservent le comportement du jeu."/>
+        <text name="cm_type_plowMission" text="Labour"/>
+        <text name="cm_type_cultivateMission" text="Déchaumage"/>
+        <text name="cm_type_sowMission" text="Semis"/>
+        <text name="cm_type_fertilizeMission" text="Fertilisation"/>
+        <text name="cm_type_herbicideMission" text="Désherbage chimique"/>
+        <text name="cm_type_weedMission" text="Désherbage mécanique"/>
+        <text name="cm_type_hoeMission" text="Binage"/>
+        <text name="cm_type_harvestMission" text="Récolte"/>
+        <text name="cm_type_mowMission" text="Fauchage"/>
+        <text name="cm_type_tedderMission" text="Fanage"/>
+        <text name="cm_type_baleMission" text="Pressage"/>
+        <text name="cm_type_baleWrapMission" text="Enrubannage"/>
+        <text name="cm_type_stonePickMission" text="Ramassage de pierres"/>
+        <text name="cm_type_deadwoodMission" text="Retrait du bois mort"/>
+        <text name="cm_type_treeTransportMission" text="Transport d'arbres"/>
+        <text name="cm_type_destructibleRockMission" text="Destruction de rochers"/>
         <text name="cm_valNone" text="Aucun"/>
         <text name="cm_valFree" text="Gratuit"/>
         <text name="cm_valUnlimited" text="Illimité"/>

@@ -8,9 +8,14 @@
 -- Isaretler oyunun kendi hotspot nesneleridir (mission:addHotspots / removeHotspot);
 -- ozel cizim yok. Kabul edilince oyunun update() dongusu kendi isaretini yonetir.
 --
+-- Isaretler kontrat NESNESINE baglidir (1.26.0.0): istemcide panodaki kontratin uniqueId'si yok (sunucu
+-- gondermez), kimlik anahtarli tablo "Tum kontratlari goster"i istemcide hic calistirmiyordu.
+--
 
 ContractManagerMapMarkers = {
-    marked = {},   -- uniqueId -> true (bizim ekledigimiz)
+    marked = setmetatable({}, { __mode = "k" }),   -- kontrat -> true (bizim ekledigimiz)
+    SYNC_INTERVAL_MS = 5000,
+    syncTimer = 0,
 }
 
 local Markers = ContractManagerMapMarkers
@@ -27,14 +32,14 @@ local function localFarmId()
 end
 
 function Markers.shouldMark(mission)
-    local missionKey = ContractManager.getMissionKey(mission)
-    if mission == nil or missionKey == nil or mission.status ~= MissionStatus.CREATED or mission.addHotspots == nil then
+    if mission == nil or mission.status ~= MissionStatus.CREATED or mission.addHotspots == nil then
         return false
     end
     if settings():get("map.showAvailable") then
         return true
     end
-    if settings():get("map.showReserved") and settings():isAvailable("map.showReserved")
+    local missionKey = ContractManager.getMissionKey(mission)
+    if missionKey ~= nil and settings():get("map.showReserved") and settings():isAvailable("map.showReserved")
         and ContractManagerReservation ~= nil and ContractManagerReservation.isEnabled() then
         local r = ContractManagerReservation.get(missionKey)
         if r ~= nil and r.farmId == localFarmId() then
@@ -45,22 +50,20 @@ function Markers.shouldMark(mission)
 end
 
 function Markers.mark(mission)
-    local missionKey = ContractManager.getMissionKey(mission)
-    if missionKey == nil or Markers.marked[missionKey] then
+    if mission == nil or Markers.marked[mission] then
         return
     end
     local ok = pcall(mission.addHotspots, mission)
     if ok then
-        Markers.marked[missionKey] = true
+        Markers.marked[mission] = true
     end
 end
 
 function Markers.unmark(mission)
-    local missionKey = ContractManager.getMissionKey(mission)
-    if missionKey == nil or not Markers.marked[missionKey] then
+    if mission == nil or not Markers.marked[mission] then
         return
     end
-    Markers.marked[missionKey] = nil
+    Markers.marked[mission] = nil
     if mission.status == MissionStatus.CREATED and mission.removeHotspot ~= nil then
         pcall(mission.removeHotspot, mission)
     end
@@ -73,18 +76,15 @@ function Markers.refresh()
     end
     local seen = {}
     for _, mission in ipairs(g_missionManager.missions) do
-        local key = ContractManager.getMissionKey(mission)
-        if key ~= nil then
-            seen[key] = true
-            if Markers.shouldMark(mission) then
-                Markers.mark(mission)
-            else
-                Markers.unmark(mission)
-            end
+        seen[mission] = true
+        if Markers.shouldMark(mission) then
+            Markers.mark(mission)
+        else
+            Markers.unmark(mission)
         end
     end
-    for id in pairs(Markers.marked) do
-        if not seen[id] then Markers.marked[id] = nil end
+    for mission in pairs(Markers.marked) do
+        if not seen[mission] then Markers.marked[mission] = nil end
     end
 end
 
@@ -101,10 +101,28 @@ function Markers.onReservationChanged(uniqueId)
 end
 
 function Markers.onMissionDeleted(mission)
-    local missionKey = ContractManager.getMissionKey(mission)
-    if missionKey ~= nil then
-        Markers.marked[missionKey] = nil
+    if mission ~= nil then
+        Markers.marked[mission] = nil
     end
+end
+
+---Istemcide yeni kontrat gelince oyun mesaj yayinlamaz (MISSION_GENERATED yalniz sunucuda): isaretler
+---ayar aciksa seyrek araliklarla esitlenir. Ayar kapaliyken ve dedicated sunucuda hic calismaz.
+function Markers:update(dt)
+    if g_client == nil or not (settings():get("map.showAvailable") or settings():get("map.showReserved")) then
+        return
+    end
+    Markers.syncTimer = Markers.syncTimer + (dt or 0)
+    if Markers.syncTimer < Markers.SYNC_INTERVAL_MS then
+        return
+    end
+    Markers.syncTimer = 0
+    Markers.refresh()
+end
+
+function Markers:deleteMap()
+    Markers.marked = setmetatable({}, { __mode = "k" })
+    Markers.syncTimer = 0
 end
 
 if g_messageCenter ~= nil and MessageType ~= nil then
@@ -120,4 +138,7 @@ if g_messageCenter ~= nil and MessageType ~= nil then
         g_messageCenter:subscribe(MessageType.MISSION_DELETED, function(_, mission) Markers.onMissionDeleted(mission) end, Markers)
     end
     g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED, function() pcall(Markers.refresh) end, Markers)
+end
+if addModEventListener ~= nil then
+    addModEventListener(Markers)
 end

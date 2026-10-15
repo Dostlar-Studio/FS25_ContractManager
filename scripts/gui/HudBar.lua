@@ -35,7 +35,7 @@ function Hud.buildTitle(isOwner, sharePercent)
     end
     local role = isOwner and text("cm_hudOwner", "Owner") or text("cm_hudPartner", "Partner")
     if not isOwner and sharePercent ~= nil then
-        role = string.format("%s %d%%", role, math.floor(sharePercent + 0.5))
+        role = string.format("%s %d %%", role, math.floor(sharePercent + 0.5))
     end
     return role
 end

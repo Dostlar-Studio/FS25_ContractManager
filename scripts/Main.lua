@@ -56,6 +56,27 @@ function ContractManager.text(key, fallback)
     return fallback or key
 end
 
+---Acik Kontrat Yonetimi sayfasini tazele (kapaliysa bir sey yapmaz). Sunucudan gelen ya da baska oyuncunun
+---yaptigi degisikliklerde cagrilir; oynayan host kendi yayinini almadigi icin yayin noktasinda da cagrilir.
+function ContractManager.refreshManagePage()
+    if ContractManagerManagePage ~= nil and ContractManagerManagePage.onRemoteChange ~= nil then
+        ContractManagerManagePage.onRemoteChange()
+    end
+end
+
+---Kontrat turunun okunur adi. Oyun turleri ham adla kaydeder (missionType.name = "plowMission"); ayar ekrani,
+---gecmis ve siralama bunu oldugu gibi yaziyordu, cm_type_* anahtari hic yoktu (1.26.0.0). Ceviri yoksa
+---(baska modun turu) ad sadelestirilir: "destructibleRockMission" -> "Destructible rock".
+function ContractManager.typeTitle(name)
+    if name == nil or name == "" then
+        return "?"
+    end
+    name = tostring(name)
+    local plain = name:gsub("Mission$", ""):gsub("(%l)(%u)", "%1 %2"):lower()
+    plain = (plain:gsub("^%l", string.upper))
+    return ContractManager.text("cm_type_" .. name, plain ~= "" and plain or name)
+end
+
 -- ---------------------------------------------------------------------------
 -- Hook tuzagi: Utils.appendedFunction ORIJINALIN DONUS DEGERINI ATAR
 --

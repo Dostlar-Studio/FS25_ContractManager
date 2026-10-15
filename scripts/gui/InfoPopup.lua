@@ -15,6 +15,49 @@ Popup.GUI_NAME = "ContractManagerInfoPopup"
 Popup.instance = nil
 Popup.loadFailed = false
 Popup.queue = {}   -- ust uste gelen mesajlar sirayla gosterilir
+Popup.nextScheduled = false
+
+---Harita kapanisi: bekleyen mesajlar sonraki oturuma tasinmaz, pencere acik sayilmaz.
+function Popup.reset()
+    Popup.queue = {}
+    Popup.nextScheduled = false
+    if Popup.instance ~= nil then
+        Popup.instance.isOpen = false
+        Popup.instance.action = nil
+    end
+end
+
+---Kuyruktaki sonraki mesaji BIR SONRAKI karede ac. Oyunun Gui:closeDialog'u onClose'u, pencere listeden
+---cikmadan ve currentListener degismeden ONCE cagirir (Gui.lua:589-613); o anda showDialog "zaten acik"
+---deyip doner (540-541). Kapanirken siradakini acmak pencereyi hic acmiyor, isOpen takili kaliyor ve o
+---oturumdaki TUM bilgi pencereleri kuyrukta bekliyordu (1.26.0.0). Kuyruk gorevi oyunun ana dongusunde,
+---gorev guncellemesinden bagimsiz calisir; hemen calisirsa (yukleme) mesaj kuyrukta kalir, siradaki
+---Popup.show onu once gosterir.
+function Popup.scheduleNext()
+    if Popup.nextScheduled or #Popup.queue == 0 or g_asyncTaskManager == nil or g_asyncTaskManager.addTask == nil then
+        return
+    end
+    Popup.nextScheduled = true
+    local queuing = true
+    g_asyncTaskManager:addTask(function()
+        Popup.nextScheduled = false
+        if not queuing then
+            Popup.showNext()
+        end
+    end)
+    queuing = false
+end
+
+function Popup.showNext()
+    if Popup.instance == nil or Popup.instance.isOpen or g_currentMission == nil then
+        return false
+    end
+    local nextItem = table.remove(Popup.queue, 1)
+    if nextItem == nil then
+        return false
+    end
+    return Popup.show(nextItem.title, nextItem.text, nextItem.ok, nextItem.action)
+end
 
 ---toast yedegi (pencere yoksa ya da yuklenemediyse)
 function Popup.fallback(title, text, ok)
@@ -78,14 +121,20 @@ if DialogElement ~= nil then
         if not Popup.ensureLoaded() then
             return Popup.fallback(title, text, ok)
         end
-        if Popup.instance.isOpen then
-            Popup.queue[#Popup.queue + 1] = { title = title, text = text, ok = ok, action = action }
+        local item = { title = title, text = text, ok = ok, action = action }
+        if Popup.instance.isOpen or Popup.nextScheduled then
+            Popup.queue[#Popup.queue + 1] = item
             return true
         end
+        -- Kuyrukta kalmis mesaj varsa sira bozulmasin: once o gosterilir.
+        if #Popup.queue > 0 then
+            Popup.queue[#Popup.queue + 1] = item
+            item = table.remove(Popup.queue, 1)
+        end
         local self = Popup.instance
-        self.dialogTitle:setText(tostring(title or ""))
-        self.dialogText:setText(tostring(text or ""))
-        self:applyAction(action)
+        self.dialogTitle:setText(tostring(item.title or ""))
+        self.dialogText:setText(tostring(item.text or ""))
+        self:applyAction(item.action)
         self.isOpen = true
         ContractManager.rememberCursor(self)
         g_gui:showDialog(Popup.GUI_NAME)
@@ -126,13 +175,18 @@ if DialogElement ~= nil then
         ContractManager.restoreCursor(self)
         self.isOpen = false
         self.action = nil
-        local nextItem = table.remove(Popup.queue, 1)
-        if nextItem ~= nil then
-            Popup.show(nextItem.title, nextItem.text, nextItem.ok, nextItem.action)
-        end
+        Popup.scheduleNext()
     end
 else
     function Popup.show(title, text, ok, action)
         return Popup.fallback(title, text, ok)
     end
+end
+
+ContractManagerInfoPopupListener = {}
+function ContractManagerInfoPopupListener:deleteMap()
+    Popup.reset()
+end
+if addModEventListener ~= nil then
+    addModEventListener(ContractManagerInfoPopupListener)
 end

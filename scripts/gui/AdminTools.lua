@@ -386,10 +386,11 @@ function Admin.showResult(key, ok)
         local kind = ok and FSBaseMission.INGAME_NOTIFICATION_OK or FSBaseMission.INGAME_NOTIFICATION_CRITICAL
         g_currentMission:addIngameNotification(kind, line)
     end
-    -- acik kontrat sayfasini tazele
+    -- acik kontrat sayfalarini tazele (oyunun listesi ve Kontrat Yonetimi)
     if g_inGameMenu ~= nil and g_inGameMenu.pageContracts ~= nil and g_inGameMenu.pageContracts.updateList ~= nil then
         pcall(g_inGameMenu.pageContracts.updateList, g_inGameMenu.pageContracts)
     end
+    ContractManager.refreshManagePage()
 end
 
 -- ---------------------------------------------------------------------------
