@@ -3,7 +3,8 @@
 --
 -- * Toplam kontrat sayisi: MissionManager.MAX_MISSIONS (0 = oyun varsayilani, tavan 80).
 -- * Yenileme araligi: MISSION_GENERATION_INTERVAL = orijinal * refreshMultiplier.
--- * Tur basina ust sinir: missionType.data.maxNumInstances (0 = oyun varsayilani).
+-- * Tur basina ust sinir: missionType.data.maxNumInstances. Turun kendi ayari (type:<ad>:max), yoksa genel
+--   generation.maxPerType, o da 0 ise oyunun/haritanin degeri.
 -- * Tur acik/kapali ve goreli agirlik: her turun statik tryGenerateMission'i sarmalanir.
 --   Agirlik goreli: p = weight / (etkin turler arasindaki en buyuk weight). Hepsi 1.0 iken
 --   davranis degismez; bir turu 2.0 yapmak digerlerini yari olasilikla dener.
@@ -74,21 +75,36 @@ function Generation.applyConstants()
     end
 
     if g_missionManager ~= nil and g_missionManager.missionTypes ~= nil then
-        local maxPerType = Generation.isEnabled() and s:get("generation.maxPerType") or 0
         for _, missionType in ipairs(g_missionManager.missionTypes) do
             if missionType.data ~= nil then
                 if Generation.originalMaxPerType[missionType.name] == nil then
                     Generation.originalMaxPerType[missionType.name] = missionType.data.maxNumInstances
                 end
-                if maxPerType > 0 then
-                    missionType.data.maxNumInstances = maxPerType
-                else
-                    missionType.data.maxNumInstances = Generation.originalMaxPerType[missionType.name]
-                end
+                missionType.data.maxNumInstances = Generation.getTypeLimit(missionType.name)
+                    or Generation.originalMaxPerType[missionType.name]
             end
         end
     end
     Generation.applied = true
+end
+
+---Turun panodaki ust siniri: turun kendi ayari, yoksa genel tur siniri, o da yoksa nil (oyunun/haritanin degeri).
+---1.27.0.0'a kadar yalnizca genel sinir vardi ve butun turlere ayni yaziliyordu: haritanin hasat icin 20 verdigi ana
+---sunucuda pano 30 kontratin 20'si hasatti, oyuncularin en cok yaptigi bicme/balya/gubre hic cikmiyordu.
+function Generation.getTypeLimit(typeName)
+    if not Generation.isEnabled() then
+        return nil
+    end
+    local s = settings()
+    local _, _, typeMax = s:getTypeConfig(typeName)
+    if (typeMax or 0) > 0 then
+        return typeMax
+    end
+    local maxPerType = s:get("generation.maxPerType") or 0
+    if maxPerType > 0 then
+        return maxPerType
+    end
+    return nil
 end
 
 ---Etkin turler arasindaki en buyuk agirlik (goreli olasilik icin payda)

@@ -10,12 +10,14 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.26.0.0",
+    VERSION = "1.27.0.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     -- 3 (1.26.0.0): ayar senkronuna 1.24.8.0'da harvest.grassContracts eklenmisti (artirilmamisti);
     -- devir olayina ag kimligi, ortaklik senkronuna paylar eklendi.
-    PROTOCOL = 3,
+    -- 4 (1.27.0.0): ayarlar ekran sirasiyla yayinlanir, duration.autoCloseHours ve tur basina pano siniri
+    -- (type max) eklendi; kural durumu (itibar/seri/zincir/NPC) ve sozlesme sartlari olaylari geldi.
+    PROTOCOL = 4,
     LOG_PREFIX = "[CM]",
 
     -- savegame icindeki birlesik durum dosyasi
@@ -681,6 +683,38 @@ function ContractManager.isMultiplayer()
     return info.isMultiplayer == true
 end
 
+---Odul/prim gosteriminde kontratin ciftligi: kabul edilmis kontratta kontratin ciftligi; kabul edilmemiste
+---istemcide oyuncunun kendi ciftligi (panodaki kontrati o ciftlik icin gosterir), sunucuda nil (odeme kabulden
+---sonra hesaplanir). Alti dosyada alti ayri bicimde yaziliydi (1.27.0.0).
+function ContractManager.getDisplayFarmId(mission)
+    local farmId = mission ~= nil and mission.farmId or nil
+    if farmId ~= nil and farmId ~= 0 then
+        return farmId
+    end
+    local current = g_currentMission
+    if current ~= nil and not current:getIsServer() and current.getFarmId ~= nil then
+        return current:getFarmId()
+    end
+    return nil
+end
+
+---Bu bilgisayardaki oyuncu kural ayarlarini degistirebilir ve yonetici araclarini gorebilir mi? (sunucu/host ya da
+---yonetici girisi yapmis oyuncu). Ayar sekmesi, stok sayfadaki yonetici butonlari ve Yonetim sayfasi ayni karari
+---verir; 1.27.0.0'a kadar bu karar ayar sekmesinin (GUI) dosyasindaydi.
+function ContractManager.isLocalAdmin()
+    local mission = g_currentMission
+    if mission == nil then
+        return false
+    end
+    if mission:getIsServer() then
+        return true
+    end
+    if g_inGameMenu ~= nil and (g_inGameMenu.isServer or g_inGameMenu.isMasterUser) then
+        return true
+    end
+    return mission.isMasterUser == true
+end
+
 function ContractManager:getRulesEnabled()
     if not self:isBetterContractsLoaded() then
         return true
@@ -707,6 +741,7 @@ ContractManager.MESSAGE_PRODUCT_LOST = "CONTRACT_MANAGER_PRODUCT_LOST"          
 ContractManager.MESSAGE_REPUTATION_CHANGED = "CONTRACT_MANAGER_REPUTATION_CHANGED" -- (farmId, points, delta)
 ContractManager.MESSAGE_CONTRACT_TRANSFERRED = "CONTRACT_MANAGER_CONTRACT_TRANSFERRED" -- (mission, oldFarmId, newFarmId)
 ContractManager.MESSAGE_PARTNERSHIP_CHANGED = "CONTRACT_MANAGER_PARTNERSHIP_CHANGED" -- (mission, ownerFarmId, partnerFarmId)
+ContractManager.MESSAGE_CONTRACT_AUTO_CLOSED = "CONTRACT_MANAGER_CONTRACT_AUTO_CLOSED" -- (mission, amount)
 
 function ContractManager.publish(message, ...)
     if g_messageCenter ~= nil and g_messageCenter.publish ~= nil and message ~= nil then

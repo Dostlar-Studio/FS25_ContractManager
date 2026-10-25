@@ -339,5 +339,12 @@
         <text name="cm_sortFarm" text="Ferme"/>
         <text name="cm_statStreak" text="Echecs consecutifs"/>
         <text name="cm_adminBlockedByRules" text="Tableau non actualise : la generation a ete bloquee par vos propres reglages (poids des types ou types desactives). Rien n'a ete supprime."/>
+        <text name="cm_duration_autoCloseHours" text="Fermer les contrats terminés après"/>
+        <text name="cm_duration_autoCloseHours_tooltip" text="Un contrat terminé que personne ne ferme est fermé automatiquement après ce nombre d'heures de jeu ; la récompense ou la pénalité s'applique comme d'habitude. Jamais = désactivé."/>
+        <text name="cm_typeMax" text="max. au tableau"/>
+        <text name="cm_typeMax_tooltip" text="Nombre maximal de contrats de ce type au tableau. Valeur du jeu = limite générale par type, sinon la valeur de la carte."/>
+        <text name="cm_detailReputation" text="Bonus de réputation"/>
+        <text name="cm_detailAutoClose" text="Fermeture automatique dans"/>
+        <text name="cm_autoClosed" text="%s a été fermé automatiquement : %s"/>
     </texts>
 </l10n>

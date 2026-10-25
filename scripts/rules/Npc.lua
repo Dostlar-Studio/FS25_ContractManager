@@ -4,8 +4,8 @@
 -- Her ciftlik icin her NPC'ye ayri sayac tutulur: o NPC'nin kontratini basariyla
 -- bitirdikce sayac artar. Odule eklenen bonus:
 --   min(sayac * npc#percentPerJob, npc#maxPercent)
--- Sayaclar Registry.npcJobs'ta, savegame'e yazilir. Istemcide sayac yoksa bonus 0 gorunur;
--- odeme her zaman sunucuda hesaplanir.
+-- Sayaclar Registry.npcJobs'ta, savegame'e yazilir; istemci kopyasini kural durumu senkronuyla alir
+-- (RuleState, 1.27.0.0; oncesinde istemcide bonus hep 0 gorunuyordu). Odeme her zaman sunucuda hesaplanir.
 --
 
 ContractManagerNpc = {}

@@ -339,5 +339,12 @@
         <text name="cm_sortFarm" text="Farm"/>
         <text name="cm_statStreak" text="Failures in a row"/>
         <text name="cm_adminBlockedByRules" text="Board not refreshed: contract generation was blocked by your own settings (type weights or disabled types). Nothing was deleted."/>
+        <text name="cm_duration_autoCloseHours" text="Close finished contracts after"/>
+        <text name="cm_duration_autoCloseHours_tooltip" text="A finished contract that nobody closes is closed automatically after this many game hours; the reward or penalty is paid as usual. Never = off."/>
+        <text name="cm_typeMax" text="max on board"/>
+        <text name="cm_typeMax_tooltip" text="How many contracts of this type the board may hold. Game default = the general per-type limit, or the map's value if that is off."/>
+        <text name="cm_detailReputation" text="Reputation bonus"/>
+        <text name="cm_detailAutoClose" text="Closes automatically in"/>
+        <text name="cm_autoClosed" text="%s was closed automatically: %s"/>
     </texts>
 </l10n>

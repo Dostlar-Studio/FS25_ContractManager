@@ -9,8 +9,10 @@ A script mod by **Dostlar STUDIO**. Uses only the game's own screens, no custom 
 
 **Rules** (ESC > Settings > Contract Manager, server admin only)
 - Reward multiplier with minimum/maximum, failure penalty as a share of the reward, leased vehicle cost multiplier.
+- Contract terms (multiplier, minimum/maximum, penalties, partial payout, lease cost, distance and difficulty pricing) are fixed when a contract is accepted; later rule changes do not touch running contracts.
 - Active contracts per farm, contracts on the board, per-type limits, generation interval, contract duration, expiry warnings.
-- Enable/disable each contract type and weight it against the others.
+- Enable/disable each contract type, weight it against the others and cap how many of it the board holds.
+- Finished contracts that nobody closes are closed automatically after a set number of game hours; the reward or penalty is paid as usual.
 - Reputation: completed contracts earn points, failures lose them; points give a reward bonus and an extra contract slot.
 - Field cooldown after a finished contract; all toggles for partnership and the management page.
 
@@ -20,7 +22,7 @@ A script mod by **Dostlar STUDIO**. Uses only the game's own screens, no custom 
 - On timeout or forced failure the net contract product accumulated since acceptance is confiscated.
 
 **Contracts page and Contract Management page**
-- Contract details: time left, possible penalty, active contracts / limit, expected yield and delivery amounts, progress.
+- Contract details: time left, possible penalty, every reward bonus, active contracts / limit, expected yield and delivery amounts, progress. Players see the same reward the server pays.
 - Reserve a contract for your farm for a set number of minutes.
 - Partner contracts: invite another farm, accept or decline, share the reward by contribution. The HUD bar shows role and expected payout for owner and partner.
 - Admin tools: refresh the board, force-cancel, transfer, assign to a farm, with confirmation dialogs.

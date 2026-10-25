@@ -51,11 +51,15 @@ Documents\My Games\FarmingSimulator2025\modSettings\FS25_ContractManager.xml
   harvest#keepPercentBale (10)  balya kontratları için aynısı
   limits#maxActivePerFarm (3)  çiftlik başına aynı anda aktif kontrat (0 = sınırsız)
   generation#maxTotal (0 = oyun varsayılanı, en çok 80)  panodaki toplam kontrat
-  generation#maxPerType (0 = oyun varsayılanı)  tür başına üst sınır
+  generation#maxPerType (0 = oyun varsayılanı)  tür başına üst sınır; türün
+    kendi sınırı (types/type#max) bunu ezer
   generation#refreshMultiplier (1.0)  yeni kontrat üretim aralığı çarpanı
   duration#multiplier (1.0)  yeni üretilen kontratların süresi
   duration#warnAtMinutes ("60,15")  bitişe kalan oyun dakikası eşiklerinde uyarı
-  types/type#name #enabled #weight  kontrat türü aç/kapat ve göreli ağırlık
+  duration#autoCloseHours (48)  biten ama kapatılmayan kontrat bu kadar oyun
+    saati sonra kendiliğinden kapanır (0 = hiç)
+  types/type#name #enabled #weight #max  kontrat türü aç/kapat, göreli ağırlık
+    ve panoda en çok kaç tane (0 = genel tür sınırı)
   compat#overrideBetterContracts (false)  aşağıya bakın
 
 BETTERCONTRACTS İLE BİRLİKTE
@@ -70,6 +74,21 @@ TEK OYUNCULU
 Tek oyunculuda tek çiftlik olduğu için ortaklık, rezervasyon, rezerv harita
 işareti ve devretme kapalıdır; ayarlarda sönük görünür ve açılamaz. Kayıtlı
 değerler korunur, aynı ayarlar çok oyunculu oyunda yine geçerli olur.
+
+SÖZLEŞME ŞARTLARI, PANO DENGESİ, KENDİLİĞİNDEN KAPANMA (1.27)
+- Kontratı kabul ettiğiniz anda şartları donar: ödül çarpanı, taban ve tavan,
+  ceza oranları, kısmi ödeme, kiralama ücreti ve uzaklık/zorluk yüzdeleri.
+  Yönetici bunları sonradan değiştirse de çalışan kontratınız etkilenmez.
+  İtibar, etkinlik, zincir ve NPC bonusları kontrat bitince hesaplanır.
+- Kontrat detayında her bonus ayrı satırdır; ekranınızdaki ödül sunucunun
+  ödediğiyle aynıdır. Ödül tavanı bonuslar dahil son tutarı sınırlar.
+- Pano dengesi: Ayarlar > Kontrat türleri > "<tür>: panoda en çok" ile her
+  tür için ayrı üst sınır verilir. "Oyun varsayılanı" genel tür sınırını, o da
+  kapalıysa haritanın değerini kullanır.
+- Biten ama kapatılmayan kontrat, Ayarlar > Süre > "Biten kontratı kapat"
+  kadar oyun saati sonra kendiliğinden kapanır (varsayılan 48 saat, Hiç =
+  kapalı). Ödül ya da ceza her zamanki gibi işler, çiftliğe bildirim gider;
+  kontrat detayında kapanmaya kalan süre görünür.
 
 KONTRAT GEÇMİŞİ
 Sunucu, kabul edilen / biten kontratları ve çiftlik başına istatistiği

@@ -8,7 +8,7 @@
 --    Kopru komut dosyasini FTP ile yazar; kutu yasi ve tekrarı kendisi denetler (nonce +
 --    issuedAt). Panelde yalnizca admin rolu komut gonderebilir (kopru tarafi), burada da
 --    sonuc yine sunucuda uygulanir.
---      cmSet   : text = ayar anahtari ("reward.multiplier" | "type:<ad>:enabled"), value = deger
+--      cmSet   : text = ayar anahtari ("reward.multiplier" | "type:<ad>:enabled|weight|max"), value = deger
 --      cmAdmin : text = refresh | cancel | assign, value = uniqueId, farmId
 --
 -- Kopru modu bu moddan SONRA yuklendigi icin kayit gorev basinda yapilir.
@@ -76,9 +76,10 @@ function Panel.buildSection()
     end
     if g_missionManager ~= nil and g_missionManager.missionTypes ~= nil then
         for _, mt in ipairs(g_missionManager.missionTypes) do
-            local enabled, weight = S:getTypeConfig(mt.name)
+            local enabled, weight, max = S:getTypeConfig(mt.name)
             out.types[#out.types + 1] = {
-                name = mt.name, enabled = enabled, weight = weight,
+                -- max: turun kendi pano siniri ayari (0 = genel sinir); maxNumInstances: o an uygulanan sinir
+                name = mt.name, enabled = enabled, weight = weight, max = max,
                 maxNumInstances = mt.data ~= nil and mt.data.maxNumInstances or nil,
                 numInstances = mt.data ~= nil and mt.data.numInstances or nil,
             }
@@ -107,18 +108,11 @@ end
 -- komutlar (saf; test edilir). Donus: ok, mesaj
 -- ---------------------------------------------------------------------------
 
----string degeri anahtarin turune gore cevir
+---string degeri anahtarin turune gore cevir (anahtar: ayar id'si ya da "type:<ad>:<alan>")
 function Panel.parseValue(key, raw)
-    local S = ContractManagerSettings
-    local name, field = ContractManagerSettingsTab.parseTypeKey(key)
-    local kind
-    if name ~= nil then
-        kind = field == "enabled" and "bool" or "float"
-    else
-        local spec = S.SPEC_BY_ID[key]
-        if spec == nil then return nil, "unknown setting: " .. tostring(key) end
-        kind = spec.type
-    end
+    local spec = ContractManagerSettings:getKeySpec(key)
+    if spec == nil then return nil, "unknown setting: " .. tostring(key) end
+    local kind = spec.type
     if kind == "bool" then
         if type(raw) == "boolean" then return raw end
         local s = tostring(raw or ""):lower()
@@ -146,7 +140,7 @@ function Panel.commandSet(cmd)
         return false, err
     end
     local by = (type(cmd.by) == "string" and cmd.by ~= "") and ("web: " .. cmd.by) or "web panel"
-    local applied = ContractManagerSettingsTab.applyOnServer(key, value, by)
+    local applied = ContractManagerSettings.applyOnServer(key, value, by)
     if applied == nil then
         return false, "setting not applied: " .. tostring(key)
     end

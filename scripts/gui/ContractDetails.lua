@@ -155,9 +155,9 @@ function Details.buildPartnerShareRows(mission, farmId, reward)
     if farmId == nil or not Part.isPartner(mission, farmId) then
         return rows
     end
-    if reward == nil and mission.getReward ~= nil then
-        local value = mission:getReward()
-        reward = type(value) == "number" and value or 0
+    -- pay, odemede bolunen tutardan (kiralama bedeli dusulmus): Reward.getExpectedNet
+    if reward == nil and ContractManagerReward ~= nil then
+        reward = ContractManagerReward.getExpectedNet(mission)
     end
     local entry = Part.get(mission)
     local ownerName = entry ~= nil and entry.owner ~= nil and ContractManagerManagePage ~= nil
@@ -214,15 +214,12 @@ function Details.buildRows(mission)
     -- olasi ceza (yalnizca bitmemis kontrat; bitmis olanda oyun zaten toplami gosterir)
     if mission.status ~= MissionStatus.FINISHED and mission.status ~= MissionStatus.DISMISSED
         and ContractManager:getRulesEnabled() then
-        -- Gercekte kesilen yuzde: taban + seri adimi, ust sinirla kirpilmis (Reward.getPenaltyPercent).
-        -- Eskiden ayardaki taban gosteriliyordu; ana sunucuda %100 gorunup %75 kesiliyordu.
-        local farmId = mission.farmId
-        if farmId == nil and g_currentMission ~= nil and g_currentMission.getFarmId ~= nil then
-            farmId = g_currentMission:getFarmId()
-        end
+        -- Bu kontrat simdi basarisiz olsa kesilecek yuzde: kabuldeki sartlar + seri bir artmis haliyle
+        -- (Reward.getPenaltyPreviewPercent). 1.26.0.0'a kadar seri artmadan okunuyordu: kademe acikken bir
+        -- adim dusuk; ondan once ayardaki taban gosteriliyordu (ana sunucuda %100 gorunup %75 kesiliyordu).
         local percent = ContractManagerSettings:get("reward.failPenaltyPercent")
-        if ContractManagerReward ~= nil and ContractManagerReward.getPenaltyPercent ~= nil then
-            percent = ContractManagerReward.getPenaltyPercent(farmId)
+        if ContractManagerReward ~= nil and ContractManagerReward.getPenaltyPreviewPercent ~= nil then
+            percent = ContractManagerReward.getPenaltyPreviewPercent(mission)
         end
         if percent > 0 and mission.getReward ~= nil then
             local reward = mission:getReward()
@@ -241,15 +238,19 @@ function Details.buildRows(mission)
         end
     end
 
-    -- zincir ve NPC bonusu
-    if mission.status ~= MissionStatus.FINISHED and mission.status ~= MissionStatus.DISMISSED then
-        if ContractManagerChain ~= nil then
-            local b = ContractManagerChain.getBonusPercent(mission)
-            if b > 0 then rows[#rows + 1] = { title = text("cm_detailChain"), value = string.format("+%d %%", b) } end
+    -- odul primleri: odul hattinin asamalari (itibar, etkinlik, uzaklik/kucuk tarla/zorluk, zincir, NPC), odemeyle
+    -- ayni hesaptan ve ayni sirayla (Reward.getDetailRows). 1.26.0.0'a kadar her biri burada ayrica hesaplaniyordu.
+    if ContractManagerReward ~= nil and mission.status ~= MissionStatus.FINISHED and mission.status ~= MissionStatus.DISMISSED then
+        for _, row in ipairs(ContractManagerReward.getDetailRows(mission, text)) do
+            rows[#rows + 1] = row
         end
-        if ContractManagerNpc ~= nil then
-            local b = ContractManagerNpc.getBonusPercent(mission)
-            if b > 0 then rows[#rows + 1] = { title = text("cm_detailNpc"), value = string.format("+%d %%", math.floor(b + 0.5)) } end
+    end
+
+    -- kendiliginden kapanma (bitmis, kapatilmamis kontrat; 1.27.0.0)
+    if ContractManagerAutoClose ~= nil and mission.status == MissionStatus.FINISHED then
+        local hours = ContractManagerAutoClose.getHoursLeft(mission)
+        if hours ~= nil then
+            rows[#rows + 1] = { title = text("cm_detailAutoClose", "Closes automatically in"), value = Details.formatMinutes(hours * 60) }
         end
     end
 
@@ -260,19 +261,6 @@ function Details.buildRows(mission)
         if day ~= nil or month ~= nil then
             rows[#rows + 1] = { title = text("cm_detailQuota"), value = string.format("%s / %s",
                 day ~= nil and tostring(day) or "-", month ~= nil and tostring(month) or "-") }
-        end
-    end
-
-    -- uzaklik / kucuk tarla / tur zorlugu
-    if ContractManagerPricing ~= nil and mission.status ~= MissionStatus.FINISHED and mission.status ~= MissionStatus.DISMISSED then
-        for _, row in ipairs(ContractManagerPricing.getDetailRows(mission, text)) do rows[#rows + 1] = row end
-    end
-
-    -- zamanli bonus
-    if ContractManagerSchedule ~= nil and mission.status ~= MissionStatus.FINISHED and mission.status ~= MissionStatus.DISMISSED then
-        local bonus = ContractManagerSchedule.getBonusPercent()
-        if bonus > 0 then
-            rows[#rows + 1] = { title = text("cm_detailEventBonus"), value = string.format("+%d %%", bonus) }
         end
     end
 

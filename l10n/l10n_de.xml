@@ -339,5 +339,12 @@
         <text name="cm_sortFarm" text="Hof"/>
         <text name="cm_statStreak" text="Fehlschlaege in Folge"/>
         <text name="cm_adminBlockedByRules" text="Tafel nicht aktualisiert: Die Vertragserzeugung wurde von deinen eigenen Einstellungen blockiert (Typgewichte oder deaktivierte Typen). Es wurde nichts geloescht."/>
+        <text name="cm_duration_autoCloseHours" text="Beendete Verträge schließen nach"/>
+        <text name="cm_duration_autoCloseHours_tooltip" text="Ein beendeter Vertrag, den niemand abschließt, wird nach so vielen Spielstunden automatisch abgeschlossen; Belohnung oder Strafe werden wie gewohnt verrechnet. Nie = aus."/>
+        <text name="cm_typeMax" text="max. auf der Tafel"/>
+        <text name="cm_typeMax_tooltip" text="Wie viele Verträge dieses Typs höchstens auf der Tafel stehen. Spielstandard = allgemeines Typlimit, sonst der Wert der Karte."/>
+        <text name="cm_detailReputation" text="Ansehensbonus"/>
+        <text name="cm_detailAutoClose" text="Automatischer Abschluss in"/>
+        <text name="cm_autoClosed" text="%s wurde automatisch abgeschlossen: %s"/>
     </texts>
 </l10n>

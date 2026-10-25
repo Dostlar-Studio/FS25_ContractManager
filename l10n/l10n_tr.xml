@@ -339,5 +339,12 @@
         <text name="cm_sortFarm" text="Çiftlik"/>
         <text name="cm_statStreak" text="Üst üste başarısız"/>
         <text name="cm_adminBlockedByRules" text="Pano yenilenmedi: kontrat üretimi mod ayarlarınızla engellendi (tür ağırlıkları ya da kapalı türler). Hiçbir kontrat silinmedi."/>
+        <text name="cm_duration_autoCloseHours" text="Biten kontratı kapat"/>
+        <text name="cm_duration_autoCloseHours_tooltip" text="Biten ama kapatılmayan kontrat bu kadar oyun saati sonra kendiliğinden kapanır; ödül ya da ceza her zamanki gibi işler. Hiç = kapalı."/>
+        <text name="cm_typeMax" text="panoda en çok"/>
+        <text name="cm_typeMax_tooltip" text="Panoda bu türden en çok kaç kontrat olsun. Oyun varsayılanı = genel tür sınırı, o da kapalıysa haritanın değeri."/>
+        <text name="cm_detailReputation" text="İtibar bonusu"/>
+        <text name="cm_detailAutoClose" text="Kendiliğinden kapanır"/>
+        <text name="cm_autoClosed" text="%s kendiliğinden kapatıldı: %s"/>
     </texts>
 </l10n>

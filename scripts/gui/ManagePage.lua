@@ -610,7 +610,7 @@ function Page:getLocalFarmId()
 end
 
 function Page:getIsAdmin()
-    return ContractManagerSettingsTab ~= nil and ContractManagerSettingsTab.getIsLocalAdmin() or false
+    return ContractManager.isLocalAdmin()
 end
 
 function Page:getSelected()
@@ -1099,9 +1099,12 @@ function Page:refresh()
         end
     end
 
-    -- ortaklik: kontrata katilan her ciftlik kendi satirinda
-    local partnerLines = showDetail and Page.buildPartnerLines(row and row.mission or nil,
-        Page.missionReward(row and row.mission or nil)) or {}
+    -- ortaklik: kontrata katilan her ciftlik kendi satirinda. Hak edis odemede bolunen tutardan (kiralama
+    -- bedeli dusulmus, Reward.getExpectedNet); 1.26.0.0'a kadar ham odulden boluyordu.
+    local partnerMission = row and row.mission or nil
+    local partnerLines = showDetail and Page.buildPartnerLines(partnerMission,
+        partnerMission ~= nil and ContractManagerReward ~= nil and ContractManagerReward.getExpectedNet(partnerMission)
+        or Page.missionReward(partnerMission)) or {}
     if self.partnerHeader ~= nil then
         self.partnerHeader:setVisible(#partnerLines > 0)
     end

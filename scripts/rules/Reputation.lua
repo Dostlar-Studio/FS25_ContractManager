@@ -7,8 +7,9 @@
 -- Etkileri:
 --   * Odul bonusu: puan > 0 iken odule (puan / maxPoints) * rewardBonusMaxPercent kadar ek.
 --   * Ek kontrat hakki: puan >= extraSlotAt iken ciftlik limiti +1.
--- Sunucu puani hesaplar; istemciler kendi ciftliklerinin puanini REPUTATION bildirimiyle
--- ve StatsEvent ile alir (odul gosterimi icin). Odeme her zaman sunucuda hesaplanir.
+-- Sunucu puani hesaplar; istemciler butun ciftliklerin puanini kural durumu senkronuyla (RuleState,
+-- 1.27.0.0), ayrica REPUTATION bildirimi ve StatsEvent ile alir (odul gosterimi icin). Odeme her zaman
+-- sunucuda hesaplanir.
 --
 
 ContractManagerReputation = {

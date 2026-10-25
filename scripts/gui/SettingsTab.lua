@@ -117,114 +117,62 @@ function Tab.fixMissingTexts(element, key, depth)
 end
 
 -- ---------------------------------------------------------------------------
--- kontrol tanimlari (saf)
+-- kontrol tanimlari (saf). Tek kaynak Settings.SPEC (1.27.0.0): sinirlar, bolum ve secenek listesi
+-- orada. Eskiden burada ikinci bir liste vardi ve sinirlari dosyanin sinirlarindan farkliydi.
+-- kind: bool | range | choice. zero: 0 degeri icin l10n etiketi. values: range'in secenek listesi.
 -- ---------------------------------------------------------------------------
 
--- kind: bool | range | choice. zero: 0 degeri icin l10n etiketi. onlyIf: "betterContracts"
-Tab.SPEC = {
-    { section = "cm_secGuard" },
-    { id = "guard.enabled", kind = "bool" },
-    { id = "guard.blockCancelAfterProgress", kind = "bool" },
-    { id = "guard.confiscateOnFail", kind = "bool" },
-    { id = "guard.warnProductLoss", kind = "bool" },
+---Ayar (ya da tur alani) tanimindan ekran kontrolu tanimi (saf)
+function Tab.controlSpec(spec, key)
+    local ui = spec.ui or {}
+    local out = { id = key, key = key, mpOnly = spec.mpOnly, format = ui.format, zero = ui.zero }
+    if spec.type == "bool" then
+        out.kind = "bool"
+    elseif spec.type == "string" then
+        out.kind = "choice"
+        out.values = ui.values
+        out.labels = ui.labels
+    else
+        out.kind = "range"
+        out.min = spec.min
+        out.max = spec.max
+        out.values = ContractManagerSettings.getUiValues(spec)
+    end
+    return out
+end
 
-    { section = "cm_secReward" },
-    { id = "reward.multiplier", kind = "range", min = 0.5, max = 5, step = 0.05, format = "x%.2f" },
-    { id = "reward.failPenaltyPercent", kind = "range", min = 0, max = 100, step = 5, format = "%d %%", zero = "cm_valNone" },
-    { id = "reward.leaseCostMultiplier", kind = "range", min = 0, max = 3, step = 0.1, format = "x%.1f", zero = "cm_valFree" },
-    { id = "reward.penaltyStepPercent", kind = "range", min = 0, max = 25, step = 1, format = "+%d %%", zero = "cm_valNone" },
-    { id = "reward.penaltyMaxPercent", kind = "range", min = 0, max = 100, step = 5, format = "%d %%" },
-    { id = "reward.partialEnabled", kind = "bool" },
-    { id = "reward.partialMinCompletion", kind = "range", min = 0, max = 100, step = 5, format = "%d %%", zero = "cm_valNone" },
-    { id = "reward.partialFactor", kind = "range", min = 0, max = 100, step = 5, format = "%d %%", zero = "cm_valNone" },
-    { id = "reward.min", kind = "range", min = 0, max = 100000, step = 2500, format = "money", zero = "cm_valNone" },
-    { id = "reward.max", kind = "range", min = 0, max = 500000, step = 10000, format = "money", zero = "cm_valNone" },
+---Ekran satirlari: Settings.SPEC sirasiyla, bolum degisince bolum basligi (saf; test edilir). Bolumdeki
+---butun ayarlar yalnizca cok oyunculuysa baslik da "yalnizca cok oyunculu" isaretlenir.
+function Tab.buildSpecList()
+    local specs = ContractManagerSettings.SPEC
+    local list = {}
+    local i = 1
+    while i <= #specs do
+        local section = specs[i].section
+        local j, allMp = i, true
+        while j <= #specs and specs[j].section == section do
+            allMp = allMp and specs[j].mpOnly == true
+            j = j + 1
+        end
+        list[#list + 1] = { section = section, mpOnly = allMp or nil }
+        for k = i, j - 1 do
+            list[#list + 1] = Tab.controlSpec(specs[k], specs[k].id)
+        end
+        i = j
+    end
+    return list
+end
 
-    { section = "cm_secHarvest" },
-    { id = "harvest.keepPercent", kind = "range", min = 0, max = 60, step = 1, format = "%d %%", zero = "cm_valNone" },
-    { id = "harvest.keepPercentBale", kind = "range", min = 0, max = 60, step = 1, format = "%d %%", zero = "cm_valNone" },
-    { id = "harvest.grassContracts", kind = "bool" },
+Tab.SPEC = Tab.buildSpecList()
 
-    { section = "cm_secLimits" },
-    { id = "limits.maxActivePerFarm", kind = "range", min = 0, max = 20, step = 1, format = "%d", zero = "cm_valUnlimited" },
-    { id = "limits.quotaPerDay", kind = "range", min = 0, max = 20, step = 1, format = "%d", zero = "cm_valNone" },
-    { id = "limits.quotaPerMonth", kind = "range", min = 0, max = 100, step = 5, format = "%d", zero = "cm_valNone" },
-
-    { section = "cm_secGeneration" },
-    { id = "generation.maxTotal", kind = "range", min = 0, max = 80, step = 5, format = "%d", zero = "cm_valGameDefault" },
-    { id = "generation.maxPerType", kind = "range", min = 0, max = 20, step = 1, format = "%d", zero = "cm_valGameDefault" },
-    { id = "generation.refreshMultiplier", kind = "range", min = 0.25, max = 4, step = 0.25, format = "x%.2f" },
-    { id = "generation.cooldownPerFieldHours", kind = "range", min = 0, max = 240, step = 6, format = "hours", zero = "cm_valNone" },
-
-    { section = "cm_secDuration" },
-    { id = "duration.multiplier", kind = "range", min = 0.5, max = 4, step = 0.25, format = "x%.2f" },
-    { id = "duration.warnAtMinutes", kind = "choice",
-      values = { "", "30,10", "60,15", "120,30", "240,60" },
-      labels = { "cm_valNone", "30 / 10", "60 / 15", "120 / 30", "240 / 60" } },
-
-    { section = "cm_secReputation" },
-    { id = "reputation.enabled", kind = "bool" },
-    { id = "reputation.gainComplete", kind = "range", min = 0, max = 50, step = 1, format = "+%d" },
-    { id = "reputation.lossFail", kind = "range", min = 0, max = 50, step = 1, format = "-%d" },
-    { id = "reputation.lossCancel", kind = "range", min = 0, max = 50, step = 1, format = "-%d" },
-    { id = "reputation.lossTimeout", kind = "range", min = 0, max = 50, step = 1, format = "-%d" },
-    { id = "reputation.maxPoints", kind = "range", min = 50, max = 500, step = 50, format = "%d" },
-    { id = "reputation.rewardBonusMaxPercent", kind = "range", min = 0, max = 100, step = 5, format = "%d %%", zero = "cm_valNone" },
-    { id = "reputation.extraSlotAt", kind = "range", min = 0, max = 200, step = 10, format = "%d", zero = "cm_valNone" },
-
-    { section = "cm_secReservation", mpOnly = true },
-    { id = "reservation.enabled", kind = "bool", mpOnly = true },
-    { id = "reservation.minutes", kind = "range", min = 1, max = 60, step = 1, format = "minutes", mpOnly = true },
-
-    { section = "cm_secPartnership", mpOnly = true },
-    { id = "partnership.enabled", kind = "bool", mpOnly = true },
-    { id = "partnership.maxPartners", kind = "range", min = 1, max = 4, step = 1, format = "%d", mpOnly = true },
-    { id = "partnership.inviteMinutes", kind = "range", min = 1, max = 30, step = 1, format = "minutes", mpOnly = true },
-
-    { section = "cm_secChain" },
-    { id = "chain.enabled", kind = "bool" },
-    { id = "chain.bonusPercent", kind = "range", min = 0, max = 50, step = 5, format = "+%d %%", zero = "cm_valNone" },
-    { id = "chain.windowDays", kind = "range", min = 0, max = 14, step = 1, format = "%d", zero = "cm_valUnlimited" },
-    { id = "npc.enabled", kind = "bool" },
-    { id = "npc.percentPerJob", kind = "range", min = 0, max = 10, step = 1, format = "+%d %%", zero = "cm_valNone" },
-    { id = "npc.maxPercent", kind = "range", min = 0, max = 50, step = 5, format = "+%d %%", zero = "cm_valNone" },
-
-    { section = "cm_secLease" },
-    { id = "lease.enabled", kind = "bool" },
-    { id = "lease.minReputation", kind = "range", min = 0, max = 200, step = 10, format = "%d", zero = "cm_valNone" },
-
-    { section = "cm_secPricing" },
-    { id = "pricing.distanceEnabled", kind = "bool" },
-    { id = "pricing.distancePercentPerKm", kind = "range", min = 0, max = 30, step = 1, format = "+%d %%/km", zero = "cm_valNone" },
-    { id = "pricing.distanceMaxPercent", kind = "range", min = 0, max = 100, step = 5, format = "+%d %%", zero = "cm_valNone" },
-    { id = "pricing.smallFieldEnabled", kind = "bool" },
-    { id = "pricing.smallFieldRefHa", kind = "range", min = 0.5, max = 10, step = 0.5, format = "area" },
-    { id = "pricing.smallFieldMaxPercent", kind = "range", min = 0, max = 100, step = 5, format = "+%d %%", zero = "cm_valNone" },
-    { id = "pricing.typeDifficultyEnabled", kind = "bool" },
-
-    { section = "cm_secSchedule" },
-    { id = "schedule.enabled", kind = "bool" },
-    { id = "schedule.weekendBonusPercent", kind = "range", min = 0, max = 100, step = 5, format = "+%d %%", zero = "cm_valNone" },
-    { id = "schedule.happyHourStart", kind = "range", min = 0, max = 23, step = 1, format = "%02d:00" },
-    { id = "schedule.happyHourEnd", kind = "range", min = 0, max = 23, step = 1, format = "%02d:00" },
-    { id = "schedule.happyHourBonusPercent", kind = "range", min = 0, max = 100, step = 5, format = "+%d %%", zero = "cm_valNone" },
-
-    { section = "cm_secMap" },
-    { id = "map.showReserved", kind = "bool", mpOnly = true },
-    { id = "map.showAvailable", kind = "bool" },
-
-    { section = "cm_secInterface" },
-    { id = "ui.managePage", kind = "bool" },
-
-    { section = "cm_secCompat" },
-    { id = "compat.overrideBetterContracts", kind = "bool" },
-
-    { section = "cm_secIntegrations" },
-    { id = "integrations.discord", kind = "bool" },
-
-}
-
-Tab.TYPE_WEIGHT_SPEC = { kind = "range", min = 0, max = 3, step = 0.25, format = "x%.2f", zero = "cm_valNever" }
+---Kontrat turu alaninin kontrolu: "type:<ad>:<alan>"
+function Tab.typeControlSpec(typeName, field)
+    local fieldSpec = ContractManagerSettings.TYPE_FIELD_BY_NAME[field]
+    if fieldSpec == nil then
+        return nil
+    end
+    return Tab.controlSpec(fieldSpec, "type:" .. typeName .. ":" .. field)
+end
 
 ---Bir spec bu oturumda gosterilsin mi?
 function Tab.isSpecVisible(spec)
@@ -235,8 +183,8 @@ function Tab.isSpecVisible(spec)
 end
 
 ---range spec icin secenek sayisi
-function Tab.getRangeCount(spec)
-    return math.floor((spec.max - spec.min) / spec.step + 0.5) + 1
+function Tab.getRangeCount(spec, values)
+    return #(values or spec.values or {})
 end
 
 function Tab.formatValue(spec, value)
@@ -263,12 +211,42 @@ function Tab.formatValue(spec, value)
     return ContractManager.formatSafe(spec.format or "%s", value)
 end
 
----kontrolun secenek metinleri
-function Tab.buildTexts(spec)
+---Listede olmayan gecerli deger (web panelinden ya da dosyadan gelen) listeye kendi yerinde eklenir:
+---ekran gercek degeri gostersin, kontrole dokunmak degeri en yakin adima kaydirmasin (1.27.0.0; ana
+---sunucuda aylik kota 6 iken ekran 5 gosteriyordu). Donus: liste - degismediyse spec.values'un kendisi.
+function Tab.valuesWith(spec, value)
+    local values = spec.values or {}
+    if spec.kind ~= "range" or type(value) ~= "number" or value ~= value then
+        return values
+    end
+    if (spec.min ~= nil and value < spec.min) or (spec.max ~= nil and value > spec.max) then
+        return values
+    end
+    for _, v in ipairs(values) do
+        if math.abs(v - value) < 1e-6 then
+            return values
+        end
+    end
+    local out, inserted = {}, false
+    for _, v in ipairs(values) do
+        if not inserted and value < v then
+            out[#out + 1] = value
+            inserted = true
+        end
+        out[#out + 1] = v
+    end
+    if not inserted then
+        out[#out + 1] = value
+    end
+    return out
+end
+
+---kontrolun secenek metinleri (`values` verilmezse spec'in listesi)
+function Tab.buildTexts(spec, values)
     local texts = {}
     if spec.kind == "range" then
-        for i = 1, Tab.getRangeCount(spec) do
-            texts[i] = Tab.formatValue(spec, spec.min + (i - 1) * spec.step)
+        for i, value in ipairs(values or spec.values or {}) do
+            texts[i] = Tab.formatValue(spec, value)
         end
     elseif spec.kind == "choice" then
         for i, label in ipairs(spec.labels) do
@@ -283,15 +261,23 @@ function Tab.buildTexts(spec)
     return texts
 end
 
-function Tab.valueToState(spec, value)
+---Degerin secenek listesindeki sirasi; listede yoksa en yakini (`values` verilmezse spec'in listesi)
+function Tab.valueToState(spec, value, values)
     if spec.kind == "bool" then
         return value and 2 or 1
     elseif spec.kind == "range" then
+        values = values or spec.values or {}
         if type(value) ~= "number" then
-            value = spec.min
+            return 1
         end
-        local state = math.floor((value - spec.min) / spec.step + 0.5) + 1
-        return math.max(1, math.min(Tab.getRangeCount(spec), state))
+        local best, bestDiff = 1, math.huge
+        for i, v in ipairs(values) do
+            local diff = math.abs(v - value)
+            if diff < bestDiff then
+                best, bestDiff = i, diff
+            end
+        end
+        return best
     elseif spec.kind == "choice" then
         for i, v in ipairs(spec.values) do
             if v == value then
@@ -303,17 +289,12 @@ function Tab.valueToState(spec, value)
     return 1
 end
 
-function Tab.stateToValue(spec, state)
+function Tab.stateToValue(spec, state, values)
     if spec.kind == "bool" then
         return state == 2
     elseif spec.kind == "range" then
-        local value = spec.min + (state - 1) * spec.step
-        -- kayan nokta gurultusunu adim hassasiyetine yuvarla
-        local digits = 0
-        local s = spec.step
-        while s < 1 and digits < 6 do s = s * 10; digits = digits + 1 end
-        local factor = 10 ^ digits
-        return math.floor(value * factor + 0.5) / factor
+        values = values or spec.values or {}
+        return values[state] or values[1]
     elseif spec.kind == "choice" then
         return spec.values[state] or spec.values[1]
     end
@@ -321,80 +302,7 @@ function Tab.stateToValue(spec, state)
 end
 
 -- ---------------------------------------------------------------------------
--- deger erisimi: "type:<ad>:enabled" / "type:<ad>:weight" veya ayar id'si
--- ---------------------------------------------------------------------------
-
-function Tab.parseTypeKey(key)
-    local name, field = string.match(key or "", "^type:(.+):(%a+)$")
-    return name, field
-end
-
-function Tab.getValue(key)
-    local name, field = Tab.parseTypeKey(key)
-    if name ~= nil then
-        local enabled, weight = S():getTypeConfig(name)
-        if field == "enabled" then return enabled end
-        return weight
-    end
-    return S():get(key)
-end
-
----Degeri ayarlara yazar (dogrulama Settings'te). Donus: uygulanan deger.
-function Tab.applyValue(key, value)
-    local name, field = Tab.parseTypeKey(key)
-    if name ~= nil then
-        local enabled, weight = S():getTypeConfig(name)
-        if field == "enabled" then
-            S():setTypeConfig(name, value == true, weight)
-        else
-            S():setTypeConfig(name, enabled, tonumber(value) or weight)
-        end
-        local e, w = S():getTypeConfig(name)
-        if field == "enabled" then return e end
-        return w
-    end
-    return S():set(key, value)
-end
-
----Sunucuda: yetkili degisikligi uygula ve herkese yay.
----DEGISIM KAPISI: kaydiracta gezinmek her adimda ayri bir istek gonderiyor; her biri
----TUM ayar tablosunu butun istemcilere yayinliyor ve orada 127 kontrolluk arayuzu
----yeniden kuruyordu. Sunucu logunda calisma kisminin %57'si tek bir satirdi
----(2026-09-09 incelemesi). Deger gercekten degismediyse hicbir sey yapilmaz.
----`who`: degisikligi yapanin adi (oyuncu, "host" ya da "web: <ad>"). Log ve Discord olayi
----bunu tasir; "ayari kim degistirdi" sorusu canlida cevapsiz kalmisti (2026-09-17).
-function Tab.applyOnServer(key, value, who)
-    local before = Tab.getValue(key)
-    local applied = Tab.applyValue(key, value)
-    if before ~= nil and applied ~= nil and before == applied then
-        return applied
-    end
-    if ContractManagerSyncEvent ~= nil then
-        ContractManagerSyncEvent.broadcastState()
-    end
-    who = (type(who) == "string" and who ~= "") and who or "unknown"
-    ContractManager.publish(ContractManager.MESSAGE_SETTINGS_CHANGED, key, applied, who)
-    ContractManager.info("Setting '%s': %s -> %s (changed by %s)",
-        tostring(key), tostring(before), tostring(applied), who)
-    return applied
-end
-
-function Tab.getIsLocalAdmin()
-    local mission = g_currentMission
-    if mission == nil then
-        return false
-    end
-    if mission:getIsServer() then
-        return true
-    end
-    if g_inGameMenu ~= nil and (g_inGameMenu.isServer or g_inGameMenu.isMasterUser) then
-        return true
-    end
-    return mission.isMasterUser == true
-end
-
--- ---------------------------------------------------------------------------
--- kontrol degisimi
+-- kontrol degisimi (deger erisimi ve yetki core'da: ContractManagerSettings / ContractManager.isLocalAdmin)
 -- ---------------------------------------------------------------------------
 
 function Tab:onControlChanged(state, element)
@@ -402,15 +310,15 @@ function Tab:onControlChanged(state, element)
     if spec == nil then
         return
     end
-    if not Tab.getIsLocalAdmin() or Tab.isMpOnlyLocked(spec) then
+    if not ContractManager.isLocalAdmin() or Tab.isMpOnlyLocked(spec) then
         self:populate() -- yetkisiz ya da tek oyunculuda kilitli: gorunumu geri al
         return
     end
-    local value = Tab.stateToValue(spec, state)
+    local value = Tab.stateToValue(spec, state, element.cmValues)
     if ContractManagerSettingChangeEvent ~= nil then
         ContractManagerSettingChangeEvent.send(spec.key, value)
     else
-        Tab.applyOnServer(spec.key, value, "host")
+        S().applyOnServer(spec.key, value, "host")
     end
 end
 
@@ -449,6 +357,24 @@ function Tab.applyMpOnlyState(option, spec)
     return locked
 end
 
+-- tur alani -> satir basligi anahtari (ipucu: anahtar .. "_tooltip")
+Tab.TYPE_FIELD_TEXT = { enabled = "cm_typeEnabled", weight = "cm_typeWeight", max = "cm_typeMax" }
+
+---Kontrole degeri yaz (saf; test edilir). Deger listede yoksa liste o degerle yeniden kurulur, yoksa
+---ekran en yakin adimi gosterirdi; deger listeye donunce eski liste geri gelir.
+function Tab.showValue(option, value)
+    local spec = option.cmSpec
+    if spec.kind == "range" then
+        local values = Tab.valuesWith(spec, value)
+        if values ~= option.cmValues then
+            option.cmValues = values
+            option:setTexts(Tab.buildTexts(spec, values))
+        end
+    end
+    option:setState(Tab.valueToState(spec, value, option.cmValues))
+    Tab.applyMpOnlyState(option, spec)
+end
+
 function Tab:createSection(i18nKey, spec)
     local page = self.page
     local header = page.subTitlePrefab:clone(page.settingsLayout)
@@ -476,17 +402,18 @@ function Tab:createControl(spec, key)
     option:setCallback("onClickCallback", "onClickOption")
     option.id = self.PREFIX .. key
     option:setDisabled(false)
-    option.cmSpec = { key = key, kind = spec.kind, min = spec.min, max = spec.max, step = spec.step,
-        format = spec.format, zero = spec.zero, values = spec.values, labels = spec.labels, mpOnly = spec.mpOnly }
+    -- kontrol tanimi degismez (Tab.SPEC / Tab.typeControlSpec); o anki secenek listesi kontrolde tutulur
+    option.cmSpec = spec
+    option.cmValues = spec.values
     if spec.kind ~= "bool" then
         option:setTexts(Tab.buildTexts(spec))
     end
 
     local title = box.elements[2]
-    local name, field = Tab.parseTypeKey(key)
-    if name ~= nil then
-        local typeTitle = ContractManager.typeTitle(name)
-        title:setText(string.format("%s: %s", typeTitle, text(field == "enabled" and "cm_typeEnabled" or "cm_typeWeight")))
+    local name, field = S().parseTypeKey(key)
+    local typeKey = name ~= nil and Tab.TYPE_FIELD_TEXT[field] or nil
+    if typeKey ~= nil then
+        title:setText(string.format("%s: %s", ContractManager.typeTitle(name), text(typeKey)))
     else
         title:setText(text(self.PREFIX .. key:gsub("%.", "_")))
     end
@@ -495,8 +422,8 @@ function Tab:createControl(spec, key)
     if tooltip ~= nil and tooltip.setText ~= nil and Tab.isMpOnlyLocked(spec) then
         tooltip:setText(text("cm_mpOnly_tooltip", "Multiplayer only. In single player this feature is off."))
     elseif tooltip ~= nil and tooltip.setText ~= nil then
-        if name ~= nil then
-            tooltip:setText(text(field == "enabled" and "cm_typeEnabled_tooltip" or "cm_typeWeight_tooltip", ""))
+        if typeKey ~= nil then
+            tooltip:setText(text(typeKey .. "_tooltip", ""))
         else
             tooltip:setText(text(self.PREFIX .. key:gsub("%.", "_") .. "_tooltip", ""))
         end
@@ -531,13 +458,13 @@ function Tab:buildControls()
         end
     end
 
-    -- kontrat turleri (dinamik)
+    -- kontrat turleri (dinamik): uretilsin mi, agirlik, panoda en cok
     if g_missionManager ~= nil and g_missionManager.missionTypes ~= nil and #g_missionManager.missionTypes > 0 then
         self:createSection("cm_secTypes")
         for _, missionType in ipairs(g_missionManager.missionTypes) do
-            local name = missionType.name
-            self:createControl({ kind = "bool" }, "type:" .. name .. ":enabled")
-            self:createControl(self.TYPE_WEIGHT_SPEC, "type:" .. name .. ":weight")
+            for _, field in ipairs(S().TYPE_FIELDS) do
+                self:createControl(Tab.typeControlSpec(missionType.name, field.name), "type:" .. missionType.name .. ":" .. field.name)
+            end
         end
     end
 
@@ -554,7 +481,7 @@ function Tab:populate()
     if not self.built then
         return
     end
-    local isAdmin = Tab.getIsLocalAdmin()
+    local isAdmin = ContractManager.isLocalAdmin()
     if self.page ~= nil and self.page.cmNoPermissionText ~= nil then
         self.page.cmNoPermissionText:setVisible(not isAdmin)
     end
@@ -563,10 +490,7 @@ function Tab:populate()
             control:setVisible(isAdmin)
         end
         if control.cmOption ~= nil and isAdmin then
-            local spec = control.cmOption.cmSpec
-            local state = Tab.valueToState(spec, Tab.getValue(spec.key))
-            control.cmOption:setState(state)
-            Tab.applyMpOnlyState(control.cmOption, spec)
+            Tab.showValue(control.cmOption, S():getValue(control.cmOption.cmSpec.key))
         end
     end
     self:populateStats()

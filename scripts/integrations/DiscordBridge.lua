@@ -206,6 +206,11 @@ function Discord.install()
     g_messageCenter:subscribe(ContractManager.MESSAGE_CONTRACT_TRANSFERRED, function(_, mission, oldFarmId, newFarmId)
         Discord.emit("cm_contract_transferred", { id = mission and mission.uniqueId, title = mission and mission.title, fromFarmId = oldFarmId, farmId = newFarmId })
     end, Discord)
+    -- 1.27.0.0: biten kontrat sure dolunca kendiliginden kapatildi (amount: hesaba gecen, cezada eksi)
+    g_messageCenter:subscribe(ContractManager.MESSAGE_CONTRACT_AUTO_CLOSED, function(_, mission, amount)
+        Discord.emit("cm_contract_auto_closed", { id = ContractManager.getMissionKey(mission), title = missionTitle(mission),
+            farmId = mission ~= nil and mission.farmId or nil, amount = math.floor((amount or 0) + 0.5) })
+    end, Discord)
     g_messageCenter:subscribe(ContractManager.MESSAGE_SETTINGS_CHANGED, function(_, key, value, who)
         if key ~= nil then
             Discord.emit("cm_settings_changed", { key = tostring(key), value = value, by = who })

@@ -434,7 +434,7 @@ end
 ---Alt cubuk 6 yuvali; yonetici araci en son eklenir, yer kalmazsa duser (Kontrat Yonetimi
 ---sayfasinda her zaman var).
 function Admin.appendMenuButtons(frame)
-    if not ContractManagerSettingsTab.getIsLocalAdmin() or frame.menuButtonInfo == nil then
+    if not ContractManager.isLocalAdmin() or frame.menuButtonInfo == nil then
         return
     end
     ContractManager.addMenuButton(frame.menuButtonInfo, ContractManager.MENU_KEYS_ADMIN,

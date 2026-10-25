@@ -233,6 +233,8 @@ function Registry:onMissionFinished(mission, finishState)
         reward = getReward(mission),
         completion = getCompletion(mission),
         payout = nil, -- dismiss'te dolar
+        -- kabuldeki sozlesme sartlari (Terms.lua): kapatma yeniden baslatmadan sonra da bunlarla odenir
+        terms = meta.terms or mission.cmTerms,
     }
     self.history[#self.history + 1] = entry
     while #self.history > self.HISTORY_LIMIT do
@@ -258,9 +260,10 @@ function Registry:onMissionFinished(mission, finishState)
     end
 
     -- Ceza yuzdesini seri BU basarisizligi icerdigi anda dondur; odeme kapatmada, seri o ana kadar degisebilir.
+    -- Taban/adim/tavan kontratin kabuldeki sartlari (1.27.0.0).
     if finishState ~= MissionFinishState.SUCCESS and ContractManagerReward ~= nil
         and ContractManagerReward.getPenaltyPercent ~= nil then
-        entry.penaltyPercent = ContractManagerReward.getPenaltyPercent(entry.farmId)
+        entry.penaltyPercent = ContractManagerReward.getPenaltyPercent(entry.farmId, mission)
         mission.cmFrozenPenaltyPercent = entry.penaltyPercent
     end
 
@@ -389,12 +392,21 @@ function Registry:writeToXML(xmlId, baseKey)
         ids[#ids + 1] = id
     end
     table.sort(ids)
+    local Terms = ContractManagerTerms
     for i, id in ipairs(ids) do
-        writeRecord(xmlId, string.format("%s.active.mission(%d)", baseKey, i - 1), self.active[id], ACTIVE_FIELDS)
+        local key = string.format("%s.active.mission(%d)", baseKey, i - 1)
+        writeRecord(xmlId, key, self.active[id], ACTIVE_FIELDS)
+        if Terms ~= nil then
+            Terms.writeXML(xmlId, key .. ".terms", self.active[id].terms)
+        end
     end
 
     for i, entry in ipairs(self.history) do
-        writeRecord(xmlId, string.format("%s.history.mission(%d)", baseKey, i - 1), entry, HISTORY_FIELDS)
+        local key = string.format("%s.history.mission(%d)", baseKey, i - 1)
+        writeRecord(xmlId, key, entry, HISTORY_FIELDS)
+        if Terms ~= nil then
+            Terms.writeXML(xmlId, key .. ".terms", entry.terms)
+        end
     end
 
     local farmIds = {}
@@ -475,6 +487,9 @@ function Registry:readFromXML(xmlId, baseKey)
         end
         local record = readRecord(xmlId, key, ACTIVE_FIELDS)
         if record ~= nil then
+            if ContractManagerTerms ~= nil then
+                record.terms = ContractManagerTerms.readXML(xmlId, key .. ".terms")
+            end
             self.active[record.id] = record
         end
         index = index + 1
@@ -488,6 +503,9 @@ function Registry:readFromXML(xmlId, baseKey)
         end
         local record = readRecord(xmlId, key, HISTORY_FIELDS)
         if record ~= nil then
+            if ContractManagerTerms ~= nil then
+                record.terms = ContractManagerTerms.readXML(xmlId, key .. ".terms")
+            end
             self.history[#self.history + 1] = record
         end
         index = index + 1

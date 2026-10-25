@@ -8,7 +8,8 @@
 -- siradaki adimin kontrati chain#bonusPercent ek odul alir. Zincir kaydi tarla basina
 -- tek satirdir (son tamamlanan adim) ve savegame'e yazilir.
 --
--- Kayit yalnizca sunucuda tutulur; istemcide bonus gosterimi icin kayit yoksa 0 doner.
+-- Kayit sunucuda tutulur; istemci kopyasini kural durumu senkronuyla alir (RuleState, 1.27.0.0). Oncesinde
+-- istemcide kayit hic yoktu ve oyuncu zincir primini hic gormuyordu (sunucu oduyordu).
 --
 
 ContractManagerChain = {

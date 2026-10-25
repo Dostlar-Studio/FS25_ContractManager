@@ -99,6 +99,13 @@ function ContractManagerSyncEvent:run(connection)
         if ContractManagerMissionInfo ~= nil then
             ContractManagerMissionInfo.sendAllTo(connection)
         end
+        -- odul/ceza gosterimi icin: itibar, seri, zincir, NPC ve calisan kontratlarin sartlari (1.27.0.0)
+        if ContractManagerRuleState ~= nil then
+            ContractManagerRuleState.sendTo(connection)
+        end
+        if ContractManagerTerms ~= nil then
+            ContractManagerTerms.sendAllTo(connection)
+        end
         return
     end
     if self.isState and self.protocol ~= nil and self.protocol ~= ContractManager.PROTOCOL then
@@ -170,6 +177,7 @@ ContractManagerNotificationEvent.PARTNER_INVITE = 7 -- text = kontrat basligi, a
 ContractManagerNotificationEvent.PARTNER_ACCEPTED = 8 -- sahibe: text = kontrat basligi, amount = kabul eden ciftlik
 ContractManagerNotificationEvent.PARTNER_DECLINED = 9 -- sahibe: text = kontrat basligi, amount = reddeden ciftlik
 ContractManagerNotificationEvent.PRODUCT_LOST = 10 -- text = kontrat basligi, amount = kaybolan litre
+ContractManagerNotificationEvent.AUTO_CLOSED = 11  -- text = kontrat basligi, amount = hesaba gecen tutar (cezada eksi)
 
 function ContractManagerNotificationEvent.emptyNew()
     return Event.new(ContractManagerNotificationEvent_mt)
@@ -218,6 +226,8 @@ function ContractManagerNotificationEvent.buildText(code, text, amount)
         return string.format(g_i18n:getText(text == "day" and "cm_quotaDay" or "cm_quotaMonth"), amount or 0)
     elseif code == ContractManagerNotificationEvent.PRODUCT_LOST then
         return string.format(g_i18n:getText("cm_productLost"), tostring(text), amount or 0)
+    elseif code == ContractManagerNotificationEvent.AUTO_CLOSED then
+        return ContractManager.formatSafe(g_i18n:getText("cm_autoClosed"), tostring(text), ContractManager.formatMoney(amount or 0))
     elseif code == ContractManagerNotificationEvent.LEASE_DENIED then
         if (amount or 0) > 0 then
             return string.format(g_i18n:getText("cm_leaseDeniedRep"), amount)
@@ -408,13 +418,13 @@ function ContractManagerSettingChangeEvent:run(connection)
         end
         return
     end
-    ContractManagerSettingsTab.applyOnServer(self.key, self.value, ContractManager.getConnectionUserName(connection))
+    ContractManagerSettings.applyOnServer(self.key, self.value, ContractManager.getConnectionUserName(connection))
 end
 
 ---yerel: sunucu/host ise dogrudan uygula, istemci ise sunucuya gonder
 function ContractManagerSettingChangeEvent.send(key, value)
     if g_currentMission ~= nil and g_currentMission:getIsServer() then
-        return ContractManagerSettingsTab.applyOnServer(key, value, "host")
+        return ContractManagerSettings.applyOnServer(key, value, "host")
     end
     if g_client ~= nil and not ContractManager.sendToServer(ContractManagerSettingChangeEvent.new(key, value)) then
         ContractManager.warning("Could not send setting change to server")

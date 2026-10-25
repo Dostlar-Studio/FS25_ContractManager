@@ -177,14 +177,15 @@ function Pricing.getGeometry(mission, farmId)
     return entry
 end
 
----{ distance = %, size = %, type = %, total = % }
-function Pricing.getBreakdown(mission)
+---{ distance = %, size = %, type = %, total = % }. farmId verilmezse kontratin ciftligi (kabul aninda sozlesme
+---sartlari kabul eden ciftlikle yakalanir, bkz. Terms.capture).
+function Pricing.getBreakdown(mission, farmId)
     local out = { distance = 0, size = 0, type = 0, total = 0 }
     if not Pricing.isEnabled() or mission == nil then
         return out
     end
     -- ciftlik degisince (kabul, devir) uzaklik da degisir: anahtarin parcasi
-    local geometry = Pricing.getGeometry(mission, Pricing.resolveFarmId(mission))
+    local geometry = Pricing.getGeometry(mission, farmId or Pricing.resolveFarmId(mission))
     local s = settings()
 
     if s:get("pricing.distanceEnabled") then
@@ -215,10 +216,17 @@ function Pricing.getMultiplier(mission)
     return 1 + Pricing.getBreakdown(mission).total / 100
 end
 
----detay satirlari
+---detay satirlari (canli)
 function Pricing.getDetailRows(mission, textFn)
+    return Pricing.rowsFromBreakdown(Pricing.getBreakdown(mission), textFn)
+end
+
+---detay satirlari bir yuzde dokumunden (odul hatti kabuldeki sartlardan cagirir; saf)
+function Pricing.rowsFromBreakdown(b, textFn)
     local rows = {}
-    local b = Pricing.getBreakdown(mission)
+    if b == nil then
+        return rows
+    end
     if b.distance > 0 then
         rows[#rows + 1] = { title = textFn("cm_detailDistance"), value = string.format("+%d %%", math.floor(b.distance + 0.5)) }
     end

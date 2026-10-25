@@ -116,7 +116,12 @@ local function localFarmId()
     return nil
 end
 
+---Beklenen kazanc odemede bolunen tutardan: odul - kiralama bedeli + geri odeme (Reward.getExpectedNet).
+---1.26.0.0'a kadar ham odul boluyordu; kiralik makineli kontratta HUD fazla gosteriyordu.
 local function reward(mission)
+    if ContractManagerReward ~= nil and ContractManagerReward.getExpectedNet ~= nil then
+        return ContractManagerReward.getExpectedNet(mission)
+    end
     if mission.getReward == nil then
         return 0
     end
