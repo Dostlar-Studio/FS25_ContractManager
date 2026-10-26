@@ -2,5 +2,6 @@
 test/
 __pycache__/
 *.zip
+.vs
 Thumbs.db
 .DS_Store
