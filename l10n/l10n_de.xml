@@ -28,6 +28,8 @@
         <text name="cm_guard_confiscateOnFail_tooltip" text="Bei Zeitablauf oder erzwungenem Fehlschlag wird die seit Annahme angesammelte Nettoware eingezogen."/>
         <text name="cm_guard_warnProductLoss" text="Warnung bei Warenverlust"/>
         <text name="cm_guard_warnProductLoss_tooltip" text="Zeigt eine Warnung, wenn Vertragsware verschwindet, ohne abgeliefert zu werden. Aufraeum-Mods auf einem Server koennen Ballen loeschen."/>
+        <text name="cm_guard_protectFields" text="Vertragsfelder schützen"/>
+        <text name="cm_guard_protectFields_tooltip" text="Räder beschädigen auf Feldern mit angebotenem oder laufendem Vertrag weder Bestand noch Stoppeln. Nur wirksam, wenn ein Mod (z. B. Crop Destruction Anywhere) Räder auch auf fremdem Land Pflanzen zerstören lässt."/>
         <text name="cm_reward_multiplier" text="Belohnungsfaktor"/>
         <text name="cm_reward_multiplier_tooltip" text="Die vom Spiel berechnete Belohnung wird mit diesem Wert multipliziert."/>
         <text name="cm_reward_failPenaltyPercent" text="Strafe bei Fehlschlag"/>

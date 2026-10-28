@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="115">
     <author>Dostlar STUDIO</author>
-    <version>1.27.0.0</version>
+    <version>1.27.1.0</version>
 
     <title>
         <en>Contract Manager</en>
@@ -17,7 +17,7 @@ WHY THIS MOD
 On shared servers, contracts were easy to exploit and hard to manage. A farm could take a harvest contract, sell the crop elsewhere or pass it to another farm, and simply let the contract fail. Rewards could not be matched to the server's economy, and admins had no way to step in. Contract Manager was made for our own community server to fix exactly this.
 
 WHAT IT DOES
-- Product protection: contract crop can only be moved between the vehicles of the farms working the contract and can only be unloaded at its delivery point. Dumping it on the ground or handing it to another farm is blocked. Once work has started the contract cannot be cancelled, and if it fails, the contract crop collected so far is taken back.
+- Product protection: contract crop can only be moved between the vehicles of the farms working the contract and can only be unloaded at its delivery point. Dumping it on the ground or handing it to another farm is blocked. Once work has started the contract cannot be cancelled, and if it fails, the contract crop collected so far is taken back. Wheels do not damage the crop or stubble on a contract field, even when another mod lifts the game's own crop protection.
 - Admin rules: reward multiplier with minimum and maximum, failure penalty and partial payout, active contracts per farm, daily and monthly quota, board size and generation interval, contract duration, contract types with their weights and board limits, harvest share kept by the farm, leased vehicle cost, distance and difficulty pricing, reputation, chain and NPC bonuses, automatic closing of finished contracts.
 - Extra lines in the contract details: time left, possible penalty, expected yield, amount to deliver and progress.
 - Contract Manager page in the ESC menu: every contract in one sortable table with Active, New and History tabs.
@@ -35,6 +35,9 @@ NOTES
 - Settings file: modSettings/FS25_ContractManager.xml
 - Source code and bug reports: https://github.com/Dostlar-Studio/FS25_ContractManager
 
+Changelog 1.27.1.0:
+- Contract fields are protected from wheel damage. With a mod such as Crop Destruction Anywhere, wheels also crush crops on land you do not own; on maps where crushed stubble no longer counts as harvested, harvest contracts could not be completed and failed when time ran out. Wheels now leave the fields of contracts on the board and in progress alone (setting "Protect contract fields", on by default).
+
 Changelog 1.27.0.0:
 - Board limit per contract type, so a single type can no longer fill the board.
 - Finished contracts that nobody closes are closed automatically after 48 game hours (adjustable, Never = off); the reward or penalty is paid as usual, so leaving a failed contract open no longer avoids the penalty.
@@ -50,18 +53,14 @@ Changelog 1.26.0.0:
 - Fixed: a second info window never opened and blocked all later ones; after answering No, the next action could go to the previously selected contract.
 - Product protection: no false "product lost" warnings when unloading into a partner's trailer or delivering a second contract of the same crop; product in a partner's vehicle is also taken back when a contract fails; dumping on the ground now says why it is blocked.
 - Contract types, hours, minutes, field size and litres are shown in the player's language; duration multiplier: correct end time and time left.
-- Less work per frame and a cleaner log; console commands removed.
-
-Changelog 1.25.1.0:
-- New, shorter mod description; English settings texts made consistent.
-- Fixed: the Contract Manager page wrote percentages as %45 in every language; it now shows 45 % like the rest of the mod.]]></en>
+- Less work per frame and a cleaner log; console commands removed.]]></en>
         <de><![CDATA[Der Vertragsmanager gibt dem Server-Admin die Kontrolle über Feldverträge und sorgt dafür, dass sie für jeden Hof fair bleiben. Er läuft auf dedizierten Servern, in gehosteten Mehrspielerpartien und im Einzelspieler und nutzt ausschließlich die Menüs des Spiels.
 
 WARUM DIESER MOD
 Auf gemeinsamen Servern ließen sich Verträge leicht ausnutzen und kaum steuern. Ein Hof konnte einen Erntevertrag annehmen, die Ernte woanders verkaufen oder einem anderen Hof geben und den Vertrag einfach scheitern lassen. Die Belohnungen ließen sich nicht an die Wirtschaft des Servers anpassen, und Admins konnten nicht eingreifen. Der Vertragsmanager entstand für unseren eigenen Community-Server, um genau das zu lösen.
 
 FUNKTIONEN
-- Produktschutz: Vertragsware lässt sich nur zwischen Fahrzeugen der Höfe bewegen, die den Vertrag bearbeiten, und nur an der Lieferstelle des Vertrags abladen. Abkippen auf den Boden oder Weitergabe an einen anderen Hof wird verhindert. Sobald die Arbeit begonnen hat, kann der Vertrag nicht mehr abgebrochen werden; scheitert er, wird die bis dahin gesammelte Vertragsware eingezogen.
+- Produktschutz: Vertragsware lässt sich nur zwischen Fahrzeugen der Höfe bewegen, die den Vertrag bearbeiten, und nur an der Lieferstelle des Vertrags abladen. Abkippen auf den Boden oder Weitergabe an einen anderen Hof wird verhindert. Sobald die Arbeit begonnen hat, kann der Vertrag nicht mehr abgebrochen werden; scheitert er, wird die bis dahin gesammelte Vertragsware eingezogen. Räder beschädigen auf einem Vertragsfeld weder Bestand noch Stoppeln, auch wenn ein anderer Mod den Schutz des Spiels vor Flurschäden aufhebt.
 - Regeln für den Admin: Belohnungsfaktor mit Minimum und Maximum, Strafe bei Fehlschlag und Teilauszahlung, aktive Verträge pro Hof, Tages- und Monatskontingent, Größe der Vertragstafel und Erzeugungsintervall, Vertragsdauer, Vertragstypen mit Gewichtung und Tafellimit, Ernteanteil für den Hof, Kosten für Leihfahrzeuge, Preise nach Entfernung und Schwierigkeit, Ruf, Ketten- und NPC-Boni, automatischer Abschluss beendeter Verträge.
 - Zusätzliche Zeilen in den Vertragsdetails: verbleibende Zeit, mögliche Strafe, erwarteter Ertrag, Liefermenge und Fortschritt.
 - Seite Vertragsmanager im ESC-Menü: alle Verträge in einer sortierbaren Tabelle mit den Reitern Aktiv, Neu und Verlauf.
@@ -79,6 +78,9 @@ HINWEISE
 - Einstellungsdatei: modSettings/FS25_ContractManager.xml
 - Quellcode und Fehlermeldungen: https://github.com/Dostlar-Studio/FS25_ContractManager
 
+Changelog 1.27.1.0:
+- Vertragsfelder sind vor Reifenschäden geschützt. Mit einem Mod wie Crop Destruction Anywhere zerstören Räder auch auf fremdem Land Pflanzen; auf Karten, auf denen überfahrene Stoppeln nicht mehr als geerntet zählen, ließen sich Ernteverträge nicht abschließen und scheiterten bei Zeitablauf. Räder lassen die Felder angebotener und laufender Verträge jetzt unberührt (Einstellung "Vertragsfelder schützen", standardmäßig an).
+
 Changelog 1.27.0.0:
 - Tafellimit pro Vertragstyp: ein einzelner Typ kann die Tafel nicht mehr füllen.
 - Beendete Verträge, die niemand abschließt, werden nach 48 Spielstunden automatisch abgeschlossen (einstellbar, Nie = aus); Belohnung oder Strafe werden wie gewohnt verrechnet, ein gescheiterter Vertrag entgeht der Strafe also nicht mehr, indem man ihn offen lässt.
@@ -94,18 +96,14 @@ Changelog 1.26.0.0:
 - Behoben: ein zweites Infofenster öffnete sich nie und blockierte alle weiteren; nach "Nein" konnte die nächste Aktion an den zuvor gewählten Vertrag gehen.
 - Produktschutz: keine falschen "Produkt verloren"-Meldungen mehr beim Abladen in den Anhänger des Partners oder bei einem zweiten Vertrag mit derselben Frucht; Ware im Fahrzeug des Partners wird beim Scheitern ebenfalls eingezogen; beim Abkippen auf den Boden wird der Grund angezeigt.
 - Vertragstypen, Stunden, Minuten, Feldgröße und Liter erscheinen in der Sprache des Spielers; Faktor für die Vertragsdauer: richtige Endzeit und Restzeit.
-- Weniger Rechenarbeit pro Bild und ein saubereres Log; Konsolenbefehle entfernt.
-
-Changelog 1.25.1.0:
-- Neue, kürzere Modbeschreibung; englische Einstellungstexte vereinheitlicht.
-- Behoben: Die Seite Vertragsmanager schrieb Prozentwerte in jeder Sprache als %45; jetzt 45 % wie im restlichen Mod.]]></de>
+- Weniger Rechenarbeit pro Bild und ein saubereres Log; Konsolenbefehle entfernt.]]></de>
         <fr><![CDATA[Le Gestionnaire de contrats donne à l'administrateur du serveur le contrôle des contrats agricoles et les garde équitables pour chaque ferme. Il fonctionne sur serveur dédié, en partie multijoueur hébergée et en solo, et n'utilise que les menus du jeu.
 
 POURQUOI CE MOD
 Sur les serveurs partagés, les contrats étaient faciles à détourner et difficiles à gérer. Une ferme pouvait accepter un contrat de récolte, vendre la récolte ailleurs ou la donner à une autre ferme, puis laisser le contrat échouer. Les récompenses ne pouvaient pas être adaptées à l'économie du serveur et les administrateurs ne pouvaient pas intervenir. Le Gestionnaire de contrats a été créé pour notre propre serveur communautaire afin de régler exactement cela.
 
 FONCTIONS
-- Protection du produit : le produit d'un contrat ne peut circuler qu'entre les véhicules des fermes qui travaillent sur le contrat et ne peut être déchargé qu'au point de livraison du contrat. Le déverser au sol ou le passer à une autre ferme est bloqué. Une fois le travail commencé, le contrat ne peut plus être annulé ; s'il échoue, le produit collecté jusque-là est repris.
+- Protection du produit : le produit d'un contrat ne peut circuler qu'entre les véhicules des fermes qui travaillent sur le contrat et ne peut être déchargé qu'au point de livraison du contrat. Le déverser au sol ou le passer à une autre ferme est bloqué. Une fois le travail commencé, le contrat ne peut plus être annulé ; s'il échoue, le produit collecté jusque-là est repris. Les roues n'abîment ni la culture ni le chaume d'un champ sous contrat, même quand un autre mod lève la protection des cultures du jeu.
 - Règles pour l'administrateur : multiplicateur de récompense avec minimum et maximum, pénalité d'échec et paiement partiel, contrats actifs par ferme, quota journalier et mensuel, taille du tableau et intervalle de génération, durée des contrats, types de contrat avec pondération et limite au tableau, part de récolte gardée par la ferme, coût des véhicules loués, prix selon la distance et la difficulté, réputation, bonus de chaîne et de PNJ, fermeture automatique des contrats terminés.
 - Lignes supplémentaires dans le détail des contrats : temps restant, pénalité possible, rendement attendu, quantité à livrer et progression.
 - Page Gestionnaire de contrats dans le menu Échap : tous les contrats dans un tableau triable avec les onglets Actifs, Nouveaux et Historique.
@@ -123,6 +121,9 @@ REMARQUES
 - Fichier de réglages : modSettings/FS25_ContractManager.xml
 - Code source et rapports de bugs : https://github.com/Dostlar-Studio/FS25_ContractManager
 
+Changelog 1.27.1.0 :
+- Les champs sous contrat sont protégés des dégâts des roues. Avec un mod comme Crop Destruction Anywhere, les roues écrasent aussi les cultures sur les terres d'autrui ; sur les cartes où le chaume écrasé ne compte plus comme récolté, les contrats de récolte ne pouvaient pas être terminés et échouaient à l'expiration. Les roues épargnent désormais les champs des contrats proposés et en cours (réglage « Protéger les champs sous contrat », activé par défaut).
+
 Changelog 1.27.0.0 :
 - Limite au tableau par type de contrat : un seul type ne peut plus remplir le tableau.
 - Les contrats terminés que personne ne ferme sont fermés automatiquement après 48 heures de jeu (réglable, Jamais = désactivé) ; la récompense ou la pénalité s'applique comme d'habitude, laisser un contrat échoué ouvert n'évite donc plus la pénalité.
@@ -138,18 +139,14 @@ Changelog 1.26.0.0 :
 - Corrigé : une deuxième fenêtre d'information ne s'ouvrait jamais et bloquait les suivantes ; après « Non », l'action suivante pouvait viser le contrat sélectionné auparavant.
 - Protection du produit : plus de fausses alertes « produit perdu » en déchargeant dans la remorque du partenaire ou pour un second contrat de la même culture ; le produit dans le véhicule du partenaire est aussi repris en cas d'échec ; le déversement au sol indique pourquoi il est bloqué.
 - Types de contrat, heures, minutes, surface et litres s'affichent dans la langue du joueur ; multiplicateur de durée : heure de fin et temps restant corrects.
-- Moins de calculs par image et un journal plus propre ; commandes de console supprimées.
-
-Changelog 1.25.1.0 :
-- Nouvelle description du mod, plus courte ; textes anglais des réglages harmonisés.
-- Corrigé : la page Gestionnaire de contrats écrivait les pourcentages sous la forme %45 dans toutes les langues ; elle affiche maintenant 45 % comme le reste du mod.]]></fr>
+- Moins de calculs par image et un journal plus propre ; commandes de console supprimées.]]></fr>
         <tr><![CDATA[Kontrat Yöneticisi, tarla kontratlarının denetimini sunucu yöneticisine verir ve kontratların her çiftlik için adil kalmasını sağlar. Dedicated sunucuda, kurulan çok oyunculu oyunlarda ve tek oyunculuda çalışır; yalnızca oyunun kendi menülerini kullanır.
 
 BU MOD NEDEN VAR
 Ortak sunucularda kontratlar kolayca istismar ediliyor ve yönetilemiyordu. Bir çiftlik hasat kontratını alıp ürünü başka yerde satabiliyor ya da başka bir çiftliğe verip kontratı öylece batırabiliyordu. Ödüller sunucunun ekonomisine göre ayarlanamıyor, yöneticinin de müdahale edecek aracı yoktu. Kontrat Yöneticisi tam olarak bunu çözmek için kendi topluluk sunucumuz için yapıldı.
 
 NE YAPAR
-- Ürün koruması: kontrat ürünü yalnızca kontratı yürüten çiftliklerin araçları arasında taşınabilir ve yalnızca kontratın teslim noktasına boşaltılabilir. Yere dökmek ya da başka çiftliğe vermek engellenir. İş başladıktan sonra kontrat iptal edilemez; kontrat başarısız olursa o ana kadar toplanan kontrat ürünü geri alınır.
+- Ürün koruması: kontrat ürünü yalnızca kontratı yürüten çiftliklerin araçları arasında taşınabilir ve yalnızca kontratın teslim noktasına boşaltılabilir. Yere dökmek ya da başka çiftliğe vermek engellenir. İş başladıktan sonra kontrat iptal edilemez; kontrat başarısız olursa o ana kadar toplanan kontrat ürünü geri alınır. Kontrat tarlasında tekerlekler ekini ve anızı ezmez; başka bir mod oyunun kendi ekin korumasını kaldırsa bile.
 - Yönetici kuralları: taban ve tavanlı ödül çarpanı, başarısızlık cezası ve kısmi ödeme, çiftlik başına aktif kontrat, günlük ve aylık kota, pano büyüklüğü ve üretim aralığı, kontrat süresi, kontrat türleri, ağırlıkları ve pano sınırları, çiftliğe kalan hasat payı, kiralık makine ücreti, uzaklık ve zorluğa göre fiyat, itibar, zincir ve NPC bonusları, biten kontratın kendiliğinden kapanması.
 - Kontrat ayrıntısında ek satırlar: kalan süre, olası ceza, beklenen verim, teslim edilecek miktar ve ilerleme.
 - ESC menüsünde Kontrat Yöneticisi sayfası: tüm kontratlar Aktif, Yeni ve Geçmiş sekmeli, sıralanabilir tek bir tabloda.
@@ -167,6 +164,9 @@ NOTLAR
 - Ayar dosyası: modSettings/FS25_ContractManager.xml
 - Kaynak kod ve hata bildirimi: https://github.com/Dostlar-Studio/FS25_ContractManager
 
+Değişiklikler 1.27.1.0:
+- Kontrat tarlası teker ezmesine karşı korunuyor. Crop Destruction Anywhere gibi bir modla tekerlekler sahibi olmadığınız arazide de ekini eziyor; ezilen anızın biçilmiş sayılmadığı haritalarda hasat kontratı tamamlanamıyor, süre dolunca başarısız oluyordu. Tekerlekler artık panodaki ve süren kontratların tarlasına dokunmuyor (ayar "Kontrat tarlasını koru", varsayılan açık).
+
 Değişiklikler 1.27.0.0:
 - Kontrat türü başına pano sınırı: tek bir tür artık panoyu dolduramıyor.
 - Biten ama kimsenin kapatmadığı kontrat 48 oyun saati sonra kendiliğinden kapanıyor (ayarlanabilir, Hiç = kapalı); ödül ya da ceza her zamanki gibi işliyor, yani başarısız kontratı açık bırakmak artık cezadan kurtarmıyor.
@@ -182,11 +182,7 @@ Değişiklikler 1.26.0.0:
 - Düzeltildi: ikinci bilgi penceresi hiç açılmıyor ve sonrakileri kilitliyordu; "Hayır"dan sonra sıradaki işlem önceden seçilen kontrata gidebiliyordu.
 - Ürün koruması: ortağın römorkuna boşaltırken ya da aynı ürünlü ikinci kontratta yanlış "ürün kayboldu" uyarısı yok; kontrat başarısız olunca ortağın aracındaki ürün de geri alınıyor; yere dökme engellenince sebebi yazılıyor.
 - Kontrat türleri, saat, dakika, tarla büyüklüğü ve litre oyuncunun dilinde; süre çarpanı: bitiş saati ve kalan süre doğru.
-- Kare başına daha az iş ve daha temiz log; konsol komutları kaldırıldı.
-
-Değişiklikler 1.25.1.0:
-- Yeni, daha kısa mod açıklaması; İngilizce ayar metinleri düzeltildi.
-- Düzeltildi: Kontrat Yöneticisi sayfası yüzdeyi diğer dillerde de "%45" diye yazıyordu; artık modun diğer ekranları gibi "45 %" yazıyor.]]></tr>
+- Kare başına daha az iş ve daha temiz log; konsol komutları kaldırıldı.]]></tr>
     </description>
 
     <iconFilename>icon_contractManager.dds</iconFilename>
@@ -234,6 +230,7 @@ Değişiklikler 1.25.1.0:
         <sourceFile filename="scripts/guard/GuardNotificationEvent.lua"/>
         <sourceFile filename="scripts/guard/Guard.lua"/>
         <sourceFile filename="scripts/guard/Register.lua"/>
+        <sourceFile filename="scripts/guard/FieldProtect.lua"/>
         <sourceFile filename="scripts/core/Persistence.lua"/>
         <sourceFile filename="scripts/core/Safety.lua"/>
         <sourceFile filename="scripts/integrations/DiscordBridge.lua"/>

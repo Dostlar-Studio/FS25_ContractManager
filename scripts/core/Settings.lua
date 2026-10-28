@@ -94,6 +94,8 @@ group("cm_secGuard", {
     { id = "guard.blockCancelAfterProgress", type = BOOL, default = true },
     { id = "guard.confiscateOnFail",         type = BOOL, default = true },
     { id = "guard.warnProductLoss",          type = BOOL, default = true },
+    -- kontrat tarlasinda teker ezmesi yok (oyunun korumasini kaldiran modlara karsi; guard/FieldProtect)
+    { id = "guard.protectFields",            type = BOOL, default = true },
 })
 
 group("cm_secReward", {

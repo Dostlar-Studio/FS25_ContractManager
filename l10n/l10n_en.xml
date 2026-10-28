@@ -28,6 +28,8 @@
         <text name="cm_guard_confiscateOnFail_tooltip" text="On timeout or forced failure the net product accumulated since acceptance is taken back."/>
         <text name="cm_guard_warnProductLoss" text="Warn about lost product"/>
         <text name="cm_guard_warnProductLoss_tooltip" text="Shows a warning when contract product disappears without being delivered. Cleanup mods on a server can delete bales."/>
+        <text name="cm_guard_protectFields" text="Protect contract fields"/>
+        <text name="cm_guard_protectFields_tooltip" text="Wheels do not damage the crop or stubble on fields with a contract on the board or in progress. Only matters when a mod (e.g. Crop Destruction Anywhere) lets wheels damage crops on land you do not own."/>
         <text name="cm_reward_multiplier" text="Reward multiplier"/>
         <text name="cm_reward_multiplier_tooltip" text="The reward calculated by the game is multiplied by this value."/>
         <text name="cm_reward_failPenaltyPercent" text="Failure penalty"/>

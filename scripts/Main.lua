@@ -10,14 +10,15 @@
 ContractManager = {
     MOD_NAME = g_currentModName,
     MOD_DIRECTORY = g_currentModDirectory,
-    VERSION = "1.27.0.0",
+    VERSION = "1.27.1.0",
     -- Ag olaylarinin bicimi degistiginde ARTTIR. Sunucu ile istemci farkli protokolde ise
     -- sayilar sessizce bozuluyordu (1.14.2 dort tamsayi yaziyordu, 1.15 bes tane okuyordu).
     -- 3 (1.26.0.0): ayar senkronuna 1.24.8.0'da harvest.grassContracts eklenmisti (artirilmamisti);
     -- devir olayina ag kimligi, ortaklik senkronuna paylar eklendi.
     -- 4 (1.27.0.0): ayarlar ekran sirasiyla yayinlanir, duration.autoCloseHours ve tur basina pano siniri
     -- (type max) eklendi; kural durumu (itibar/seri/zincir/NPC) ve sozlesme sartlari olaylari geldi.
-    PROTOCOL = 4,
+    -- 5 (1.27.1.0): ayar senkronuna guard.protectFields eklendi.
+    PROTOCOL = 5,
     LOG_PREFIX = "[CM]",
 
     -- savegame icindeki birlesik durum dosyasi

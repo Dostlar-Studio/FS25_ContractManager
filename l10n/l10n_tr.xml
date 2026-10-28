@@ -28,6 +28,8 @@
         <text name="cm_guard_confiscateOnFail_tooltip" text="Süre aşımı veya zorunlu başarısızlıkta kabulden beri biriken net ürün geri alınır."/>
         <text name="cm_guard_warnProductLoss" text="Ürün kaybını bildir"/>
         <text name="cm_guard_warnProductLoss_tooltip" text="Kontrat ürünü teslim edilmeden azalırsa uyarı gösterilir. Sunucudaki temizlik modları balyaları silebiliyor."/>
+        <text name="cm_guard_protectFields" text="Kontrat tarlasını koru"/>
+        <text name="cm_guard_protectFields_tooltip" text="Panodaki ya da süren kontratın tarlasında tekerlekler ekini ve anızı ezmez. Yalnızca bir mod (ör. Crop Destruction Anywhere) tekerleklerin sahibi olmadığınız arazide de ekini ezmesine izin verdiğinde fark eder."/>
         <text name="cm_reward_multiplier" text="Ödül çarpanı"/>
         <text name="cm_reward_multiplier_tooltip" text="Oyunun hesapladığı kontrat ödülü bu çarpanla çarpılır."/>
         <text name="cm_reward_failPenaltyPercent" text="Başarısızlık cezası"/>

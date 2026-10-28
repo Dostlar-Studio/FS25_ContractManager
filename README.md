@@ -20,6 +20,7 @@ A script mod by **Dostlar STUDIO**. Uses only the game's own screens, no custom 
 - Contract crops move only between vehicles of the same farm; ground dumping, cross-farm transfers and wrong unloading points are blocked.
 - Only the delivery point of the contract accepts the protected product; a started contract cannot be cancelled.
 - On timeout or forced failure the net contract product accumulated since acceptance is confiscated.
+- Wheels do not damage the crop or stubble on fields of contracts on the board or in progress, also when a mod such as Crop Destruction Anywhere lifts the game's own protection on land you do not own.
 
 **Contracts page and Contract Management page**
 - Contract details: time left, possible penalty, every reward bonus, active contracts / limit, expected yield and delivery amounts, progress. Players see the same reward the server pays.

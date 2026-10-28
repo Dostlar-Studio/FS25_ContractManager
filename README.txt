@@ -37,12 +37,18 @@ KORUMA KURALLARI
   kontrat kabulünden sonra çiftliğin araçlarında/balyalarında oluşan net
   ürün miktarı geri alınır. En fazla kontratın kendi ürettiği kadar alınır
   (teslim edilen düşülür); ortak çiftliklerin araçları da taranır.
+- Panodaki ya da süren kontratın tarlasında tekerlekler ekini ve anızı
+  ezmez. Oyun bunu zaten yapar; FS25_CropDestructionAnywhere gibi bir mod
+  oyunun korumasını kaldırırsa kontrat tarlası yine korunur (hasat
+  ilerlemesi teker iziyle düşmez). Kontratı olmayan tarlalarda davranış
+  değişmez.
 
 AYAR DOSYASI
 Documents\My Games\FarmingSimulator2025\modSettings\FS25_ContractManager.xml
 İlk çalıştırmada varsayılanlarla oluşturulur. Geçersiz değerler varsayılana
 çekilir ve log.txt'ye yazılır. Alanlar:
-  guard#enabled / confiscateOnFail / blockCancelAfterProgress
+  guard#enabled / confiscateOnFail / blockCancelAfterProgress / warnProductLoss
+  guard#protectFields (true)  kontrat tarlasını teker ezmesinden koru
   reward#multiplier (1.25)  ödül çarpanı; #min / #max taban-tavan (0 = yok)
   reward#failPenaltyPercent (10)  başarısız/iptal/süre aşımında ödülün yüzdesi ceza
   reward#leaseCostMultiplier (1.0)  kiralık makine maliyeti çarpanı

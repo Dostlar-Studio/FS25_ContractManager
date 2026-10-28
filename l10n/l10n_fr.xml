@@ -28,6 +28,8 @@
         <text name="cm_guard_confiscateOnFail_tooltip" text="En cas d'expiration ou d'échec forcé, le produit net accumulé depuis l'acceptation est repris."/>
         <text name="cm_guard_warnProductLoss" text="Alerter en cas de perte"/>
         <text name="cm_guard_warnProductLoss_tooltip" text="Affiche une alerte quand le produit du contrat disparait sans etre livre. Les mods de nettoyage d'un serveur peuvent supprimer les balles."/>
+        <text name="cm_guard_protectFields" text="Protéger les champs sous contrat"/>
+        <text name="cm_guard_protectFields_tooltip" text="Les roues n'abîment ni la culture ni le chaume des champs dont le contrat est proposé ou en cours. Utile seulement si un mod (par ex. Crop Destruction Anywhere) laisse les roues abîmer les cultures sur les terres d'autrui."/>
         <text name="cm_reward_multiplier" text="Multiplicateur de récompense"/>
         <text name="cm_reward_multiplier_tooltip" text="La récompense calculée par le jeu est multipliée par cette valeur."/>
         <text name="cm_reward_failPenaltyPercent" text="Pénalité d'échec"/>
